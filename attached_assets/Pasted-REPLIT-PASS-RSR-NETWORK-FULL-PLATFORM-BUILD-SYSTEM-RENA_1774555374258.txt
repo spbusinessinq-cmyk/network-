@@ -1,0 +1,1010 @@
+REPLIT PASS — RSR NETWORK FULL PLATFORM BUILD / SYSTEM RENAME / NO-MOCK PRESENTATION PASS
+
+You are upgrading and consolidating an existing prototype called **RSR NETWORK**.
+
+This is a serious internal platform.
+
+It is **not**:
+
+* a startup dashboard
+* a Twitter clone
+* a Discord clone
+* a Reddit clone
+* a gamer leveling app
+* a colorful community app
+
+It should feel like:
+
+* a classified internal network
+* an operator communications system
+* a controlled intelligence platform
+* a hardened signal and case environment
+* a premium identity-driven network with hierarchy, access, and contribution
+
+The current dark visual direction is correct.
+Keep that direction.
+Refine it.
+Do not replace it with generic SaaS design.
+Do not brighten it.
+Do not make it playful.
+Do not make it look like social media.
+
+The platform should feel:
+
+* secure
+* structured
+* premium
+* inhabited
+* operational
+* controlled
+
+---
+
+## CRITICAL PRODUCT DIRECTION
+
+This pass must consolidate everything discussed so far into one cohesive working prototype.
+
+The system needs to support:
+
+* full operator profile creation
+* premium RSR digital ID card system
+* identity hierarchy / standing / clearance tiers
+* controlled communication layer
+* signal submission and review flow
+* signal detail views with threads
+* investigation / case collaboration
+* operator presence
+* admin command oversight
+* progression / advancement requirements
+* stronger overall application shell
+* better naming across the app
+* removal of weak placeholder language
+
+This should feel like a real system people can enter and use.
+
+---
+
+## CRITICAL NAMING RULE
+
+Do **not** use the term **God Room** anywhere in the interface.
+
+Replace it with something stronger, cleaner, and more serious.
+
+Use this label instead throughout the UI:
+
+**COMMAND**
+
+Optional longer internal section labels you may use inside the UI:
+
+* Command Center
+* Command Oversight
+* Command Authority
+* Command Control
+
+But the main nav label should simply be:
+
+**COMMAND**
+
+This should feel professional and powerful, not cheesy.
+
+---
+
+## CRITICAL NO-MOCK / NO-FAKE PRESENTATION RULE
+
+Do **not** display phrases like:
+
+* mock data
+* demo data
+* sample data
+* placeholder
+* fake system
+* coming soon
+* prototype mode
+* local mode
+
+Do not surface those kinds of words in the visible UI.
+
+Even if local state is used internally, the user-facing experience should feel complete and operational.
+
+Use clean seeded data internally, but do not label it as mock/sample/demo on-screen.
+
+The platform should feel live and inhabited.
+
+---
+
+## CRITICAL BUILD QUALITY RULE
+
+This should not just be a visual pass.
+
+It must be wired up as a working frontend prototype with coherent flows.
+
+That means:
+
+* navigation works
+* profile creation works
+* identity assignment works
+* card choice works
+* card render works
+* signal submission works
+* signal list updates
+* signal detail panel opens
+* signal threads function in local state
+* Network Room works
+* case room views work
+* operator presence displays coherently
+* standing / advancement logic displays correctly
+* Command actions update the UI coherently
+
+Do not leave the build feeling disconnected.
+
+The goal is a polished, working frontend prototype.
+
+---
+
+## DESIGN SYSTEM — NON-NEGOTIABLE
+
+Visual language must remain:
+
+* dark black / charcoal base
+* subtle grid / scanline texture
+* thin steel-gray borders
+* emerald or ice-blue highlights used sparingly
+* sharp corners
+* premium spacing
+* restrained glow on active states
+* minimal, clean typography
+* quiet, controlled motion
+
+Mood:
+
+* secure
+* powerful
+* controlled
+* intentional
+* premium
+* internal
+
+Avoid:
+
+* bright colors
+* bubbly UI
+* loud gradients
+* social-media style cards
+* cartoony badges
+* gamer UI
+* cluttered startup dashboard patterns
+
+---
+
+1. GLOBAL APP SHELL UPGRADE
+
+---
+
+Replace the current simple tab layout with a full application shell.
+
+Build:
+
+* left vertical command rail
+* top system header bar
+* main central content area
+* right-side contextual drawer / detail area on desktop when appropriate
+
+This should feel like a real platform, not a landing page.
+
+### Left Command Rail Sections
+
+Use these sections:
+
+* Identity
+* Signals
+* Network Room
+* Profile
+* Cases
+* Operators
+* Command
+
+Optional:
+
+* Watchlist
+* Archive
+
+### Rail Behavior
+
+* active states should be crisp and premium
+* subtle glow for active section
+* clean transitions
+* compact icons + labels
+* strong hierarchy
+* no oversized soft components
+
+### Header Bar
+
+Can include:
+
+* network state
+* operator count
+* signal count
+* case count
+* current section title
+* active operator identity
+* small system search field if useful
+
+Keep it restrained.
+
+---
+
+2. FULL CREATE PROFILE / JOIN NETWORK FLOW
+
+---
+
+Build a true **Create Profile / Join Network** experience.
+
+This must feel like entering a controlled network, not signing up for a casual app.
+
+### Required Fields
+
+* Alias
+* Bio
+* Card Style Choice
+* Optional Status Line
+
+### Generated Fields
+
+On profile creation, automatically generate:
+
+* RSR ID
+* default role
+* default standing tier
+* badge color / clearance
+* join date
+* access class
+* presence state
+
+### Experience
+
+This flow should feel like:
+
+* credential issuance
+* operator onboarding
+* network enrollment
+
+Not:
+
+* consumer signup
+* playful profile editor
+* social app onboarding
+
+---
+
+3. CARD STYLE SELECTION RULES
+
+---
+
+Allow users to choose from a controlled list of card styles.
+
+Normal selectable card styles:
+
+* Obsidian
+* Steel
+* Ice
+* Graphite
+
+Optional additions only if they fit:
+
+* Slate
+* Carbon
+
+### Critical Rule
+
+**Gold is reserved and is NOT user-selectable.**
+
+The founder / command profile gets gold treatment automatically and exclusively.
+
+Do not allow normal users to choose gold.
+
+---
+
+4. FOUNDER / COMMAND PROFILE RULE
+
+---
+
+Create a distinct founder / command identity treatment.
+
+My profile should be treated as:
+
+* founder
+* command
+* gold badge tier
+* premium gold card treatment
+* elevated access class
+* higher visibility identity styling
+* distinct presence state such as COMMAND ACTIVE
+
+This identity should look clearly above standard users.
+
+But do it tastefully.
+No tacky king/crown energy.
+No cheesy “VIP” styling.
+
+It should feel like command authority.
+
+---
+
+5. RSR DIGITAL ID CARD SYSTEM — MAJOR UPGRADE
+
+---
+
+The digital ID card is a centerpiece feature and needs to feel premium.
+
+Upgrade it substantially.
+
+### Card Behavior
+
+* fade in from black
+* subtle 3D tilt on hover / mouse move
+* smooth premium motion
+* click to expand / inspect
+* optional front/back flip
+* strong but restrained depth
+
+### Card Design
+
+* matte black / matte dark surface
+* subtle grid texture
+* thin controlled edge glow
+* cleaner proportions
+* tighter spacing
+* premium typography
+* barcode / credential strip / code zone
+* badge / clearance integration
+* access class marker
+* status marker
+
+### Card Content
+
+Show:
+
+* RSR logo
+* Alias
+* Bio or short status line
+* RSR ID
+* Role
+* Join Date
+* Standing Tier
+* Badge / Clearance
+* Access Class
+* Presence State
+
+The card should feel like a secure credential, not a collectible card.
+
+---
+
+6. PROFILE / DOSSIER SYSTEM
+
+---
+
+Turn profiles into full operator dossiers.
+
+A profile is not a social media page.
+It is an internal operator record.
+
+Each profile should show:
+
+* expanded ID card
+* alias
+* bio
+* status line
+* RSR ID
+* role
+* standing
+* badge tier
+* access class
+* join date
+* presence state
+* recent submitted signals
+* recent messages
+* active rooms
+* active case
+* case activity
+* contribution record
+* promotion status
+* requirements remaining
+
+Optional:
+
+* concise operator summary block
+
+No:
+
+* likes
+* followers
+* vanity metrics
+* engagement counters
+
+---
+
+7. BADGE / STANDING / CLEARANCE SYSTEM
+
+---
+
+Add a 5-tier standing system.
+
+This should feel like:
+
+* trust
+* contribution
+* access
+* clearance
+* network standing
+
+It should NOT feel like:
+
+* gamer XP
+* loot grinding
+* childish rank-up systems
+
+### Use These 5 Tiers
+
+1. **Black — Observer**
+2. **Steel — Scout**
+3. **Red — Operator**
+4. **White — Analyst**
+5. **Gold — Command**
+
+### Rules
+
+* Gold is reserved for command/founder only
+* Gold is not user-selectable
+* Gold is not part of normal casual progression
+* upper tiers should feel earned and meaningful
+
+### Apply Badge / Standing Across
+
+* profile
+* ID card
+* chat messages
+* operator directory
+* signal attribution
+* case rooms
+* Command user control
+* signal threads
+
+### Visual Treatment
+
+Use:
+
+* compact clearance strips
+* standing labels
+* access markers
+* dossier tabs
+* subtle tier color treatment
+
+Do not use:
+
+* cartoon medals
+* silly icons
+* game trophies
+
+---
+
+8. ADVANCEMENT / PROMOTION SYSTEM
+
+---
+
+Add a tasteful progression system.
+
+Do not frame it as:
+
+* XP
+* points
+* loot
+* streaks
+* achievements spam
+
+Frame it as:
+
+* Standing
+* Clearance Progress
+* Promotion Criteria
+* Contribution Record
+* Review Status
+* Requirements Remaining
+
+### Suggested Progression Logic
+
+**Observer → Scout**
+Requirements can include:
+
+* complete profile
+* add bio
+* choose card style
+* submit first valid signal
+* participate in Network Room appropriately
+
+**Scout → Operator**
+Requirements can include:
+
+* submit multiple quality signals
+* participate in a signal thread
+* contribute to a case room
+* maintain stable standing
+* positive review state
+
+**Operator → Analyst**
+Requires higher trust:
+
+* contribute useful case notes
+* support verified discussions
+* help organize signals or analysis
+* meaningful case participation
+* admin review / approval
+
+**Analyst → Command**
+Not standard progression.
+Reserved for command assignment only.
+
+### Progress UI
+
+Show fields like:
+
+* Standing
+* Promotion Status
+* Next Review
+* Contribution Record
+* Requirements Remaining
+
+Keep it serious and premium.
+No confetti.
+No flashy celebration popups.
+
+---
+
+9. NETWORK ROOM — CONTROLLED SOCIAL LAYER
+
+---
+
+Add a main shared **Network Room**.
+
+This is the primary communication layer.
+
+It should make the platform feel inhabited and alive, while staying controlled.
+
+This is **not** normal social media.
+
+### Purpose
+
+* live operator discussion
+* signal reaction / discussion
+* internal network energy
+* controlled collaboration
+* identity presence
+
+### Each Message Should Show
+
+* alias
+* RSR ID
+* role
+* standing tier / badge color
+* timestamp
+* message text
+
+### Layout
+
+* room header
+* message stream
+* input bar
+* operator presence list / online now
+* optional room state / activity strip
+
+### Style
+
+* terminal-like
+* minimal
+* sharp
+* premium
+* restrained
+
+No:
+
+* likes
+* follower counts
+* reposts
+* algorithmic feed behavior
+
+---
+
+10. CONTROLLED RESPONSE CHIPS
+
+---
+
+Instead of social reactions, use operational interaction chips.
+
+Examples:
+
+* ACKNOWLEDGED
+* TRACKING
+* VERIFYING
+* ESCALATE
+* LOGGED
+* PRIORITY
+
+These can appear on:
+
+* messages
+* signals
+* signal threads
+* case rooms
+* Command actions
+
+They should feel like operational state markers, not emoji reactions.
+
+---
+
+11. SIGNAL SYSTEM — SUBMISSION + FEED + DETAIL
+
+---
+
+Keep signal submission but make the full signal workflow feel stronger.
+
+### Submit Signal Form
+
+Fields:
+
+* Title
+* Description
+* Category
+* Location (optional)
+* Link / file placeholder (optional)
+
+Categories:
+
+* Political
+* Economic
+* Conflict
+* Local
+* Other
+
+### Signal Feed
+
+Keep it clean and controlled.
+
+Each item shows:
+
+* title
+* category
+* timestamp
+* submitted by
+* status
+* priority state if applicable
+
+No social metrics.
+
+### Signal Detail Drawer / Panel
+
+When clicking a signal, open a detail drawer or contextual panel.
+
+Show:
+
+* title
+* category
+* timestamp
+* location
+* description
+* verification state
+* source/file placeholder
+* linked case
+* submitted by
+* response chips
+* discussion thread
+* relevant command actions if applicable
+
+This needs to feel operational and alive, not static.
+
+---
+
+12. SIGNAL THREADS
+
+---
+
+Each signal should support a discussion thread.
+
+This is not a casual comment section.
+It is a controlled thread tied to the signal.
+
+Show:
+
+* operator alias
+* RSR ID
+* badge / standing
+* timestamp
+* message
+* optional response chip state
+
+This can live inside the signal detail drawer/panel.
+
+---
+
+13. CASE ROOMS — MAJOR UPGRADE
+
+---
+
+Upgrade investigation rooms so they feel much more complete.
+
+Each case room should include:
+
+* case title
+* summary
+* case status
+* case lead
+* linked signals
+* notes log
+* case discussion thread
+* assigned priority signals
+* activity / timeline styling
+
+### Case Status Labels
+
+Use:
+
+* OPEN
+* ACTIVE
+* MONITORING
+* ESCALATED
+* ARCHIVED
+
+### Tone
+
+Case rooms should feel:
+
+* serious
+* structured
+* operational
+* useful
+* intelligence-oriented
+
+Not casual or forum-like.
+
+---
+
+14. OPERATOR DIRECTORY / PRESENCE
+
+---
+
+Add an Operators section or presence layer.
+
+Each operator entry should show:
+
+* alias
+* RSR ID
+* role
+* standing / badge tier
+* presence state
+* optional active room
+
+### Presence States
+
+Use:
+
+* Online
+* Monitoring
+* In Network Room
+* In Case Room
+* Reviewing Signals
+* Command Active
+
+Use this in:
+
+* Network Room sidebar
+* Profile
+* Operators section
+* Command area
+* case room presence where useful
+
+This should make the platform feel inhabited.
+
+---
+
+15. COMMAND SECTION — REPLACES OLD ADMIN AREA
+
+---
+
+Replace the old admin section label with **COMMAND** everywhere.
+
+This area should feel like command oversight and platform control.
+
+Break it into strong subsections:
+
+* Signal Control
+* User Control
+* Standing / Clearance Control
+* Case Assignment
+* Priority Board
+* Visibility State
+
+### Signal Actions
+
+* verify
+* mark unverified
+* mark priority
+* assign to case
+* apply response/status chips
+* route to watchlist if useful
+
+### User Actions
+
+* promote role
+* change standing tier
+* assign case lead
+* restrict access
+* remove user
+
+### Case Actions
+
+* create case
+* assign signals
+* assign case lead
+* change case status
+
+### Visibility States
+
+You may include controlled states like:
+
+* Internal
+* Elevated
+* Reviewed
+
+Keep this area feeling like command authority, not social moderation tools.
+
+---
+
+16. BETTER WORDING ACROSS THE APP
+
+---
+
+Use stronger, cleaner, more serious labels throughout the system.
+
+Avoid cheesy or weak naming.
+
+Preferred language:
+
+* Network Room
+* Command
+* Operator
+* Standing
+* Clearance
+* Access Class
+* Case Lead
+* Contribution Record
+* Review Status
+* Signal Intake
+* Signal Thread
+* Presence
+* Dossier
+* Command Active
+
+Do not use childish or sloppy naming.
+
+---
+
+17. VISUAL POLISH PASS
+
+---
+
+Refine the current prototype into a much more premium-feeling system.
+
+Improve:
+
+* spacing consistency
+* panel hierarchy
+* typography sizing consistency
+* section separation
+* stronger shell structure
+* stronger detail views
+* stronger dossier presentation
+* better message layout
+* better side panels/drawers
+* more intentional use of empty space
+
+Preserve:
+
+* black / charcoal base
+* grid / scanline texture
+* thin steel-gray borders
+* emerald / ice-blue restraint
+* sharp edges
+* controlled glow
+
+Avoid:
+
+* colorful card stacks
+* chunky soft UI
+* big rounded community-app design
+* random decorative clutter
+
+---
+
+18. MOTION / MICRO-INTERACTIONS
+
+---
+
+Add subtle premium motion only.
+
+Use:
+
+* panel fade/slide transitions
+* drawer open/close motion
+* command rail active motion
+* ID card hover tilt
+* ID card inspect/expand motion
+* profile reveal transitions
+* message reveal transitions
+* clean state changes
+
+Keep it restrained.
+No flashy effects.
+
+---
+
+19. TECH / IMPLEMENTATION RULES
+
+---
+
+Important:
+
+* frontend only
+* local state only
+* no backend yet
+* no database yet
+* no auth yet
+* no realtime infra yet
+
+But the system should still feel wired up and coherent.
+
+All key flows should function together in the frontend prototype.
+
+Do not leave disconnected UI islands.
+
+---
+
+20. FINAL OUTPUT REQUIREMENTS
+
+---
+
+Return a working upgraded prototype that includes:
+
+1. stronger full application shell
+2. full create profile / join network flow
+3. bio field and status line
+4. card style selection
+5. founder-only gold profile/card treatment
+6. upgraded RSR digital ID card
+7. 5-tier standing / clearance hierarchy
+8. tasteful advancement / promotion system
+9. Network Room main chat
+10. controlled response chips
+11. signal submission + feed + detail drawer
+12. signal discussion threads
+13. upgraded case rooms
+14. operator directory / presence system
+15. COMMAND section replacing old admin naming
+16. stronger wording throughout the app
+17. polished intelligence-network feel
+18. no visible mock/demo/placeholder wording anywhere
+
+---
+
+## FINAL PRODUCT RULE
+
+This platform should feel like:
+
+**an internal intelligence network with controlled social energy, identity, hierarchy, standing, case collaboration, and command oversight**
+
+It should not feel like:
+
+* social media first
+* a startup admin dashboard
+* a gamer progression system
+* a casual community app
+
+Everything should communicate:
+**control, access, structure, identity, trust, and operator presence.**
