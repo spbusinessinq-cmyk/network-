@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useStore } from "@/lib/store";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -14,9 +14,38 @@ import {
 } from "lucide-react";
 import { StandingBadge } from "@/components/StandingBadge";
 
+function getPersonalizedGreeting(standing: string) {
+  switch (standing) {
+    case "Command": return "COMMAND ACTIVE — AUTHORITY LEVEL UNRESTRICTED";
+    case "Analyst": return "ANALYST STATION — VERIFICATION ACTIVE";
+    case "Operator": return "OPERATOR STATION — FIELD ACCESS ENABLED";
+    case "Scout": return "SCOUT STATION — OBSERVATION ACTIVE";
+    case "Observer": return "OBSERVER STATION — INTAKE MONITORING";
+    default: return "OPERATOR ACTIVE";
+  }
+}
+
+function formatDate(date: Date) {
+  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const d = date.getDate().toString().padStart(2, '0');
+  const m = months[date.getMonth()];
+  const y = date.getFullYear();
+  const h = date.getHours().toString().padStart(2, '0');
+  const min = date.getMinutes().toString().padStart(2, '0');
+  return `${d} ${m} ${y} / ${h}:${min}`;
+}
+
 export default function CommandDeckPage() {
   const { currentUserId, users, signals, cases, networkMessages } = useStore();
   const currentUser = users.find((u) => u.id === currentUserId);
+  const [timeStr, setTimeStr] = useState(formatDate(new Date()));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeStr(formatDate(new Date()));
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   if (!currentUser) return null;
 
@@ -78,31 +107,37 @@ export default function CommandDeckPage() {
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="shrink-0 border border-zinc-800 bg-zinc-950/40 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden"
+        className="shrink-0 border border-zinc-800 bg-zinc-950 p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden shadow-sm"
       >
         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.01)_50%,transparent_75%)] bg-[length:250%_250%] animate-pulse" />
         
-        <div className="flex items-center gap-6 z-10">
+        <div className="flex items-center gap-6 z-10 w-full md:w-auto">
           <div className="flex flex-col">
-            <div className="flex items-baseline gap-3">
-              <h1 className={`text-2xl font-bold uppercase tracking-wider ${isCommand ? 'text-amber-500' : 'text-emerald-400'}`}>
-                {currentUser.alias}
+            <div className="flex items-center gap-3 mb-1">
+              <Shield className={`w-5 h-5 ${isCommand ? 'text-amber-500' : 'text-emerald-500'}`} />
+              <h1 className="text-xl font-medium tracking-[0.15em] uppercase text-zinc-100">
+                Network Command Console
               </h1>
-              <span className="text-zinc-500 font-mono text-sm">{currentUser.id}</span>
             </div>
-            <div className="flex items-center gap-3 mt-1">
+            <div className="flex items-baseline gap-3 mt-2">
+              <h2 className={`text-sm font-bold uppercase tracking-wider ${isCommand ? 'text-amber-500' : 'text-emerald-400'}`}>
+                {currentUser.alias}
+              </h2>
+              <span className="text-zinc-500 font-mono text-xs">ID: {currentUser.id}</span>
+            </div>
+            <div className="flex items-center gap-2 mt-2">
               <StandingBadge standing={currentUser.standing} grade={currentUser.grade} />
-              <span className="text-[10px] uppercase tracking-widest text-zinc-400 border border-zinc-800 px-2 py-0.5 bg-black/50">
-                {currentUser.cardStyle.toUpperCase()} CREDENTIAL
+              <span className="text-[9px] uppercase tracking-widest text-zinc-400 border border-zinc-800 px-1.5 py-0.5 bg-black/50">
+                {currentUser.cardStyle} CREDENTIAL
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-zinc-400 border border-zinc-800 px-2 py-0.5 bg-black/50">
+              <span className="text-[9px] uppercase tracking-widest text-zinc-400 border border-zinc-800 px-1.5 py-0.5 bg-black/50">
                 {currentUser.accessClass} ACCESS
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-6 z-10 border-l border-zinc-800 pl-6">
+        <div className="flex items-center gap-6 z-10 border-t md:border-t-0 md:border-l border-zinc-800 pt-4 md:pt-0 md:pl-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
@@ -117,9 +152,10 @@ export default function CommandDeckPage() {
               {currentUser.statusLine}
             </div>
           </div>
-          <div className="flex flex-col items-end justify-center ml-4">
-            <span className={`text-xs font-bold tracking-[0.2em] uppercase ${isCommand ? 'text-amber-500' : 'text-emerald-500/70'}`}>
-              {isCommand ? "COMMAND ACTIVE" : "OPERATOR ACTIVE"}
+          <div className="flex flex-col items-end justify-center ml-4 gap-1">
+            <span className="text-xs font-mono tracking-widest text-zinc-400">{timeStr}</span>
+            <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${isCommand ? 'text-amber-500' : 'text-emerald-500/70'}`}>
+              {getPersonalizedGreeting(currentUser.standing)}
             </span>
           </div>
         </div>
@@ -138,9 +174,11 @@ export default function CommandDeckPage() {
             transition={{ delay: 0.1 }}
             className="flex-1 flex flex-col border border-zinc-800 bg-zinc-950/40 overflow-hidden"
           >
-            <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between">
+            <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between group">
               <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Priority Signals</h2>
-              <span className="text-[10px] text-zinc-500 font-mono">[{prioritySignals.length}]</span>
+              <Link href="/signals" className="text-[10px] text-emerald-500 hover:text-emerald-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                → Inspect
+              </Link>
             </div>
             <div className="flex-1 overflow-auto divide-y divide-zinc-800/50">
               {prioritySignals.map((signal) => (
@@ -197,9 +235,11 @@ export default function CommandDeckPage() {
             transition={{ delay: 0.2 }}
             className="flex-1 flex flex-col border border-zinc-800 bg-zinc-950/40 overflow-hidden"
           >
-            <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between">
+            <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between group">
               <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Active Cases</h2>
-              <span className="text-[10px] text-zinc-500 font-mono">[{cases.length}]</span>
+              <Link href="/cases" className="text-[10px] text-emerald-500 hover:text-emerald-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                → Enter
+              </Link>
             </div>
             <div className="flex-1 overflow-auto divide-y divide-zinc-800/50">
               {cases.map((c) => (
@@ -246,23 +286,26 @@ export default function CommandDeckPage() {
             </div>
             <div className="p-3 flex flex-col gap-2">
               {[
-                { label: "Network Room", path: "/network", icon: Radio },
-                { label: "Submit Signal", path: "/signals", icon: Radar },
-                { label: "Case Rooms", path: "/cases", icon: FolderOpen },
-                { label: "Operators", path: "/operators", icon: Users },
-                { label: "Dossier", path: "/profile", icon: UserCircle },
-                ...(isCommand ? [{ label: "Command", path: "/command", icon: Shield, isCommand: true }] : [])
+                { label: "Network Room", path: "/network", icon: Radio, sub: "Live operator feed" },
+                { label: "Submit Signal", path: "/signals", icon: Radar, sub: "File new intelligence" },
+                { label: "Case Rooms", path: "/cases", icon: FolderOpen, sub: "Active investigations" },
+                { label: "Operators", path: "/operators", icon: Users, sub: "Network personnel" },
+                { label: "Dossier", path: "/profile", icon: UserCircle, sub: "Operational record" },
+                ...(isCommand ? [{ label: "Command Authority", path: "/command", icon: Shield, sub: "Restricted access", isCommand: true }] : [])
               ].map((item, i) => (
-                <Link key={i} href={item.path} className={`flex items-center justify-between p-2.5 border transition-colors ${
+                <Link key={i} href={item.path} className={`flex items-center justify-between p-2.5 border transition-all duration-200 group ${
                   item.isCommand 
-                    ? "border-amber-900/30 bg-amber-950/10 hover:bg-amber-900/30 text-amber-500/80 hover:text-amber-400" 
-                    : "border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
+                    ? "border-amber-900/30 bg-amber-950/10 hover:bg-amber-900/30 hover:border-amber-500/50 text-amber-500/80 hover:text-amber-400" 
+                    : "border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/80 hover:border-zinc-600 text-zinc-400 hover:text-zinc-200"
                 }`}>
                   <div className="flex items-center gap-3">
-                    <item.icon className="w-4 h-4 opacity-70" />
-                    <span className="text-xs uppercase tracking-widest font-medium">{item.label}</span>
+                    <item.icon className={`w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity ${item.isCommand ? 'text-amber-500' : 'text-emerald-500'}`} />
+                    <div className="flex flex-col">
+                      <span className="text-xs uppercase tracking-widest font-medium">{item.label}</span>
+                      <span className="text-[9px] uppercase text-zinc-500">{item.sub}</span>
+                    </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 opacity-50" />
+                  <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </Link>
               ))}
             </div>
@@ -283,7 +326,7 @@ export default function CommandDeckPage() {
               {users.map((u) => {
                 const isCmd = u.standing === "Command";
                 return (
-                  <div key={u.id} className={`flex items-center gap-3 p-2 bg-black/20 hover:bg-zinc-900/40 border border-transparent ${isCmd ? 'border-l-2 border-l-amber-500/40' : ''}`}>
+                  <Link key={u.id} href={`/operators?id=${u.id}`} className={`flex items-center gap-3 p-2 bg-black/20 hover:bg-zinc-900/60 transition-colors border border-transparent cursor-pointer ${isCmd ? 'border-l-2 border-l-amber-500/40' : ''}`}>
                     <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${getPresenceColor(u.presence)}`} />
                     <div className="flex-1 min-w-0 flex flex-col">
                       <div className="flex items-center gap-2">
@@ -298,7 +341,7 @@ export default function CommandDeckPage() {
                         <span className="truncate">{u.presence}</span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -311,8 +354,9 @@ export default function CommandDeckPage() {
             transition={{ delay: 0.35 }}
             className="shrink-0 border border-zinc-800 bg-zinc-950/40 flex flex-col"
           >
-            <div className="border-b border-zinc-800 bg-black/40 p-2 px-4">
+            <div className="border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between">
               <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Network Status</h2>
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.8)]" title="Live Refresh Active" />
             </div>
             <div className="p-4 grid grid-cols-2 gap-y-3 gap-x-4">
               <div className="flex flex-col gap-1">

@@ -1,0 +1,452 @@
+REPLIT PASS — RSR NETWORK HQ FLOW / WELCOME ROOM / REAL COMMAND CONSOLE / FULL COMMAND TOOLS
+
+You are upgrading the current **RSR NETWORK** build.
+
+The backend is now live and persistent.
+Authentication, users, signals, cases, and network messages are real.
+
+This pass is NOT about backend infrastructure.
+This pass is about fixing the product flow and making the platform feel like a real, living headquarters system.
+
+Do not redesign away from the dark intelligence-network style.
+Do not brighten it.
+Do not make it playful or generic.
+Do not turn it into a startup dashboard.
+Do not turn it into a normal social app.
+
+Keep the current visual language, but restructure the experience.
+
+---
+
+## PRIMARY OBJECTIVE
+
+The platform currently works, but the experience still feels too section-by-section and too flat.
+
+It needs:
+
+* a clearly defined landing flow
+* a real welcome / access experience
+* a true main command console
+* a better register/create-operator experience
+* restored and expanded command/admin controls
+* the ability to create/manage cases from Command
+* a more living, interactive headquarters feel
+
+This pass should make the platform feel like:
+
+* a real internal network
+* a command headquarters
+* a living operator system
+* a place you enter, understand, and operate from
+
+---
+
+1. REBUILD THE APP FLOW
+
+---
+
+The app should follow this product flow:
+
+### If user is not authenticated:
+
+Show a full **Welcome / Access Room**
+
+### If user is authenticated:
+
+Send them to the **Network Command Console** (main landing page)
+
+The platform should no longer feel like random page switching.
+It should feel like entering a system.
+
+---
+
+2. ADD A TRUE WELCOME / ACCESS ROOM
+
+---
+
+Build a real pre-login landing experience.
+
+This should be the first thing people see if they are not logged in.
+
+This is NOT a boring login page.
+
+It should feel like:
+
+* secure network entry
+* operator access chamber
+* onboarding room
+* credential entry point
+
+### This room should include:
+
+* a strong hero area
+* short explanation of what RSR NETWORK is
+* login path for existing users
+* register/request access path for new users
+* a serious, immersive tone
+* a premium dark intelligence-network feel
+
+### Hero content should communicate:
+
+* Welcome to RSR NETWORK
+* what the platform is
+* what it is used for
+* signals / cases / operators / command structure
+* why access is controlled
+
+This page should feel like entering a secure network, not opening an app.
+
+---
+
+3. ADD TWO CLEAR ENTRY PATHS
+
+---
+
+In the Welcome / Access Room, present two clear choices:
+
+### A) Existing Operator
+
+* username
+* password
+* authenticate
+* enter network
+
+### B) New to the Network
+
+* clear register/request access action
+* take them into a dedicated operator creation room
+
+This should feel intentional and immersive.
+
+---
+
+4. BUILD A REAL OPERATOR CREATION ROOM
+
+---
+
+The current “request access” flow should be upgraded into a real creation/onboarding room.
+
+This can have a slightly game-like feeling in structure, but it must stay premium and serious.
+
+Think:
+
+* create your operator identity
+* choose how you enter the network
+* receive your credentials
+
+NOT:
+
+* cheesy character creator
+* playful game menu
+* cartoon onboarding
+
+### This room should explain:
+
+* what an operator is
+* what standing means
+* what credential classes mean
+* what access is
+* how users enter the network
+
+### Required fields:
+
+* Alias
+* Bio / operator statement
+* optional status line
+* credential class / card style choice
+* maybe a short “function” or “focus” field if it fits
+
+### On completion:
+
+* create the real account
+* issue the credential
+* generate RSR ID
+* assign default standing
+* route user into the network
+
+This room should feel like:
+**credential issuance + identity creation**
+
+---
+
+5. COMMAND CONSOLE MUST BECOME A TRUE HQ PAGE
+
+---
+
+The current Command Deck is better than before, but it still needs to become a true headquarters page.
+
+Rename or frame it clearly as the main command hub.
+
+Preferred name:
+**Network Command Console**
+
+You may keep “Command Deck” as a sublabel if helpful, but the page should feel like the real HQ landing page.
+
+### It must include:
+
+* large hero / welcome block for current logged-in operator
+* current standing / access / credential summary
+* top priority signals
+* active cases
+* quick actions
+* personnel / who is online
+* network activity / mission log
+* command status
+
+This should feel like:
+
+* the operational center of the platform
+* the main page you return to
+* the place from which all other areas branch out
+
+---
+
+6. MAKE THE HQ PAGE FEEL MORE ALIVE
+
+---
+
+The HQ page needs more life and interaction.
+
+Add elements like:
+
+* welcome line personalized to current operator
+* clearer live status indicators
+* mission / activity strip
+* more interactive panel behavior
+* better quick navigation
+* clearer operational focus
+
+It should not feel like static panels on a blank page.
+
+It should feel like a living command environment.
+
+---
+
+7. RESTORE AND EXPAND FULL COMMAND CONTROLS
+
+---
+
+The older admin/control functionality must come back inside the current architecture.
+
+The new **Command** section should contain real full command tools.
+
+Bring back / restore / improve:
+
+* Signal Control
+* User Control
+* Case Control
+* Priority Board
+* Standing / Clearance control
+* command-only tools
+
+This must feel like a serious administrative and oversight center.
+
+---
+
+8. CASE CREATION MUST EXIST IN COMMAND
+
+---
+
+Right now cases cannot be properly created/managed from the current experience.
+
+Fix that.
+
+In **Command**, add the ability to:
+
+* create a new case
+* edit case title
+* edit summary
+* assign case lead
+* set case status
+* attach linked signals
+* add/update case notes
+* archive / close case if needed
+
+This must be a real working UI backed by the live backend.
+
+This is critical.
+
+---
+
+9. COMMAND SHOULD FEEL LIKE THE OLD “GOD CONTROLS” BUT BETTER
+
+---
+
+The platform still needs the power of the earlier control area, just with better naming and better structure.
+
+Do NOT use the phrase “God Room.”
+Use:
+
+* Command
+* Command Control
+* Command Authority
+* Command Oversight
+
+But bring back the power/functionality of the old control center.
+
+Founder / command account should be able to:
+
+* create cases
+* manage cases
+* manage users
+* manage standing/clearance where appropriate
+* manage signal status
+* review network activity
+* control priority items
+
+---
+
+10. CLEAN UP NAVIGATION LOGIC
+
+---
+
+The left rail should remain, but the product should no longer feel like “same page over and over.”
+
+Refine the navigation so it feels like a system map branching from HQ.
+
+Recommended sections:
+
+* Network Command Console
+* Identity
+* Network Room
+* Signals
+* Cases
+* Operators
+* Profile
+* Command
+
+The HQ / Network Command Console should be the main home and default authenticated landing page.
+
+---
+
+11. WELCOME / ONBOARDING EXPLANATION CONTENT
+
+---
+
+The pre-login and operator-creation experience should explain the system clearly.
+
+It should teach new users:
+
+* what RSR NETWORK is
+* what operators do
+* what signals are
+* what case rooms are
+* what standing means
+* what credential class means
+* why access is controlled
+
+Keep this concise, cinematic, and premium.
+Do not make it wordy.
+Do not make it cheesy.
+
+This is important because the system needs context, not just UI.
+
+---
+
+12. FOUNDER / COMMAND EXPERIENCE
+
+---
+
+Keep the founder login exactly working:
+
+* Username: EIO
+* Password: 4451
+
+On founder login:
+
+* land in the HQ / Network Command Console
+* show full command access
+* preserve Black Rail identity
+* preserve gold credential
+* preserve Command standing
+* preserve command-active presence
+* show full command tools
+
+Founder should clearly feel like the top-level authority in the network.
+
+---
+
+13. MAKE THE EXPERIENCE MORE INTERACTIVE
+
+---
+
+Without turning it into a game or social app, make the experience feel more alive.
+
+Possible improvements:
+
+* more interactive welcome room transitions
+* smoother onboarding progression
+* better panel hover/focus states
+* more engaging command console hierarchy
+* richer quick actions
+* cleaner dynamic content loading from the real backend
+
+The system should feel responsive and inhabited.
+
+---
+
+14. DO NOT WASTE THIS PASS ON
+
+---
+
+Do not spend time on:
+
+* major visual redesign
+* backend rewrites
+* unnecessary animations
+* random charts
+* cosmetic-only fluff
+
+Use this pass on:
+
+* structure
+* flow
+* onboarding
+* command tools
+* case creation/control
+* making the platform feel like a real headquarters
+
+---
+
+15. FINAL OUTPUT
+
+---
+
+Return an upgraded build that includes:
+
+1. a real Welcome / Access Room for unauthenticated users
+2. clear split between existing operator login and new operator registration
+3. a full Operator Creation Room
+4. better explanation of what the network is
+5. a true authenticated landing page called Network Command Console
+6. stronger HQ/home experience
+7. more interactive/living command feel
+8. full restored Command controls
+9. real case creation/editing inside Command
+10. founder flow preserved with:
+
+* EIO
+* 4451
+* Black Rail
+* Command
+* Gold credential
+
+11. better overall system flow from entry to operation
+
+---
+
+## FINAL RULE
+
+This platform should feel like:
+
+**a living internal headquarters system with real access flow, real identity onboarding, a true command console, and full command authority**
+
+It should not feel like:
+
+* a flat page-switching app
+* disconnected screens
+* a basic admin dashboard
+* a fake toy control panel
+
+Everything should communicate:
+**entry, identity, authority, orientation, control, and operational presence.**

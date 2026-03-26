@@ -23,7 +23,7 @@ export function AppShell({ children }: AppShellProps) {
   const currentUser = users.find((u) => u.id === currentUserId);
 
   const navItems = [
-    { label: "Command Deck", path: "/", icon: LayoutDashboard },
+    { label: "Network HQ", path: "/", icon: LayoutDashboard },
     { label: "Identity", path: "/identity", icon: Fingerprint },
     { label: "Network Room", path: "/network", icon: Radio },
     { label: "Signals", path: "/signals", icon: Radar },
