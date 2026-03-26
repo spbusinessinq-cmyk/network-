@@ -8,7 +8,8 @@ import {
   FolderOpen, 
   Users, 
   UserCircle, 
-  Shield 
+  Shield,
+  LayoutDashboard
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export function AppShell({ children }: AppShellProps) {
   const currentUser = users.find((u) => u.id === currentUserId);
 
   const navItems = [
+    { label: "Command Deck", path: "/", icon: LayoutDashboard },
     { label: "Identity", path: "/identity", icon: Fingerprint },
     { label: "Network Room", path: "/network", icon: Radio },
     { label: "Signals", path: "/signals", icon: Radar },

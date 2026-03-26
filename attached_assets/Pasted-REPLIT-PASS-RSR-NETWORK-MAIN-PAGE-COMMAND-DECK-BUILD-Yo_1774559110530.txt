@@ -1,0 +1,330 @@
+REPLIT PASS — RSR NETWORK MAIN PAGE / COMMAND DECK BUILD
+
+You are upgrading the current RSR NETWORK build.
+
+Do not redesign the app.
+Do not replace the current visual language.
+Do not brighten it.
+Do not make it look like a startup dashboard.
+
+The current section pages are strong, but the platform is missing a true **main page**.
+
+Right now the experience feels like moving between similar interior screens.
+It needs a real central hub.
+
+---
+
+## PRIMARY OBJECTIVE
+
+Build a new primary landing page for the platform called:
+
+**COMMAND DECK**
+
+This should become the first/main page in the left navigation.
+
+It should feel like:
+
+* the central operations hub
+* the main network headquarters screen
+* the command surface of the platform
+* the page that gives the operator an immediate sense of the whole system
+
+It should not feel like:
+
+* a generic dashboard
+* a pile of random widgets
+* a startup analytics screen
+* a fake KPI page
+
+This page should make the system feel like a real platform with structure and direction.
+
+---
+
+1. ADD MAIN NAV ITEM
+
+---
+
+Add a new first item in the left command rail:
+
+**Command Deck**
+
+Place it above Identity.
+
+This should become the default landing page after login.
+
+---
+
+2. COMMAND DECK LAYOUT
+
+---
+
+Build the page as a real multi-panel command hub.
+
+Use a layout that feels structured and premium.
+
+Recommended structure:
+
+* top summary zone
+* center main operational panels
+* right-side personnel / status column
+* lower activity / mission section
+
+Do not make every section the same size.
+Use hierarchy.
+Create a true home screen layout.
+
+---
+
+3. TOP COMMAND SUMMARY PANEL
+
+---
+
+Create a top hero-style command panel.
+
+This should show the current logged-in operator’s command summary.
+
+For example, it should surface:
+
+* alias
+* RSR ID
+* standing
+* grade if applicable
+* credential class
+* access class
+* presence state
+* short identity summary line
+
+For founder/command login, this should feel elevated and important.
+
+It should feel like:
+“you are now inside the network”
+
+not just another card on another page.
+
+---
+
+4. QUICK ACTION PANEL
+
+---
+
+Add a clear quick-action section on the main page.
+
+Actions can include:
+
+* Open Network Room
+* Submit Signal
+* View Active Cases
+* Open Operators
+* Open Profile
+* Enter Command
+
+These should be presented as clean operational action panels or buttons.
+
+They should feel like command shortcuts, not generic app buttons.
+
+---
+
+5. PRIORITY SIGNALS PANEL
+
+---
+
+Add a dedicated panel for top active or priority signals.
+
+Show a short list of the most important current signals.
+
+Each item should show:
+
+* title
+* category
+* status
+* submitted by
+* linked case if any
+* time
+* quick open / inspect action
+
+This should feel like a real live operational queue.
+
+---
+
+6. ACTIVE CASES PANEL
+
+---
+
+Add a panel showing current active case rooms.
+
+Each case entry should show:
+
+* case title
+* status
+* case lead
+* linked signals count
+* last activity
+* quick open action
+
+Statuses can include:
+
+* OPEN
+* ACTIVE
+* MONITORING
+* ESCALATED
+* ARCHIVED
+
+This gives the home screen operational depth.
+
+---
+
+7. PERSONNEL / PRESENCE PANEL
+
+---
+
+Add a right-side personnel panel.
+
+Show:
+
+* operators online
+* current command presence
+* analysts active
+* operators in case rooms
+* operators reviewing signals
+
+This should feel like a live inhabited system, not a static list.
+
+Can include compact operator entries with:
+
+* alias
+* standing
+* credential class
+* presence state
+
+---
+
+8. COMMAND / NETWORK STATUS PANEL
+
+---
+
+Add a compact system status area.
+
+Possible items:
+
+* active signals
+* priority signals
+* open cases
+* operators online
+* command review queue
+* verification load
+
+Do not overdo it.
+Keep it clean and useful.
+
+---
+
+9. RECENT NETWORK ACTIVITY / MISSION LOG
+
+---
+
+Add a bottom section for recent activity.
+
+This can be framed as:
+
+* Recent Activity
+* Mission Log
+* Network Activity
+* Operations Feed
+
+Show entries like:
+
+* signal submitted
+* case updated
+* operator promoted
+* command review applied
+* thread updated
+
+Keep it clean and structured.
+
+This should make the platform feel alive.
+
+---
+
+10. DESIGN RULES FOR COMMAND DECK
+
+---
+
+This page must feel different from the interior pages.
+
+It should feel more layered, more premium, and more central.
+
+Use:
+
+* larger hierarchical panels
+* better width variation
+* stronger layout composition
+* more intentional spacing
+* more panel diversity
+* clear “home base” feel
+
+Keep:
+
+* black / charcoal base
+* subtle grid / scanline texture
+* steel borders
+* restrained emerald / ice-blue highlights
+* gold reserved carefully for command/founder identity
+* sharp corners
+* premium quiet motion
+
+Do not:
+
+* add random charts
+* add fake graphs
+* overload the page
+* use generic SaaS stat-card layout everywhere
+
+---
+
+11. OPTIONAL PANEL IDEAS
+
+---
+
+If useful, include one or two of these:
+
+* Standing Summary
+* Credential Overview
+* Access Scope
+* Review Queue
+* Personnel Distribution
+* Priority Board Snapshot
+
+Only if they improve the home screen.
+Do not clutter it.
+
+---
+
+12. FLOW RULE
+
+---
+
+The app experience should now be:
+
+1. login / access
+2. enter Command Deck
+3. branch into Signals, Cases, Network Room, Operators, Profile, Command
+
+The Command Deck should make the platform feel centered and real.
+
+---
+
+13. OUTPUT
+
+---
+
+Return an upgraded prototype with:
+
+1. new Command Deck main page
+2. first nav item + default landing page
+3. better multi-panel home layout
+4. top command summary panel
+5. quick action section
+6. priority signals panel
+7. active cases panel
+8. personnel/presence panel
+9. system status

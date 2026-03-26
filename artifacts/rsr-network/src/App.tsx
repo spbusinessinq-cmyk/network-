@@ -6,6 +6,7 @@ import { AppProvider, useStore } from "@/lib/store";
 import { AppShell } from "@/components/AppShell";
 
 import AccessGate from "@/pages/AccessGate";
+import CommandDeckPage from "@/pages/CommandDeckPage";
 import IdentityPage from "@/pages/IdentityPage";
 import NetworkRoom from "@/pages/NetworkRoom";
 import SignalsPage from "@/pages/SignalsPage";
@@ -27,7 +28,7 @@ function ProtectedRouter() {
   return (
     <AppShell>
       <Switch>
-        <Route path="/" component={IdentityPage} />
+        <Route path="/" component={CommandDeckPage} />
         <Route path="/identity" component={IdentityPage} />
         <Route path="/network" component={NetworkRoom} />
         <Route path="/signals" component={SignalsPage} />

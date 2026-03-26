@@ -31,7 +31,7 @@ export default function AccessGate() {
     setLoginError(false);
     
     if (loginUser(loginUsername, loginPassword)) {
-      setLocation("/identity");
+      setLocation("/");
     } else {
       setLoginError(true);
     }
@@ -67,7 +67,7 @@ export default function AccessGate() {
     setTimeout(() => {
       addUser(user);
       setCurrentUserId(user.id);
-      setLocation("/identity");
+      setLocation("/");
     }, 2500);
   };
 
