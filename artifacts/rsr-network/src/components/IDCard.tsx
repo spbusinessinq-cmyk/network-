@@ -69,7 +69,7 @@ export function IDCard({ user, expanded, onExpand, size = "md", className }: IDC
           <div className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-1">Operative</div>
           <div className="text-xl font-bold tracking-wider text-zinc-100 uppercase">{user.alias}</div>
         </div>
-        <StandingBadge standing={user.standing} />
+        <StandingBadge standing={user.standing} grade={user.grade} />
       </div>
 
       {/* Middle Section (Expanded Only) */}

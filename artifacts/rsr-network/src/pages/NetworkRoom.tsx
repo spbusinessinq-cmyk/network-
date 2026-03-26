@@ -45,18 +45,34 @@ export default function NetworkRoom() {
             {networkMessages.map((m) => {
               const author = users.find(u => u.id === m.userId);
               const isMe = currentUserId === m.userId;
+              const isCommand = author?.standing === "Command";
+              
               return (
                 <div key={m.id} className="flex flex-col gap-2">
-                  <div className="flex items-baseline gap-3">
-                    <span className={`text-sm font-medium ${isMe ? "text-emerald-400" : "text-zinc-300"}`}>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className={`text-sm font-medium ${isCommand ? "text-amber-500" : isMe ? "text-emerald-400" : "text-zinc-300"}`}>
                       {author?.alias || m.userId}
                     </span>
-                    <span className="text-[10px] text-zinc-600 font-mono tracking-widest">{m.timestamp}</span>
-                    {author && <StandingBadge standing={author.standing} />}
+                    
+                    {author && <StandingBadge standing={author.standing} grade={author.grade} />}
+                    
+                    {author?.cardStyle && !isCommand && (
+                      <span className="text-[9px] uppercase tracking-widest text-zinc-500 border border-zinc-800 px-1.5 py-0.5">
+                        {author.cardStyle}
+                      </span>
+                    )}
+
+                    <span className="text-[10px] text-zinc-600 font-mono tracking-widest ml-auto">{m.timestamp}</span>
                   </div>
-                  <div className="text-[15px] text-zinc-300 bg-black/40 border border-zinc-800/50 p-4 leading-relaxed">
+                  
+                  <div className={`text-[15px] p-4 leading-relaxed border ${
+                    isCommand 
+                      ? "bg-amber-950/10 border-amber-900/30 text-amber-100/90" 
+                      : "bg-black/40 border-zinc-800/50 text-zinc-300"
+                  }`}>
                     {m.text}
                   </div>
+                  
                   <div className="pl-4">
                     <ResponseChips 
                       options={["ACKNOWLEDGED", "TRACKING", "VERIFYING", "LOGGED"]} 

@@ -1,0 +1,659 @@
+REPLIT PASS — RSR NETWORK AUTH / COMMAND ACCOUNT / GOLD CARD / STANDING DEPTH EXPANSION
+
+You are upgrading the current **RSR NETWORK** build.
+
+The current platform is already visually strong and structurally solid.
+
+Do not redesign it.
+Do not brighten it.
+Do not soften it.
+Do not turn it into social media.
+Do not turn it into a gamer app.
+Do not replace the current visual language.
+
+This pass must focus on making the system feel more real, more controlled, more premium, and closer to a live internal platform.
+
+---
+
+## PRIMARY MISSION
+
+In this pass, build and wire up these major systems together:
+
+1. login / access gate
+2. founder / command account setup
+3. founder-only gold credential card
+4. command-only navigation + access
+5. stronger standing depth
+6. stronger card doctrine and meaning
+7. clearer promotion / progression structure
+8. more detailed operator dossier language
+9. tighter access control presentation
+
+This needs to feel like a real internal network with a real command identity.
+
+The founder account should be able to enter the network and land in a higher-trust command state with the gold credential card and command permissions visible.
+
+---
+
+## CRITICAL RULES
+
+Keep this as a working frontend prototype using local state only.
+
+Do not build backend auth yet.
+Do not wire a real database yet.
+Do not build server infrastructure yet.
+
+But do make the flow feel real and coherent.
+
+All key flows must work together in the frontend:
+
+* access screen
+* login flow
+* founder credential assignment
+* command visibility
+* profile rendering
+* card rendering
+* tier rendering
+* command access
+* navigation gating
+
+Do not leave disconnected UI pieces.
+
+---
+
+1. ADD A REAL ACCESS / LOGIN SCREEN
+
+---
+
+Build an entry screen before the user enters the platform.
+
+This should feel like:
+
+* secure access gate
+* terminal credential check
+* internal network entry point
+
+Not:
+
+* casual website login
+* social app sign-in
+* consumer auth flow
+
+The screen should include:
+
+* platform mark / title
+* subtle secure system styling
+* username field
+* password field
+* enter / authenticate button
+* optional small access status line
+* smooth transition into the app after successful entry
+
+Use dark styling consistent with the platform.
+
+---
+
+2. SEED A FOUNDER / COMMAND ACCOUNT
+
+---
+
+Create a seeded founder command account for the prototype.
+
+Use these credentials for the local prototype login flow:
+
+Username:
+EIO
+
+Password:
+4451
+
+This founder account should log directly into the command-tier identity.
+
+On successful login, that account should load with:
+
+* founder / command authority
+* gold credential card
+* gold tier treatment
+* command access
+* elevated identity presentation
+* command-only nav visibility
+* distinct presence state
+
+This founder profile should feel clearly above standard operators.
+
+---
+
+3. FOUNDER PROFILE / COMMAND IDENTITY
+
+---
+
+The founder account should load as a special command record.
+
+Founder identity should include:
+
+* founder / command standing
+* gold credential card
+* command-only access state
+* elevated access class
+* special presence state such as COMMAND ACTIVE
+* stronger dossier styling
+* stronger visual distinction in operator listings
+* command visibility in relevant rooms and control surfaces
+
+This should feel premium and authoritative.
+Do not make it cheesy.
+Do not use crown motifs or tacky “VIP” energy.
+
+It should feel like command authority.
+
+---
+
+4. GOLD CARD RULE
+
+---
+
+Gold remains restricted.
+
+Important:
+
+* gold is not selectable by normal users
+* gold is not shown as a standard card-style option
+* gold is founder / command only
+* founder account must automatically receive the gold card
+* command card should have a more refined premium treatment than other cards
+
+Gold card treatment should feel:
+
+* executive
+* rare
+* restricted
+* clean
+* authoritative
+
+Not flashy.
+Not loud.
+Not gaudy.
+
+---
+
+5. NORMAL USER ACCESS / ONBOARDING FLOW
+
+---
+
+Keep or improve the Join Network / Create Profile flow for non-founder users.
+
+Normal users should still be able to create profiles with:
+
+* Alias
+* Bio
+* Optional status line
+* Card style choice
+
+Allowed user card styles:
+
+* Obsidian
+* Steel
+* Ice
+* Graphite
+* optional Slate / Carbon if consistent
+
+Do not allow gold for normal users.
+
+On normal user creation, generate:
+
+* RSR ID
+* default role
+* default standing
+* default access class
+* join date
+* presence state
+
+---
+
+6. NAVIGATION / ACCESS GATING
+
+---
+
+Add clean access gating by standing / command authority.
+
+Examples:
+
+* normal users should not see or access full Command controls
+* founder / command account should see the full Command section
+* command-only features should appear naturally unlocked under the founder account
+* limited-access users should see cleaner reduced access states where appropriate
+
+Do not make gated areas feel broken or unfinished.
+They should feel intentionally restricted.
+
+Use language like:
+
+* Restricted
+* Clearance Required
+* Command Access
+* Authorized
+* Elevated Access
+
+---
+
+7. EXPAND THE 5-TIER STANDING SYSTEM
+
+---
+
+Keep the 5 standing tiers:
+
+* Observer
+* Scout
+* Operator
+* Analyst
+* Command
+
+But deepen the system so it feels more real.
+
+Add visible doctrine for each tier:
+
+* what it means
+* what trust level it represents
+* what access it allows
+* what responsibilities it implies
+* what distinguishes it from the next tier
+
+Example direction:
+
+Observer:
+Entry-level standing. Intake, observation, limited participation, early credential state.
+
+Scout:
+Early trusted contributor. More active room participation, signal engagement, growing trust.
+
+Operator:
+Proven field-level contributor. Broader room access, case participation, stronger operational standing.
+
+Analyst:
+High-trust review and synthesis role. Verification, case support, refinement, signal interpretation.
+
+Command:
+Reserved executive authority. Oversight, access control, network direction, founder-level standing.
+
+---
+
+8. ADD INTERNAL SUBGRADES
+
+---
+
+Add subgrades for the first 4 tiers.
+
+Use:
+
+* Grade I
+* Grade II
+* Grade III
+
+So examples can be:
+
+* Observer I
+* Scout II
+* Operator III
+* Analyst I
+
+Command should remain special and not use normal casual progression.
+
+This should add depth without turning the system into a cheesy rank grind.
+
+Show subgrade in places like:
+
+* identity page
+* operator dossier
+* operator directory
+* advancement section
+* card detail view if useful
+
+---
+
+9. PROMOTION / PROGRESSION LOGIC
+
+---
+
+Add or improve tasteful advancement logic.
+
+Do not frame it as:
+
+* XP
+* points
+* loot
+* streaks
+* gamer rewards
+
+Frame it as:
+
+* Standing
+* Grade
+* Promotion Status
+* Review Status
+* Advancement Criteria
+* Contribution Record
+* Requirements Remaining
+
+Suggested logic:
+
+Observer → Scout
+
+* complete profile
+* add bio
+* choose credential class
+* submit valid signals
+* participate in Network Room appropriately
+
+Scout → Operator
+
+* contribute multiple useful signals
+* participate in case discussion
+* maintain stable standing
+* demonstrate useful engagement
+
+Operator → Analyst
+
+* support verified threads
+* contribute meaningful case notes
+* assist in review / synthesis
+* require stronger review logic
+
+Analyst → Command
+
+* not normal progression
+* command-assigned only
+* founder/admin restricted
+
+---
+
+10. ADD CARD DOCTRINE / CREDENTIAL CLASS MEANING
+
+---
+
+Right now the card styles look good, but they need more meaning.
+
+Turn card styles into credential classes with doctrine.
+
+Add visible meaning for card classes such as:
+
+Obsidian:
+Low-signature operational credential.
+
+Steel:
+Structured support / field-aligned credential.
+
+Ice:
+Verification / intelligence / technical review credential.
+
+Graphite:
+Neutral general network credential.
+
+Gold:
+Restricted command credential.
+
+Display this meaning in the UI in relevant places:
+
+* identity page
+* dossier
+* onboarding card selector
+* credential detail / inspect state
+
+This should make the card choice feel purposeful, not decorative.
+
+---
+
+11. UPGRADE THE IDENTITY PAGE
+
+---
+
+Strengthen the Identity page so it has more meaning and explanation.
+
+Add sections such as:
+
+* Standing & Advancement
+* Credential Class Meaning
+* Access Scope
+* Active Provisions
+* Promotion Track
+* Standing Doctrine
+
+This page should explain not just what the operator has, but what it means.
+
+---
+
+12. UPGRADE THE OPERATOR DOSSIER
+
+---
+
+The Profile / Dossier page needs more depth.
+
+Each operator dossier should show:
+
+* expanded credential card
+* alias
+* bio / status line
+* RSR ID
+* role
+* standing tier
+* grade
+* access class
+* credential class
+* join date
+* presence state
+* contribution totals
+* recent signal activity
+* recent message activity
+* current active room
+* case involvement
+* promotion status
+* review status
+* requirements remaining
+
+Add a stronger operator summary block that explains who this operator is inside the network.
+
+---
+
+13. UPGRADE THE OPERATOR DIRECTORY
+
+---
+
+Improve the Operators view so each person feels more defined.
+
+Each operator card/listing should show:
+
+* alias
+* RSR ID
+* standing tier
+* grade
+* credential class
+* active function
+* presence state
+
+Example:
+Operator Vanta
+Scout II
+Credential Class: Steel
+Function: Monitoring / Field Support
+
+This will make the directory feel much more alive and meaningful.
+
+---
+
+14. COMMAND ACCESS POLISH
+
+---
+
+Strengthen the Command section so it feels clearly tied to the founder login.
+
+Founder / command account should be able to access:
+
+* Signal Control
+* User Control
+* Standing / Clearance Control
+* Case Assignment
+* Priority Board
+* access-gated control surfaces
+
+Make it obvious the founder account has elevated network authority.
+
+This should feel like command oversight, not forum moderation.
+
+---
+
+15. NETWORK ROOM COMMAND PRESENCE
+
+---
+
+Improve the Network Room so founder / command identity matters more.
+
+Founder messages should clearly carry:
+
+* command tier
+* gold identity treatment
+* command presence state
+
+Without being tacky.
+
+Also improve operator meaning in the chat stream by showing:
+
+* standing
+* grade
+* credential class if useful
+* stronger identity chips where helpful
+
+The room should feel more inhabited and more structured.
+
+---
+
+16. SIGNAL / CASE IDENTITY MEANING
+
+---
+
+Where relevant, signals and case activity should reflect operator standing more clearly.
+
+Examples:
+
+* submitted by Operator / Scout / Analyst
+* case lead visibly identified
+* analyst review visually distinguished
+* command intervention or review states clearly shown where useful
+
+This adds more hierarchy and network depth.
+
+---
+
+17. VISUAL POLISH RULES
+
+---
+
+Keep the current platform look.
+
+Preserve:
+
+* black / charcoal base
+* subtle grid texture
+* steel-gray borders
+* emerald / ice-blue restraint
+* sharp corners
+* quiet premium glow
+
+For command/founder gold treatment:
+
+* use it carefully
+* keep it elegant
+* do not overpower the rest of the system
+
+The gold should feel special because it is rare, not because it is loud.
+
+---
+
+18. UX / FLOW RULE
+
+---
+
+This pass must feel like a coherent live platform flow.
+
+The experience should be:
+
+1. access screen
+2. founder login or user onboarding
+3. identity issued
+4. network access granted
+5. command access revealed if founder
+6. profile / identity meaning visible
+7. standing depth clearly understood
+
+Do not make this feel like separate pages stapled together.
+
+---
+
+19. IMPLEMENTATION NOTES
+
+---
+
+This is still a frontend/local-state build.
+
+You may use seeded local data for:
+
+* founder account
+* other operators
+* signals
+* case rooms
+* threads
+* progression data
+
+But do not label anything on-screen as:
+
+* mock
+* demo
+* sample
+* placeholder
+* prototype mode
+
+The UI should feel operational.
+
+---
+
+20. FINAL OUTPUT
+
+---
+
+Return a working upgraded prototype that includes:
+
+1. real access / login screen
+2. seeded founder command account
+3. founder login using:
+
+   * username: EIO
+   * password: 4451
+4. founder-only gold credential card
+5. founder command identity presentation
+6. navigation / access gating
+7. stronger 5-tier standing doctrine
+8. subgrades for the first 4 tiers
+9. stronger promotion / progression panel
+10. credential class doctrine for each card style
+11. stronger identity page meaning
+12. deeper operator dossier
+13. deeper operator directory
+14. stronger command presence in the system
+15. polished coherent flow from login to network access
+
+---
+
+## FINAL PRODUCT RULE
+
+This should feel like:
+
+**a real internal intelligence network with command identity, restricted gold authority, structured standing, deeper credential meaning, and a true access flow**
+
+It should not feel like:
+
+* a generic mockup
+* a casual app
+* a social platform first
+* a gamer rank system
+* disconnected concept screens
+
+Everything should communicate:
+**authority, access, identity, trust, structure, and controlled network presence.**

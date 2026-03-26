@@ -8,6 +8,15 @@ export interface User {
   alias: string;
   role: string;
   standing: Standing;
+  grade: "I" | "II" | "III" | null;
+  username: string;
+  password?: string;
+  accessClass: string;
+  credentialMeaning: string;
+  statusLine: string;
+  contributionCount: number;
+  promotionStatus: "Eligible" | "Under Review" | "Not Eligible" | "Command Reserved";
+  reviewStatus: "Approved" | "Pending" | "Active" | "Command Assigned";
   cardStyle: CardStyle;
   bio: string;
   presence: string;
@@ -54,13 +63,83 @@ interface AppState {
   currentUserId: string | null;
 }
 
+export const STANDING_DOCTRINE = {
+  Observer: {
+    label: "Observer",
+    tier: 1,
+    badgeColor: "zinc",
+    description: "Entry-level network standing. Intake and observation with limited participation. Early credential state.",
+    access: "Read access to Signal Feed and Network Room. No case participation.",
+    trust: "Unverified. Standing under evaluation.",
+    responsibilities: "Observation, basic signal intake, Network Room presence.",
+    advancement: "Complete profile, submit valid signals, demonstrate appropriate Network Room conduct."
+  },
+  Scout: {
+    label: "Scout",
+    tier: 2,
+    badgeColor: "slate",
+    description: "Early trusted contributor. Active room participation, signal engagement, and growing trust.",
+    access: "Signal submission, Network Room participation, limited case viewing.",
+    trust: "Initial trust established through contribution.",
+    responsibilities: "Signal submission, field observation, early case support.",
+    advancement: "Contribute multiple useful signals, engage in case discussion, maintain stable standing."
+  },
+  Operator: {
+    label: "Operator",
+    tier: 3,
+    badgeColor: "red",
+    description: "Proven field-level contributor. Broader room access, case participation, and stronger operational standing.",
+    access: "Full signal submission, case room participation, cross-room access.",
+    trust: "Operational trust. Contribution record verified.",
+    responsibilities: "Active signal and case work, field-level analysis, operational support.",
+    advancement: "Support verified threads, contribute meaningful case notes, assist in review synthesis."
+  },
+  Analyst: {
+    label: "Analyst",
+    tier: 4,
+    badgeColor: "white",
+    description: "High-trust review and synthesis role. Verification, case support, refinement, and signal interpretation.",
+    access: "Verification authority, case lead candidacy, signal routing.",
+    trust: "Elevated trust. Review authority active.",
+    responsibilities: "Signal verification, case synthesis, analytical oversight, thread moderation.",
+    advancement: "Command review and assignment required. Not standard progression."
+  },
+  Command: {
+    label: "Command",
+    tier: 5,
+    badgeColor: "gold",
+    description: "Reserved executive authority. Oversight, access control, network direction, and founder-level standing.",
+    access: "Full network authority. Command section unrestricted. User and case control.",
+    trust: "Absolute. Founder-assigned.",
+    responsibilities: "Network direction, access control, standing assignment, operator oversight.",
+    advancement: "Not applicable. Command is founder-assigned."
+  }
+} as const;
+
+export const CREDENTIAL_DOCTRINE = {
+  obsidian: { name: "Obsidian", description: "Low-signature operational credential. Used by field operators requiring minimal visibility." },
+  steel: { name: "Steel", description: "Structured support and field-aligned credential. Standard operational issue for active contributors." },
+  ice: { name: "Ice", description: "Verification and intelligence review credential. Issued to operators in analysis and technical roles." },
+  graphite: { name: "Graphite", description: "Neutral general network credential. Broad utility, minimal specialization." },
+  gold: { name: "Gold", description: "Restricted command credential. Founder-class authority. Not user-selectable." }
+} as const;
+
 const initialUsers: User[] = [
   {
     alias: "Black Rail",
     id: "RSR-000001",
     role: "Founder",
+    username: "EIO",
+    password: "4451",
+    grade: null,
+    accessClass: "ELEVATED",
     standing: "Command",
     cardStyle: "gold",
+    credentialMeaning: "Restricted command credential. Founder-class authority.",
+    statusLine: "Network oversight active.",
+    contributionCount: 47,
+    promotionStatus: "Command Reserved",
+    reviewStatus: "Command Assigned",
     bio: "Network founder. Command authority.",
     presence: "COMMAND ACTIVE",
     joinDate: "2025-11-01",
@@ -69,8 +148,17 @@ const initialUsers: User[] = [
     alias: "Signal Echo",
     id: "RSR-000103",
     role: "Analyst",
+    username: "echo",
+    password: "echo",
+    grade: "II",
+    accessClass: "FIELD",
     standing: "Analyst",
     cardStyle: "obsidian",
+    credentialMeaning: "Verification and intelligence review credential.",
+    statusLine: "Pattern analysis in progress.",
+    contributionCount: 31,
+    promotionStatus: "Under Review",
+    reviewStatus: "Active",
     bio: "Signal verification and pattern analysis.",
     presence: "Reviewing Signals",
     joinDate: "2026-01-08",
@@ -79,8 +167,17 @@ const initialUsers: User[] = [
     alias: "Operator Vanta",
     id: "RSR-000214",
     role: "Scout",
+    username: "vanta",
+    password: "vanta",
+    grade: "I",
+    accessClass: "STANDARD",
     standing: "Scout",
     cardStyle: "steel",
+    credentialMeaning: "Structured support and field-aligned credential.",
+    statusLine: "Field observation active.",
+    contributionCount: 12,
+    promotionStatus: "Eligible",
+    reviewStatus: "Pending",
     bio: "Field observation and signal intake.",
     presence: "Online",
     joinDate: "2026-03-10",
@@ -89,8 +186,17 @@ const initialUsers: User[] = [
     alias: "Cipher Nine",
     id: "RSR-000089",
     role: "Operator",
+    username: "cipher",
+    password: "cipher",
+    grade: "III",
+    accessClass: "FIELD",
     standing: "Operator",
     cardStyle: "graphite",
+    credentialMeaning: "Low-signature operational credential.",
+    statusLine: "Infrastructure surveillance ongoing.",
+    contributionCount: 24,
+    promotionStatus: "Not Eligible",
+    reviewStatus: "Active",
     bio: "Infrastructure and logistics surveillance.",
     presence: "In Case Room",
     joinDate: "2026-01-22",
@@ -170,6 +276,8 @@ const initialNetworkMessages: ThreadMessage[] = [
 
 interface AppContextType extends AppState {
   setCurrentUserId: (id: string | null) => void;
+  loginUser: (username: string, password?: string) => boolean;
+  logoutUser: () => void;
   addUser: (user: User) => void;
   updateUser: (id: string, updates: Partial<User>) => void;
   addSignal: (signal: Omit<Signal, "id" | "timestamp" | "thread">) => void;
@@ -193,6 +301,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
   });
 
   const setCurrentUserId = (id: string | null) => setState((s) => ({ ...s, currentUserId: id }));
+
+  const loginUser = (username: string, password?: string): boolean => {
+    const match = state.users.find(u => 
+      u.username.toLowerCase() === username.toLowerCase() && 
+      (password ? u.password === password : true)
+    );
+    if (match) {
+      setCurrentUserId(match.id);
+      return true;
+    }
+    return false;
+  };
+
+  const logoutUser = () => {
+    setCurrentUserId(null);
+  };
 
   const addUser = (user: User) => setState((s) => ({ ...s, users: [...s.users, user] }));
   
@@ -287,6 +411,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         ...state,
         setCurrentUserId,
+        loginUser,
+        logoutUser,
         addUser,
         updateUser,
         addSignal,

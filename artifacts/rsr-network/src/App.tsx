@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider, useStore } from "@/lib/store";
 import { AppShell } from "@/components/AppShell";
 
-import JoinNetwork from "@/pages/JoinNetwork";
+import AccessGate from "@/pages/AccessGate";
 import IdentityPage from "@/pages/IdentityPage";
 import NetworkRoom from "@/pages/NetworkRoom";
 import SignalsPage from "@/pages/SignalsPage";
@@ -21,7 +21,7 @@ function ProtectedRouter() {
   const { currentUserId } = useStore();
 
   if (!currentUserId) {
-    return <JoinNetwork />;
+    return <AccessGate />;
   }
 
   return (
