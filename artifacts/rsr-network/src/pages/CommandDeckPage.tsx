@@ -75,7 +75,7 @@ export default function CommandDeckPage() {
   const getSignalStatusColor = (status: string) => {
     switch (status) {
       case "VERIFIED": return "bg-emerald-500";
-      case "UNVERIFIED": return "bg-amber-500";
+      case "UNVERIFIED": return "bg-sky-500";
       case "ARCHIVED": return "bg-zinc-600";
       default: return "bg-zinc-500";
     }
@@ -95,7 +95,7 @@ export default function CommandDeckPage() {
   const getPresenceColor = (presence: string) => {
     const p = presence.toLowerCase();
     if (p.includes("active") || p.includes("online")) return "bg-emerald-500";
-    if (p.includes("reviewing") || p.includes("room") || p.includes("progress") || p.includes("ongoing")) return "bg-amber-500";
+    if (p.includes("reviewing") || p.includes("room") || p.includes("progress") || p.includes("ongoing")) return "bg-sky-500";
     return "bg-zinc-500";
   };
 
@@ -223,7 +223,7 @@ export default function CommandDeckPage() {
                           {signal.category}
                         </span>
                         {signal.priority && (
-                          <span className="text-[9px] uppercase tracking-wider text-amber-500 border border-amber-900/50 bg-amber-950/30 px-1.5 py-0.5 rounded-sm">
+                          <span className="text-[9px] uppercase tracking-wider text-red-400 border border-red-900/40 bg-red-950/30 px-1.5 py-0.5 rounded-sm">
                             PRIORITY
                           </span>
                         )}
@@ -429,7 +429,7 @@ export default function CommandDeckPage() {
       >
         <div className="bg-black/60 px-4 border-r border-zinc-800 flex flex-col justify-center shrink-0 min-w-[120px]">
           <div className="flex items-center gap-2">
-            <Shield className="w-3 h-3 text-amber-500" />
+            <Shield className="w-3 h-3 text-sky-500" />
             <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Event Feed</h2>
           </div>
           <div className="text-[9px] text-zinc-600 font-mono mt-0.5 uppercase tracking-wider">Command Oversight</div>
@@ -440,7 +440,7 @@ export default function CommandDeckPage() {
               <div key={ev.id} className="flex items-center whitespace-nowrap border-r border-zinc-800/50 pr-4 mr-0 last:border-0 last:pr-0">
                 <span className={`text-[9px] uppercase tracking-widest mr-3 ${
                   ev.severity === 'priority' ? 'text-red-400 bg-red-950/40 border border-red-900/40 px-1.5 py-0.5' :
-                  ev.severity === 'command' ? 'text-amber-400 bg-amber-950/30 border border-amber-900/30 px-1.5 py-0.5' :
+                  ev.severity === 'command' ? 'text-sky-400 bg-sky-950/30 border border-sky-900/30 px-1.5 py-0.5' :
                   'text-zinc-400 bg-zinc-900/40 border border-zinc-800 px-1.5 py-0.5'
                 }`}>
                   {ev.label}

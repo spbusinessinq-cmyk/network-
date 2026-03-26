@@ -1,0 +1,386 @@
+REPLIT FINAL LIVE PASS — RSR NETWORK VISUAL DISCIPLINE / PROFILE CUSTOMIZATION / COLD-LIGHT COMMAND POLISH
+
+You are upgrading the current **RSR NETWORK** build for the final live pass.
+
+Do not redesign the platform from scratch.
+Do not rebuild backend architecture.
+Do not add unrelated new systems.
+Do not break any working functionality.
+
+The platform is already functional and close to live.
+
+This pass must focus on:
+
+* visual discipline
+* accent cleanup
+* colder command-grade polish
+* tighter language
+* better operator profile customization
+* making the app feel more premium, personal, and finished
+
+This is the last major refinement pass before live use.
+
+---
+
+## PRIMARY OBJECTIVE
+
+The system now works, but two major things still need correction:
+
+1. the accent/color language is too warm and too amber-heavy
+2. the current operator/profile experience feels too generic and too fixed, almost like a placeholder character sheet
+
+This pass should make the app feel:
+
+* colder
+* sharper
+* more premium
+* more glassy
+* more personal
+* more like a real operator environment
+* more like a serious internal network with customizable operator presence
+
+The target is:
+**black-glass, cold-light, command-grade internal network with customizable operator identity and rare founder gold authority**
+
+---
+
+1. REMOVE MOST ORANGE / AMBER FROM GENERAL UI
+
+---
+
+Reduce amber/orange usage heavily across the general interface.
+
+Replace most non-founder warm accents with:
+
+* electro-luminescent blue
+* ice-blue
+* cold cyan
+* restrained blue-white glow
+* existing emerald only where it still makes sense
+
+Apply this shift across:
+
+* tabs
+* section headers
+* accent rails
+* panel emphasis
+* active states
+* event feed styling
+* quick access emphasis
+* command structure accents where founder authority is not specifically being referenced
+
+The app should feel much colder and cleaner overall.
+
+---
+
+2. KEEP GOLD RARE AND FOUNDER-ONLY
+
+---
+
+Gold should remain extremely limited.
+
+Keep gold only for:
+
+* founder card
+* founder identity chip
+* founder-only authority markers
+* tiny founder-specific moments where command authority is being identified
+
+Do not let the whole app feel gold/orange themed.
+
+The founder should still feel special.
+The system overall should feel cold and technical.
+
+---
+
+3. SHIFT THE SYSTEM TO COLD-LIGHT / ELECTRO-LUMINESCENT BLUE
+
+---
+
+The general platform accent language should become colder and more advanced.
+
+Use electro-luminescent blue / cyan / ice-blue as the dominant premium interface accent.
+
+The visual feel should be:
+
+* dark glass
+* precision lighting
+* cold circuitry
+* command hardware
+* premium black-steel UI
+
+Not:
+
+* warm orange dashboard
+* amber-washed interface
+* generic sci-fi glow mess
+
+Keep it restrained and expensive.
+
+---
+
+4. MAKE PANELS GLASSIER / MORE PREMIUM
+
+---
+
+Improve the panel materials and surface depth.
+
+Add:
+
+* more premium glass-like layering
+* soft edge-light
+* slightly more surface separation
+* subtle depth
+* more expensive-feeling black panel materials
+* more refined contrast between primary and secondary surfaces
+
+Do not overdo blur.
+Do not make it frosted gimmick glass.
+Keep it tactical, dark, and premium.
+
+---
+
+5. OPERATOR PROFILES MUST BECOME MORE CUSTOMIZABLE
+
+---
+
+The current profile/dossier experience feels too fixed and generic.
+
+Upgrade operator profiles so they feel more like a customizable operator home page / identity surface.
+
+This should still remain serious and premium — not playful social media.
+
+Each operator profile should become more personal and configurable.
+
+---
+
+6. ADD OPERATOR PROFILE CUSTOMIZATION
+
+---
+
+Add real customizable profile/home-page options for operators.
+
+At minimum, allow configurable profile settings such as:
+
+* profile background style / environment
+* profile panel theme variant
+* operator status line
+* bio / assignment summary
+* maybe emblem/identity accent choice if it fits the system cleanly
+* layout emphasis for the profile hero section
+
+Background/theme options should feel like serious operator environments, not bright wallpapers.
+
+Good examples:
+
+* Dark Grid
+* Tactical Mesh
+* Command Steel
+* Cold Glass
+* Signal Field
+* Shadow Panel
+
+These should be tasteful and integrated into the design language.
+
+The goal is:
+operators should feel like they have an actual customizable home surface inside the network.
+
+---
+
+7. PROFILE SHOULD FEEL LIKE AN OPERATOR HOME PAGE
+
+---
+
+The profile should not feel like a static card stuck on a page.
+
+It should feel like:
+
+* the operator’s internal home surface
+* their personal network record
+* their configurable command identity space
+
+Keep the dossier structure, but make it feel more owned and more defined.
+
+Possible improvements:
+
+* customizable hero background treatment
+* stronger profile header/hero section
+* clearer identity summary
+* personalized environment feel
+* more dynamic profile presentation without losing seriousness
+
+This should still remain:
+
+* tactical
+* premium
+* internal
+* structured
+
+---
+
+8. PRESERVE PROFILE PROFESSIONALISM
+
+---
+
+Do not turn customization into:
+
+* social profile fluff
+* playful avatar system
+* colorful banner app
+* gamer cosmetics
+
+Everything must stay:
+
+* dark
+* premium
+* restrained
+* command-grade
+* operator-focused
+
+Customization should feel like:
+
+* choosing your workspace/interface class
+* setting your operator environment
+* defining your internal presentation
+
+Not:
+
+* decorating a social media page
+
+---
+
+9. TIGHTEN LANGUAGE THROUGHOUT THE APP
+
+---
+
+The wording needs another cleanup pass.
+
+Rewrite anything that feels:
+
+* clunky
+* repetitive
+* filler-heavy
+* awkwardly dramatic
+* too wordy
+* generic
+
+Tighten:
+
+* welcome room copy
+* event feed language
+* command summaries
+* helper text
+* profile text
+* labels/subtitles
+* quick access copy
+
+The language should feel:
+
+* concise
+* tactical
+* premium
+* internal
+* operator-facing
+* brief and intelligent
+
+---
+
+10. CLEAN EVENT FEED WORDING
+
+---
+
+Event feed should stay sharp and compact.
+
+Examples of preferred style:
+
+* Signal verified
+* Priority applied
+* Case updated
+* Transmission logged
+* Standing changed
+* Case archived
+
+Keep it short and clean.
+
+---
+
+11. COMMAND COLOR BALANCE
+
+---
+
+The Command section should no longer rely on amber for general structure.
+
+Command should feel:
+
+* cold
+* elite
+* sharp
+* technical
+
+Use blue/cyan as the main non-founder command accent.
+Use red only for destructive/priority/danger states.
+Use green only where meaningful.
+Use gold only for founder-specific authority markers.
+
+---
+
+12. KEEP FUNCTIONALITY INTACT
+
+---
+
+Do not break any of the working systems.
+
+All of the following must remain intact:
+
+* login
+* logout
+* founder account
+* registration
+* role-gated access
+* signals
+* cases
+* messages
+* delete flows
+* event feed
+* command controls
+* backend persistence
+
+This is a refinement/customization pass, not a regression pass.
+
+---
+
+13. FINAL OUTPUT
+
+---
+
+Return a polished final build that includes:
+
+1. general UI accent shift away from warm amber/orange
+2. electro-luminescent blue/cyan as the dominant system accent
+3. founder gold isolated and rare
+4. more glassy premium surfaces
+5. tighter language throughout
+6. upgraded operator profile/home-page customization
+7. operator-selectable serious background/theme options
+8. profile feeling more owned and personalized
+9. preserved full functionality and backend wiring
+10. overall colder, cleaner, more premium command-grade feel
+
+---
+
+## FINAL RULE
+
+RSR NETWORK should now feel like:
+
+**a cold-light, black-glass, command-grade internal network with customizable operator identity surfaces and rare founder gold authority**
+
+It should not feel like:
+
+* a warm amber dashboard
+* a generic character profile sheet
+* a social profile page
+* a game UI clone
+* a flat prototype
+
+Everything should communicate:
+**cold control, operator identity, premium tactical polish, and real internal network presence.**

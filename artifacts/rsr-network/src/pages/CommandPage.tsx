@@ -155,14 +155,14 @@ export default function CommandPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "VERIFIED": return "text-emerald-400 bg-emerald-950/30 border-emerald-900/50";
-      case "UNVERIFIED": return "text-amber-400 bg-amber-950/30 border-amber-900/50";
+      case "UNVERIFIED": return "text-sky-400 bg-sky-950/30 border-sky-900/50";
       case "ARCHIVED": return "text-zinc-400 bg-zinc-900/50 border-zinc-800";
       default: return "text-zinc-400 bg-zinc-900/50 border-zinc-800";
     }
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-full relative border-t-2 border-amber-500/40">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-full relative border-t-2 border-sky-500/25">
 
       {/* TOAST */}
       {toast && (
@@ -230,19 +230,19 @@ export default function CommandPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-transparent border-b border-zinc-800 rounded-none w-full justify-start h-auto p-0 mb-8 gap-6 overflow-x-auto flex-nowrap hide-scrollbar">
-          <TabsTrigger value="signals" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
-            Signals {unverifiedCount > 0 && <Badge className="ml-2 bg-amber-950 text-amber-500 border-amber-900 rounded-none">{unverifiedCount}</Badge>}
+          <TabsTrigger value="signals" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-sky-500 data-[state=active]:text-sky-400 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+            Signals {unverifiedCount > 0 && <Badge className="ml-2 bg-sky-950 text-sky-400 border-sky-900 rounded-none">{unverifiedCount}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="cases" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+          <TabsTrigger value="cases" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-sky-500 data-[state=active]:text-sky-400 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Cases
           </TabsTrigger>
-          <TabsTrigger value="personnel" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+          <TabsTrigger value="personnel" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-sky-500 data-[state=active]:text-sky-400 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Personnel
           </TabsTrigger>
-          <TabsTrigger value="messages" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+          <TabsTrigger value="messages" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-sky-500 data-[state=active]:text-sky-400 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Messages {networkMessages.length > 0 && <Badge className="ml-2 bg-zinc-900 text-zinc-400 border-zinc-800 rounded-none">{networkMessages.length}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="priority" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+          <TabsTrigger value="priority" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-sky-500 data-[state=active]:text-sky-400 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Priority Board {priorityCount > 0 && <Badge className="ml-2 bg-red-950 text-red-500 border-red-900 rounded-none">{priorityCount}</Badge>}
           </TabsTrigger>
         </TabsList>
@@ -256,7 +256,7 @@ export default function CommandPage() {
                 onClick={() => setSignalFilter(filter as any)}
                 className={`px-3 py-1.5 text-[10px] uppercase tracking-widest border transition-colors ${
                   signalFilter === filter 
-                    ? "border-amber-500/50 bg-amber-950/20 text-amber-400" 
+                    ? "border-sky-500/50 bg-sky-950/20 text-sky-400" 
                     : "border-zinc-800 bg-zinc-900/30 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700"
                 }`}
               >
@@ -342,7 +342,7 @@ export default function CommandPage() {
                 <h3 className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-semibold border-b border-zinc-800/50 pb-2 mb-4">Case Control</h3>
                 <Button 
                   onClick={() => handleEditCase(null)}
-                  className="bg-amber-950/20 text-amber-500 border border-amber-900/50 hover:bg-amber-900/30 rounded-none text-[10px] h-8 uppercase tracking-widest"
+                  className="bg-sky-950/20 text-sky-400 border border-sky-900/50 hover:bg-sky-900/30 rounded-none text-[10px] h-8 uppercase tracking-widest"
                 >
                   <Plus className="w-3 h-3 mr-1.5" /> New Case
                 </Button>
@@ -389,7 +389,7 @@ export default function CommandPage() {
           ) : (
             <div className="border border-zinc-800 bg-zinc-950/60 p-6">
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-zinc-800">
-                <h3 className="text-sm text-amber-500 uppercase tracking-widest font-medium">
+                <h3 className="text-sm text-sky-400 uppercase tracking-widest font-medium">
                   {editingCaseId === "NEW" ? "Initialize New Case" : "Modify Case Details"}
                 </h3>
                 <button onClick={() => setViewState("LIST")} className="text-zinc-500 hover:text-zinc-300">
@@ -413,7 +413,7 @@ export default function CommandPage() {
                     <select 
                       value={caseForm.lead || ""}
                       onChange={e => setCaseForm({...caseForm, lead: e.target.value})}
-                      className="w-full bg-black/50 border border-zinc-800 rounded-none text-sm p-2 h-10 text-zinc-200 outline-none focus:border-amber-500/50"
+                      className="w-full bg-black/50 border border-zinc-800 rounded-none text-sm p-2 h-10 text-zinc-200 outline-none focus:border-sky-500/50"
                     >
                       {users.map(u => (
                         <option key={u.id} value={u.id}>{u.alias} ({u.standing})</option>
@@ -428,7 +428,7 @@ export default function CommandPage() {
                     <select 
                       value={caseForm.status || "OPEN"}
                       onChange={e => setCaseForm({...caseForm, status: e.target.value as any})}
-                      className="w-full bg-black/50 border border-zinc-800 rounded-none text-sm p-2 h-10 text-zinc-200 outline-none focus:border-amber-500/50"
+                      className="w-full bg-black/50 border border-zinc-800 rounded-none text-sm p-2 h-10 text-zinc-200 outline-none focus:border-sky-500/50"
                     >
                       <option value="OPEN">OPEN</option>
                       <option value="ACTIVE">ACTIVE</option>
@@ -497,10 +497,10 @@ export default function CommandPage() {
                   <label className="block text-[10px] uppercase tracking-widest text-zinc-500 mb-4">Link Signals</label>
                   <div className="max-h-64 overflow-y-auto border border-zinc-800 bg-black/30 p-2 space-y-1">
                     {signals.map(sig => (
-                      <label key={sig.id} className={`flex items-start gap-3 p-2 cursor-pointer hover:bg-zinc-900/50 transition-colors ${caseSignalsState.includes(sig.id) ? 'bg-amber-950/10' : ''}`}>
+                      <label key={sig.id} className={`flex items-start gap-3 p-2 cursor-pointer hover:bg-zinc-900/50 transition-colors ${caseSignalsState.includes(sig.id) ? 'bg-sky-950/10' : ''}`}>
                         <input 
                           type="checkbox" 
-                          className="mt-1 accent-amber-500 bg-zinc-900 border-zinc-700"
+                          className="mt-1 accent-sky-500 bg-zinc-900 border-zinc-700"
                           checked={caseSignalsState.includes(sig.id)}
                           onChange={() => toggleSignalLink(sig.id)}
                         />
@@ -573,7 +573,7 @@ export default function CommandPage() {
                             <select 
                               value={u.standing}
                               onChange={(e) => updateUser(u.id, { standing: e.target.value as Standing })}
-                              className="flex-1 bg-black/50 border border-zinc-800 text-[10px] uppercase tracking-widest p-1.5 text-zinc-300 outline-none focus:border-amber-500/50"
+                              className="flex-1 bg-black/50 border border-zinc-800 text-[10px] uppercase tracking-widest p-1.5 text-zinc-300 outline-none focus:border-sky-500/50"
                             >
                               <option value="Observer">Observer</option>
                               <option value="Scout">Scout</option>
@@ -601,7 +601,7 @@ export default function CommandPage() {
                             </button>
                             <button 
                               onClick={() => updateUser(u.id, { presence: "IN CASE ROOM" })}
-                              className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-[9px] uppercase tracking-widest py-1.5 text-amber-400 border border-zinc-800 transition-colors"
+                              className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-[9px] uppercase tracking-widest py-1.5 text-sky-400 border border-zinc-800 transition-colors"
                             >
                               Room
                             </button>
@@ -700,7 +700,7 @@ export default function CommandPage() {
 
             {/* Escalated/Stale Cases */}
             <div className="border border-zinc-800 bg-zinc-950/40 p-5">
-              <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-amber-500 flex items-center gap-2 mb-4">
+              <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-sky-400 flex items-center gap-2 mb-4">
                 <AlertTriangle className="w-4 h-4" /> Case Triage
               </h3>
               <div className="space-y-3">
@@ -724,7 +724,7 @@ export default function CommandPage() {
                           setViewState("EDIT");
                           setActiveTab("cases");
                         }}
-                        className="text-[10px] uppercase tracking-widest text-amber-400 hover:text-amber-300 font-bold"
+                        className="text-[10px] uppercase tracking-widest text-sky-400 hover:text-sky-300 font-bold"
                       >
                         → MANAGE CASE
                       </button>
