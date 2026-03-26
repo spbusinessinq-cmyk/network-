@@ -1,0 +1,542 @@
+REPLIT FINAL PASS — RSR NETWORK LIVE RELEASE / COMMAND CLEANUP / AUTH COMPLETE / DELETE CONTROLS / SCROLLBAR FIX PASS
+
+You are upgrading the current **RSR NETWORK** build for the final live-release pass.
+
+The platform already has:
+
+* real backend
+* real authentication
+* founder account
+* real users
+* real signals
+* real cases
+* real network room messages
+* welcome/access room
+* command console
+* command authority section
+
+This pass is the final **make it feel finished, connected, stable, and actually usable** pass.
+
+Do not redesign the product from scratch.
+Do not replace the visual language.
+Do not add random experiments.
+Do not waste time on fluff.
+
+This pass must focus on:
+
+* full live usability
+* cleanup of bad layout behavior
+* sign out
+* delete actions
+* better command layout
+* scrollbar cleanup
+* removing annoying overflow behavior
+* making the whole app feel fully connected and production-ready
+
+---
+
+## PRIMARY OBJECTIVE
+
+Take the current build and finish the last major usability/stability issues so the platform feels truly live.
+
+Main problems to solve now:
+
+* no sign out / hard to test account switching
+* bottom mission log scroll behavior feels bad
+* scrollbars look broken/ugly/inconsistent
+* command section layout feels too flat and underpowered
+* edit exists but delete is missing
+* pages still feel too same-y in places
+* some layout/overflow behavior feels sloppy
+* need confidence that everything is really wired together end-to-end
+
+This pass should make the platform feel:
+
+* stable
+* finished
+* role-aware
+* clean
+* fully connected
+* much closer to a real private network product
+
+---
+
+1. ADD A REAL SIGN OUT / EXIT NETWORK CONTROL
+
+---
+
+This is required.
+
+Add a clear sign out action in the authenticated UI.
+
+Best placement:
+
+* top-right operator identity menu
+* or a small operator/account dropdown in the header
+* optional secondary sign out inside profile/account area
+
+Behavior must:
+
+* clear the real auth token/session
+* clear current user state
+* fully reset role-gated UI
+* return user to Welcome / Access Room
+* prevent stale founder/command state from visually sticking around
+
+This must work reliably every time.
+
+Also ensure:
+
+* refresh after logout does not silently re-authenticate
+* switching between founder and normal user is now fully testable
+
+---
+
+2. SCROLLBAR / OVERFLOW CLEANUP — GLOBAL
+
+---
+
+Fix all scrollbars and overflow behavior across the app.
+
+Current issue:
+the bottom mission log / horizontal scroll treatment looks wrong and cheap.
+
+Required:
+
+* eliminate awkward horizontal overflow wherever possible
+* remove unnecessary double scroll areas
+* ensure scroll regions feel intentional
+* use a clean consistent scrollbar style across the whole app
+* no weird clipped bars
+* no ugly browser-default mismatch if avoidable
+* no broken bottom slider behavior
+
+Apply cleanup to:
+
+* mission log
+* personnel panel
+* network room
+* command tabs/panels
+* cases area
+* any feed/list/detail panel
+* whole-page layout where overflow currently feels sloppy
+
+Goal:
+scroll behavior should feel premium, controlled, and invisible unless needed.
+
+If a horizontal scrollbar can be replaced by better layout, wrapping, truncation, or contained panel behavior, do that.
+
+---
+
+3. FIX THE MISSION LOG / BOTTOM STRIP
+
+---
+
+The current bottom scrolling mission log treatment needs to be cleaned up.
+
+Do one of these cleanly:
+
+* convert it into a better contained horizontal ticker with hidden native scrollbar and clean controlled motion
+  OR
+* turn it into a proper vertically stacked recent activity panel
+  OR
+* make it a stable horizontally scrolling strip without broken visible scrollbar mess
+
+Important:
+It must not look hacked together.
+
+If needed, prioritize:
+
+* readability
+* clean containment
+* no ugly native bottom bar
+* better spacing and clipping
+* more premium activity feed feel
+
+This section should feel intentional.
+
+---
+
+4. ANYTHING EDITABLE MUST ALSO BE DELETABLE
+
+---
+
+Critical rule:
+If the UI allows an item to be edited, it must also allow it to be deleted where appropriate.
+
+Add delete actions anywhere edit/create exists for manageable objects.
+
+At minimum, support delete for:
+
+* cases
+* signals if command rules permit
+* network messages if command rules permit or own-message rules permit
+* case notes/messages if those are editable
+* any admin-managed content object that currently only supports edit/update
+
+Use clean serious destructive actions:
+
+* Delete
+* Remove
+* Archive if soft-delete is more appropriate
+* confirmation modal where needed
+
+For anything destructive:
+
+* require confirmation
+* show clear warning language
+* update backend correctly
+* update UI immediately after success
+
+No dead delete buttons.
+No fake deletes.
+These must work.
+
+---
+
+5. COMMAND SECTION — MAJOR LAYOUT CLEANUP
+
+---
+
+The Command area needs to feel more powerful and better composed.
+
+Right now it works, but it still feels too flat and too much like simple tabbed admin content.
+
+Upgrade the Command area layout so it feels like a real control center.
+
+Improve:
+
+* hierarchy
+* spacing
+* panel composition
+* command state visibility
+* stronger grouping of tools
+* better distinction between:
+
+  * Signals
+  * Cases
+  * Personnel
+  * Priority Board
+* cleaner action placement
+* more obvious “this is where command authority operates”
+
+Suggested improvements:
+
+* stronger command header / hero strip
+* clearer section summaries
+* more structured tab/panel layout
+* primary actions placed more intentionally
+* better form layout for create/edit case
+* more readable command-level data density
+* less empty dead space
+
+The Command area should feel like:
+**the actual administrative heart of the network**
+
+---
+
+6. CASE MANAGEMENT — COMPLETE CRUD
+
+---
+
+Cases must support full lifecycle management.
+
+Command must be able to:
+
+* create case
+* edit case
+* delete or archive case
+* assign/change case lead
+* change status
+* link/unlink signals
+* update notes
+* persist all changes
+
+UI must clearly support this without confusion.
+
+Make sure delete/archive behavior is real and reflected immediately in the UI and backend.
+
+---
+
+7. SIGNAL MANAGEMENT — COMPLETE CRUD WHERE APPROPRIATE
+
+---
+
+For signals, ensure command can:
+
+* create if needed through signal intake flow
+* edit relevant fields if allowed by design
+* delete/archive/remove where appropriate
+* change status
+* set/remove priority
+* link/unlink to cases
+* persist all changes
+
+Anything command can manage must feel complete, not half-finished.
+
+---
+
+8. PERSONNEL / USER MANAGEMENT CLEANUP
+
+---
+
+Make sure personnel controls feel complete and properly wired.
+
+Founder/protected account should remain protected.
+
+For manageable users, support actions like:
+
+* edit/update user attributes that are already supported
+* standing changes
+* presence changes
+* delete/remove/deactivate where appropriate and safe
+* clear role separation enforcement
+
+If deletion is too dangerous for founder/admin, explicitly protect those accounts.
+
+But for normal managed users, if management exists, make it feel complete.
+
+---
+
+9. AUTH / ROLE / SESSION VALIDATION
+
+---
+
+Tighten the full real-use auth behavior.
+
+Validate:
+
+* founder login works
+* normal user login works
+* sign out works
+* role-gated UI updates instantly
+* command nav only appears for founder/command
+* non-command users do not inherit founder UI
+* refresh restores valid session only
+* invalid session returns cleanly to Welcome / Access Room
+
+This is non-negotiable for live readiness.
+
+---
+
+10. WELCOME / ACCESS ROOM + REGISTRATION STABILITY
+
+---
+
+Make sure the welcome room and registration flow are fully stable.
+
+Required:
+
+* login path works
+* registration path works
+* credential class selection works
+* gold is not available to normal users
+* account creation writes real user records
+* newly created users can log in immediately
+* first login lands user in the correct authenticated flow
+
+No broken transitions.
+No stale state.
+No weird back-button traps if avoidable.
+
+---
+
+11. MAKE PAGES FEEL MORE DISTINCT
+
+---
+
+Some sections still feel too visually same-y.
+
+Without redesigning everything, improve page distinction through:
+
+* stronger section headers
+* more meaningful layout differences
+* better panel composition per section
+* better spacing variation
+* clearer purpose-specific structure
+
+Examples:
+
+* Network HQ should feel like command overview
+* Network Room should feel like communication environment
+* Signals should feel like intake + review
+* Cases should feel like dossier/casework
+* Operators should feel like roster/directory
+* Profile should feel like a dossier
+* Command should feel like authority/control
+
+Keep the overall brand consistent, but give each section a clearer internal identity.
+
+---
+
+12. CLEAN HEADER / ACCOUNT MENU
+
+---
+
+Improve the top-right identity area.
+
+It should now support:
+
+* current alias
+* RSR ID if useful
+* maybe standing/access if clean
+* account menu
+* sign out
+
+Optional:
+
+* quick link to profile/dossier
+* quick command entry if founder
+
+Make it feel like a real logged-in product header, not just a static label.
+
+---
+
+13. REMOVE ANY REMAINING “HALF-DONE” UI
+
+---
+
+Audit for any places where the app still feels unfinished.
+
+Fix or remove:
+
+* dead actions
+* edit-without-delete gaps
+* broken empty spaces
+* sloppy overflow
+* mismatched panel heights where it hurts usability
+* controls that don’t persist
+* controls that don’t visually confirm success/failure
+* broken form states
+
+Anything visible should feel intentional and complete.
+
+---
+
+14. SUCCESS / CONFIRMATION STATES
+
+---
+
+Where appropriate, add clean success/failure feedback for real actions.
+
+For example:
+
+* case created
+* case updated
+* case deleted
+* signal updated
+* signal deleted
+* signed out
+* user updated
+* save failed
+
+Keep it subtle and professional.
+No loud gimmicks.
+
+---
+
+15. LIVE-END TEST CYCLE
+
+---
+
+Before this pass is considered complete, validate the full live-use flow:
+
+### Founder flow
+
+1. open Welcome / Access Room
+2. log in with EIO / 4451
+3. land in Network HQ
+4. open Command
+5. create case
+6. edit case
+7. delete/archive case
+8. submit/update signal
+9. delete/archive signal where appropriate
+10. send network room message
+11. sign out
+12. confirm return to Welcome / Access Room
+13. refresh and confirm session is gone
+
+### New operator flow
+
+1. register a new operator
+2. log in as that operator
+3. verify no command access
+4. submit signal
+5. send message if allowed
+6. verify role-limited UI
+7. sign out
+8. log back in as founder
+9. confirm founder command state returns correctly
+
+### UI cleanup flow
+
+1. inspect all major pages
+2. verify scrollbars look clean
+3. verify no ugly horizontal slider issues remain
+4. verify no dead links/buttons remain
+5. verify edit/delete parity exists where needed
+
+---
+
+16. FINAL GO-LIVE CHECKLIST
+
+---
+
+This pass is not complete until all of these are true:
+
+* founder can log in with EIO / 4451
+* founder can sign out
+* new user can register
+* new user can log in
+* auth/session state behaves correctly across refresh/logout
+* command-only areas are hidden from non-command users
+* Network HQ loads real data
+* command area is fully usable
+* cases can be created, edited, and deleted/archived
+* signals can be managed with full persistence
+* network room messages persist
+* anything editable is deletable where appropriate
+* scrollbars are cleaned up
+* bottom mission log no longer looks broken
+* no dead links or fake controls remain
+* deployed build feels stable and connected
+
+---
+
+17. FINAL OUTPUT
+
+---
+
+Return a fully stabilized upgraded build with:
+
+1. real sign out/account menu
+2. full auth/session reliability
+3. cleaned global scrollbar/overflow behavior
+4. fixed mission log / bottom strip behavior
+5. full delete support alongside edit support
+6. improved command layout and authority feel
+7. complete case management lifecycle
+8. stronger signal management lifecycle
+9. stable registration/login/account switching flow
+10. more distinct section layouts
+11. no obvious broken or half-finished UI
+12. true live-ready connected feel
+
+---
+
+## FINAL RULE
+
+This pass should make RSR NETWORK feel like:
+
+**a real, stable, role-aware, command-grade internal platform that is fully connected, fully usable, and ready to operate**
+
+It should not feel like:
+
+* a prototype with rough edges
+* a page-switching mockup
+* an app with half-finished controls
+* a UI with broken scrollbars and missing lifecycle actions
+
+Everything should communicate:
+**control, stability, completeness, persistence, and real operational readiness.**

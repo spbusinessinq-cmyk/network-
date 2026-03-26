@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useStore, Case, Signal, Standing } from "@/lib/store";
-import { Shield, AlertTriangle, CheckCircle2, Archive, Plus, Flag, X } from "lucide-react";
+import { Shield, AlertTriangle, CheckCircle2, Archive, Plus, Flag, X, Trash2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StandingBadge } from "@/components/StandingBadge";
 
 export default function CommandPage() {
-  const { currentUserId, users, signals, cases, updateSignal, updateUser, addCase, updateCase } = useStore();
+  const { currentUserId, users, signals, cases, updateSignal, updateUser, addCase, updateCase, deleteCase, deleteSignal } = useStore();
   const currentUser = users.find(u => u.id === currentUserId);
   
   const [activeTab, setActiveTab] = useState("signals");
@@ -25,6 +25,35 @@ export default function CommandPage() {
   const [noteInput, setNoteInput] = useState("");
   const [caseSignalsState, setCaseSignalsState] = useState<number[]>([]);
   const [isSavingCase, setIsSavingCase] = useState(false);
+
+  // --- CONFIRM DELETE STATE ---
+  const [confirmDelete, setConfirmDelete] = useState<{ type: "case" | "signal"; id: number; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toast, setToast] = useState<{ msg: string; kind: "ok" | "err" } | null>(null);
+
+  const showToast = (msg: string, kind: "ok" | "err" = "ok") => {
+    setToast({ msg, kind });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    setIsDeleting(true);
+    try {
+      if (confirmDelete.type === "case") {
+        await deleteCase(confirmDelete.id);
+        showToast("Case record removed.");
+      } else {
+        await deleteSignal(confirmDelete.id);
+        showToast("Signal removed.");
+      }
+      setConfirmDelete(null);
+    } catch {
+      showToast("Delete failed. Try again.", "err");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // --- PERSONNEL STATE ---
   // Managed inline
@@ -103,8 +132,10 @@ export default function CommandPage() {
       }
       setViewState("LIST");
       setEditingCaseId(null);
+      showToast(editingCaseId === "NEW" ? "Case initialized." : "Case record updated.");
     } catch (e) {
       console.error(e);
+      showToast("Save failed. Try again.", "err");
     } finally {
       setIsSavingCase(false);
     }
@@ -128,7 +159,57 @@ export default function CommandPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-full">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-full relative">
+
+      {/* TOAST */}
+      {toast && (
+        <div className={`fixed top-6 right-6 z-50 px-4 py-3 border text-xs uppercase tracking-widest font-mono transition-all ${
+          toast.kind === "ok" 
+            ? "bg-emerald-950/90 border-emerald-800 text-emerald-400" 
+            : "bg-red-950/90 border-red-800 text-red-400"
+        }`}>
+          {toast.msg}
+        </div>
+      )}
+
+      {/* CONFIRM DELETE MODAL */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="border border-red-900/60 bg-zinc-950 p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+              <h3 className="text-sm font-bold uppercase tracking-widest text-red-400">Confirm Removal</h3>
+            </div>
+            <p className="text-sm text-zinc-300 mb-2">
+              You are about to permanently remove:
+            </p>
+            <div className="bg-black/50 border border-zinc-800 p-3 mb-6 font-mono text-xs text-zinc-300 uppercase tracking-wider">
+              {confirmDelete.type === "case" ? "CASE" : "SIGNAL"}: {confirmDelete.name}
+            </div>
+            <p className="text-xs text-zinc-500 mb-6 uppercase tracking-wider">
+              This action cannot be undone. All associated data will be removed.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="ghost"
+                onClick={() => setConfirmDelete(null)}
+                disabled={isDeleting}
+                className="rounded-none text-zinc-400 hover:text-zinc-200 uppercase tracking-widest text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="bg-red-900/60 text-red-300 border border-red-800 hover:bg-red-800/60 rounded-none uppercase tracking-widest text-xs px-6"
+              >
+                {isDeleting ? "Removing..." : "Confirm Remove"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mb-8 border-b border-zinc-800 pb-6">
         <h1 className="text-2xl font-medium tracking-[0.1em] text-amber-500 uppercase mb-2 flex items-center gap-3">
           <Shield className="w-6 h-6" /> NETWORK COMMAND CONSOLE
@@ -226,6 +307,13 @@ export default function CommandPage() {
                     <Flag className="w-3 h-3 mr-1.5" />
                     {sig.priority ? "Drop Priority" : "Flag Priority"}
                   </Button>
+                  <Button 
+                    onClick={() => setConfirmDelete({ type: "signal", id: sig.id, name: sig.title })}
+                    className="bg-zinc-900/50 text-red-400 border border-red-900/40 hover:bg-red-950/40 rounded-none text-[10px] h-8 px-3 uppercase tracking-wider"
+                    title="Remove signal"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -266,12 +354,20 @@ export default function CommandPage() {
                         <span>Notes: {c.notes.length}</span>
                       </div>
                     </div>
-                    <Button 
-                      onClick={() => handleEditCase(c)}
-                      className="bg-zinc-900/50 text-zinc-300 border border-zinc-700 hover:bg-zinc-800 rounded-none text-[10px] h-8 px-4 uppercase tracking-wider shrink-0"
-                    >
-                      Edit Case
-                    </Button>
+                    <div className="flex gap-2 shrink-0">
+                      <Button 
+                        onClick={() => handleEditCase(c)}
+                        className="bg-zinc-900/50 text-zinc-300 border border-zinc-700 hover:bg-zinc-800 rounded-none text-[10px] h-8 px-4 uppercase tracking-wider"
+                      >
+                        Edit
+                      </Button>
+                      <Button 
+                        onClick={() => setConfirmDelete({ type: "case", id: c.id, name: c.name })}
+                        className="bg-zinc-900/50 text-red-400 border border-red-900/40 hover:bg-red-950/40 rounded-none text-[10px] h-8 px-3 uppercase tracking-wider"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

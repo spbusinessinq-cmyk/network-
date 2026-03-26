@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import {
   apiLogin, apiRegister, apiVerifyToken, apiGetUsers, apiGetSignals, apiGetCases,
   apiGetMessages, apiCreateSignal, apiUpdateSignal, apiAddSignalThread, apiCreateCase,
-  apiUpdateCase, apiSendMessage, apiAddMessageResponse, saveSession, clearSession, getSavedToken,
+  apiUpdateCase, apiSendMessage, apiAddMessageResponse, apiDeleteCase, apiDeleteSignal, apiDeleteMessage,
+  saveSession, clearSession, getSavedToken,
   type ApiUser, type ApiSignal, type ApiCase, type ApiMessage,
 } from "./api";
 
@@ -133,11 +134,14 @@ interface AppContextType extends AppState {
   updateUser: (id: string, updates: Partial<User>) => void;
   addSignal: (signal: Omit<Signal, "id" | "timestamp" | "thread">) => Promise<void>;
   updateSignal: (id: number, updates: Partial<Signal>) => Promise<void>;
+  deleteSignal: (id: number) => Promise<void>;
   addSignalThreadMessage: (signalId: number, msg: Omit<ThreadMessage, "id" | "timestamp">) => Promise<void>;
   addCase: (newCase: Omit<Case, "id">) => Promise<void>;
   updateCase: (id: number, updates: Partial<Case>) => Promise<void>;
+  deleteCase: (id: number) => Promise<void>;
   addNetworkMessage: (msg: Omit<ThreadMessage, "id" | "timestamp">) => Promise<void>;
   addMessageResponse: (msgId: number, response: string) => Promise<void>;
+  deleteNetworkMessage: (id: number) => Promise<void>;
   refreshSignals: () => Promise<void>;
   refreshMessages: () => Promise<void>;
 }
@@ -329,6 +333,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const deleteCase = useCallback(async (id: number) => {
+    await apiDeleteCase(id);
+    setState(s => ({ ...s, cases: s.cases.filter(c => c.id !== id) }));
+  }, []);
+
+  const deleteSignal = useCallback(async (id: number) => {
+    await apiDeleteSignal(id);
+    setState(s => ({ ...s, signals: s.signals.filter(sig => sig.id !== id) }));
+  }, []);
+
+  const deleteNetworkMessage = useCallback(async (id: number) => {
+    await apiDeleteMessage(id);
+    setState(s => ({ ...s, networkMessages: s.networkMessages.filter(m => m.id !== id) }));
+  }, []);
+
   return (
     <AppContext.Provider value={{
       ...state,
@@ -342,8 +361,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addSignalThreadMessage,
       addCase,
       updateCase,
+      deleteCase,
       addNetworkMessage,
       addMessageResponse,
+      deleteNetworkMessage,
+      deleteSignal,
       refreshSignals,
       refreshMessages,
     }}>

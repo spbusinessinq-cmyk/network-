@@ -148,6 +148,19 @@ export async function apiAddMessageResponse(id: number, response: string): Promi
   return apiRequest("PATCH", `/messages/${id}/response`, { response });
 }
 
+// Delete operations
+export async function apiDeleteCase(id: number): Promise<void> {
+  return apiRequest("DELETE", `/cases/${id}`);
+}
+
+export async function apiDeleteSignal(id: number): Promise<void> {
+  return apiRequest("DELETE", `/signals/${id}`);
+}
+
+export async function apiDeleteMessage(id: number): Promise<void> {
+  return apiRequest("DELETE", `/messages/${id}`);
+}
+
 // Session management
 export function saveSession(token: string): void {
   localStorage.setItem("rsr_token", token);

@@ -396,22 +396,28 @@ export default function CommandDeckPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="shrink-0 border border-zinc-800 bg-zinc-950/60 overflow-hidden flex"
+        className="shrink-0 border border-zinc-800 bg-zinc-950/60 flex items-stretch"
       >
-        <div className="bg-black/60 p-2 px-4 border-r border-zinc-800 flex items-center shrink-0">
-          <Terminal className="w-3 h-3 text-emerald-500 mr-2" />
-          <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400 whitespace-nowrap">Mission Log</h2>
+        <div className="bg-black/60 px-4 border-r border-zinc-800 flex flex-col justify-center shrink-0 py-2.5 min-w-[120px]">
+          <div className="flex items-center gap-2">
+            <Terminal className="w-3 h-3 text-emerald-500" />
+            <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Activity</h2>
+          </div>
+          <div className="text-[9px] text-zinc-600 font-mono mt-0.5 uppercase tracking-wider">Recent</div>
         </div>
-        <div className="flex-1 overflow-x-auto flex items-center px-4 no-scrollbar">
-          <div className="flex items-center gap-6 py-1 w-max">
-            {networkMessages.slice(-5).map((msg) => (
-              <div key={msg.id} className="flex items-center gap-2 text-xs font-mono shrink-0">
-                <span className="text-zinc-600">{msg.timestamp}</span>
-                <span className="text-zinc-400 uppercase">{getUserAlias(msg.userId)}</span>
-                <span className="text-zinc-700">/</span>
-                <span className="text-zinc-300">{msg.text}</span>
+        <div className="flex-1 flex items-center min-w-0 px-4 py-2">
+          <div className="flex items-center gap-0 w-full min-w-0 divide-x divide-zinc-800/60">
+            {networkMessages.slice(-4).map((msg, i) => (
+              <div key={msg.id} className={`flex items-center gap-2 text-[11px] font-mono min-w-0 ${i === 0 ? 'pr-4' : 'px-4'}`}>
+                <span className="text-zinc-600 shrink-0">{msg.timestamp}</span>
+                <span className="text-emerald-600 uppercase shrink-0">{getUserAlias(msg.userId)}</span>
+                <span className="text-zinc-500 shrink-0">/</span>
+                <span className="text-zinc-400 truncate">{msg.text}</span>
               </div>
             ))}
+            {networkMessages.length === 0 && (
+              <span className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest">No recent activity.</span>
+            )}
           </div>
         </div>
       </motion.div>

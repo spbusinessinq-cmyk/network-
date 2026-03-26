@@ -97,6 +97,18 @@ router.patch("/:id", requireAuth, async (req, res) => {
   }
 });
 
+// DELETE /api/signals/:id
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    await db.delete(signalThreadsTable).where(eq(signalThreadsTable.signalId, id));
+    await db.delete(signalsTable).where(eq(signalsTable.id, id));
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // POST /api/signals/:id/thread
 router.post("/:id/thread", requireAuth, async (req, res) => {
   try {

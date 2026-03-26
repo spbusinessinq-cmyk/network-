@@ -68,13 +68,28 @@ router.post("/", requireAuth, async (req, res) => {
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { status, notes, summary } = req.body;
+    const { status, notes, summary, name, lead } = req.body;
     const updates: Record<string, any> = { updatedAt: new Date() };
     if (status !== undefined) updates.status = status;
     if (notes !== undefined) updates.notes = notes;
     if (summary !== undefined) updates.summary = summary;
+    if (name !== undefined) updates.name = name;
+    if (lead !== undefined) updates.lead = lead;
 
     await db.update(casesTable).set(updates).where(eq(casesTable.id, id));
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// DELETE /api/cases/:id
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    // Unlink signals from this case first
+    await db.update(signalsTable).set({ caseId: null }).where(eq(signalsTable.caseId, id));
+    await db.delete(casesTable).where(eq(casesTable.id, id));
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });

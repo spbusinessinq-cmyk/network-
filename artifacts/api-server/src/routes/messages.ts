@@ -65,4 +65,15 @@ router.patch("/:id/response", requireAuth, async (req, res) => {
   }
 });
 
+// DELETE /api/messages/:id
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    await db.delete(messagesTable).where(eq(messagesTable.id, id));
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;
