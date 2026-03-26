@@ -38,7 +38,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `GET /messages?roomId=X` + `POST /messages` — network room (roomId optional for filtering)
 - `PATCH /messages/:id/response` — add response chip
 - `DELETE /messages/:id` — delete message (Command oversight)
-- `GET /rooms` + `POST /rooms` + `DELETE /rooms/:id` — channel rooms CRUD
+- `GET /rooms` + `POST /rooms` + `PATCH /rooms/:id` + `DELETE /rooms/:id` — channel rooms CRUD (system rooms cannot be renamed or deleted)
 
 ### Frontend API Layer
 - `src/lib/api.ts` — all fetch helpers, session management

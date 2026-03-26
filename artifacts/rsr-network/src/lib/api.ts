@@ -172,6 +172,10 @@ export async function apiDeleteRoom(id: number): Promise<void> {
   return apiRequest("DELETE", `/rooms/${id}`);
 }
 
+export async function apiRenameRoom(id: number, name: string): Promise<ApiRoom> {
+  return apiRequest("PATCH", `/rooms/${id}`, { name });
+}
+
 // Delete operations
 export async function apiDeleteCase(id: number): Promise<void> {
   return apiRequest("DELETE", `/cases/${id}`);

@@ -1,14 +1,14 @@
 import React from "react";
 
 interface PresenceDotProps {
-  status?: string; // "online" | "away" | "offline"
+  status?: string;
   className?: string;
 }
 
 export function PresenceDot({ status = "online", className = "" }: PresenceDotProps) {
   let color = "bg-emerald-500";
-  if (status === "away") color = "bg-amber-500";
-  if (status === "offline") color = "bg-zinc-600";
+  if (status === "away") color = "bg-zinc-500";
+  if (status === "offline") color = "bg-zinc-700";
 
   return (
     <span className={`relative flex h-2 w-2 ${className}`}>

@@ -1,0 +1,384 @@
+REPLIT FINAL CLEANUP PASS — RSR NETWORK BLUE-LIGHT AUTHORITY / CHANNEL RENAME / PROFILE LINKING / IDENTITY LAYOUT FIX
+
+You are upgrading the current **RSR NETWORK** build.
+
+The platform is now very close.
+Do not redesign from scratch.
+Do not change the architecture.
+Do not break any working backend flows.
+
+This is a tight final cleanup pass.
+
+---
+
+## PRIMARY OBJECTIVE
+
+Finish the remaining friction points so the app feels fully locked in.
+
+Current issues to solve:
+
+1. still too much yellow / amber across the interface
+2. the whole app needs to shift harder into glowing electro-luminescent blue
+3. clicking operators should open their profile/dossier directly
+4. Identity Hub layout still feels weak and needs stronger composition
+5. founder/admin needs to be able to rename network rooms/channels
+6. the ACKNOWLEDGED / TRACKING / VERIFYING / LOGGED boxes in chat are cluttering the room and should be removed from the chat surface
+7. final polish pass should make the product feel cleaner, colder, and more premium
+
+This pass should make the platform feel like:
+
+* black glass
+* cold light
+* tactical operator network
+* premium internal command system
+
+Not:
+
+* yellow/orange-heavy
+* cluttered
+* repetitive
+* over-tagged
+* flat
+
+---
+
+1. REMOVE MOST REMAINING YELLOW / AMBER
+
+---
+
+There is still too much warm yellow/amber in the system.
+
+Reduce it further across the app.
+
+Replace general warm/glowing accents with:
+
+* electro-luminescent blue
+* cold cyan
+* ice-blue
+* blue-white edge light
+
+This applies to:
+
+* page highlight rails
+* section accents
+* active states
+* non-founder emphasis
+* panel glow treatment
+* header details
+* line accents
+* UI focus states
+* general highlight color language
+
+Important:
+The app should now feel predominantly **cold blue / cyan / electric light**.
+
+---
+
+2. KEEP FOUNDER GOLD VERY LIMITED
+
+---
+
+Gold should now be extremely limited.
+
+Keep founder gold only for:
+
+* founder card
+* founder chip/badge
+* tiny founder authority moments only if truly needed
+
+Do not use gold as the general UI highlight anymore.
+Do not use gold as the main command accent anymore.
+
+The founder account should still feel special.
+The app overall should feel blue/cyan dominant.
+
+---
+
+3. PUSH THE WHOLE APP INTO ELECTRO-LUMINESCENT BLUE
+
+---
+
+Make the system feel more like cold illuminated command hardware.
+
+Use blue/cyan for:
+
+* section rails
+* headings where appropriate
+* focus states
+* panel accents
+* room/channel emphasis
+* command structure accents
+* drawer edges
+* identity layout polish
+* hover/selection treatment
+* event feed framing
+
+Do this with restraint.
+It should feel premium and expensive, not neon toy UI.
+
+---
+
+4. CLICKING AN OPERATOR MUST OPEN THEIR PROFILE
+
+---
+
+Wherever operators are shown as selectable entities, clicking them should open their profile/dossier.
+
+Apply this to places like:
+
+* operators roster
+* side personnel panels
+* network room personnel column
+* any founder/admin personnel cards where useful
+
+This should route cleanly to that operator’s profile page or dossier state.
+
+If needed, support:
+
+* founder viewing own profile
+* founder viewing other operator dossiers
+* cleaner profile route/state handling
+
+This is required.
+
+---
+
+5. IDENTITY HUB NEEDS A STRONGER LAYOUT
+
+---
+
+The Identity Hub still feels weak.
+
+Improve the layout significantly without redesigning the whole product.
+
+Goals:
+
+* better composition
+* better balance between card and explanatory panels
+* stronger visual hierarchy
+* cleaner use of space
+* less awkward empty black space
+* more premium identity presentation
+
+Improve:
+
+* placement and size of the credential card
+* standing/advancement block
+* credential class block
+* access scope block
+* spacing between modules
+* alignment
+* overall flow of information
+
+The page should feel like:
+
+* a real identity/control surface
+* a central credential page
+* a premium operator access dashboard
+
+Not:
+
+* scattered boxes around a card
+
+---
+
+6. PROFILE / DOSSIER LAYOUT SHOULD BENEFIT TOO
+
+---
+
+If the same weak layout logic exists in profile/dossier pages, tighten those as well.
+
+Keep the identity surfaces feeling:
+
+* premium
+* deliberate
+* operator-grade
+* better structured
+
+The operator’s personal area should feel more composed and intentional.
+
+---
+
+7. ADD CHANNEL RENAME FOR FOUNDER / COMMAND
+
+---
+
+Founder/admin must be able to rename custom network rooms/channels.
+
+Add clean rename controls for channels.
+
+Requirements:
+
+* founder/command can rename custom channels
+* protected/system channels should remain protected if that is the design
+* rename action should persist to backend
+* room list updates immediately after rename
+* if active room is renamed, the active room label updates instantly
+* no broken state in the channel rail
+
+Keep the rename interaction clean:
+
+* inline rename
+  or
+* compact modal/dialog
+  Either is fine if polished.
+
+---
+
+8. REMOVE THE ACKNOWLEDGED / TRACKING / VERIFYING / LOGGED BOXES FROM CHAT SURFACE
+
+---
+
+Those repeated status boxes are cluttering the Network Room.
+
+Remove them from the main chat message UI.
+
+The conversation area should be cleaner and more readable.
+
+If those operational response states still matter, move them to one of these:
+
+* message detail/inspection view
+* command oversight panel
+* optional compact metadata/state indicator
+* hover/reveal action
+* message moderation/control area
+
+But they should no longer sit under every message in the room like repetitive clutter.
+
+This is important.
+
+The room should feel more like:
+
+* operator transmissions
+* tactical comms
+* channel conversation
+
+Not:
+
+* repeated stacks of control boxes under every post
+
+---
+
+9. MAKE NETWORK ROOM CLEANER AND MORE SERIOUS
+
+---
+
+With those response chips removed, tighten the Network Room.
+
+Improve:
+
+* message density
+* vertical rhythm
+* operator metadata layout
+* room/channel clarity
+* cleaner tactical feel
+* stronger separation between message content and side personnel rail
+
+Keep:
+
+* room/channel system
+* personnel side panel
+* founder visibility
+* posting flow
+
+Make it feel cleaner and more focused.
+
+---
+
+10. KEEP ALL NEW ROOM FEATURES WORKING
+
+---
+
+Do not break the newly added room/channel system.
+
+All of this must remain working:
+
+* room switching
+* room-specific feeds
+* room creation
+* room deletion for founder/admin
+* protected system channels
+* room persistence
+* room messages persistence
+
+Add rename on top of this cleanly.
+
+---
+
+11. AUDIT THE SIGNAL DRAWER DELETE FLOW
+
+---
+
+Since founder delete is now in the signal side drawer, verify it remains stable.
+
+Make sure:
+
+* delete button appears only for founder/command
+* confirmation works
+* drawer closes or refreshes correctly after delete
+* signal disappears from the feed
+* no stale selected-signal state remains
+* backend deletion remains correct
+
+---
+
+12. FINAL POLISH RULE
+
+---
+
+The product is almost there.
+
+This pass should make it feel:
+
+* colder
+* cleaner
+* less cluttered
+* more connected
+* more premium
+* more command-grade
+
+Focus on:
+
+* color discipline
+* operator navigation flow
+* identity layout
+* chat cleanup
+* channel rename
+* final cohesion
+
+---
+
+13. FINAL OUTPUT
+
+---
+
+Return a cleaned final build with:
+
+1. much less yellow/amber across general UI
+2. stronger electro-luminescent blue/cyan visual language
+3. founder gold isolated and rare
+4. clickable operators that open profile/dossier
+5. stronger Identity Hub layout
+6. tighter dossier/identity composition
+7. founder/admin channel rename support
+8. ACKNOWLEDGED / TRACKING / VERIFYING / LOGGED boxes removed from main chat surface
+9. cleaner, more serious Network Room presentation
+10. all existing room/channel/backend functionality preserved
+
+---
+
+## FINAL RULE
+
+RSR NETWORK should now feel like:
+
+**a cold-light, glassy, command-grade internal network with clean operator navigation, structured comms, and disciplined visual authority**
+
+It should not feel like:
+
+* yellow-heavy
+* cluttered by repeated chat controls
+* awkward in the identity layout
+* unfinished in channel management
+
+Everything should communicate:
+**cold control, premium system design, operator structure, and final release polish.**

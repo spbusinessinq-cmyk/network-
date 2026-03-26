@@ -34,6 +34,24 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
+router.patch("/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { name } = req.body;
+    if (!name?.trim()) { res.status(400).json({ error: "Name required" }); return; }
+    const [room] = await db.select().from(roomsTable).where(eq(roomsTable.id, id));
+    if (!room) { res.status(404).json({ error: "Room not found" }); return; }
+    if (room.type === "system") { res.status(403).json({ error: "Cannot rename system rooms" }); return; }
+    const [updated] = await db.update(roomsTable)
+      .set({ name: name.trim() })
+      .where(eq(roomsTable.id, id))
+      .returning();
+    res.json(updated);
+  } catch {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id);

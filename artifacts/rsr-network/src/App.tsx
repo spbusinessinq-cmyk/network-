@@ -13,6 +13,7 @@ import NetworkRoom from "@/pages/NetworkRoom";
 import SignalsPage from "@/pages/SignalsPage";
 import CasesPage from "@/pages/CasesPage";
 import OperatorsPage from "@/pages/OperatorsPage";
+import DossierPage from "@/pages/DossierPage";
 import ProfilePage from "@/pages/ProfilePage";
 import CommandPage from "@/pages/CommandPage";
 import NotFound from "@/pages/not-found";
@@ -51,6 +52,7 @@ function ProtectedRouter() {
         <Route path="/signals" component={SignalsPage} />
         <Route path="/cases" component={CasesPage} />
         <Route path="/operators" component={OperatorsPage} />
+        <Route path="/operators/:userId" component={DossierPage} />
         <Route path="/profile" component={ProfilePage} />
         <Route path="/command" component={CommandPage} />
         <Route component={NotFound} />

@@ -1,29 +1,31 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useStore } from "@/lib/store";
+import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Users, Plus, Trash2, Hash, X, Check } from "lucide-react";
+import { Send, Users, Plus, Trash2, Hash, X, Check, Pencil } from "lucide-react";
 import { StandingBadge } from "@/components/StandingBadge";
-import { ResponseChips } from "@/components/ResponseChips";
 import { OperatorCard } from "@/components/OperatorCard";
 
 export default function NetworkRoom() {
   const {
     networkMessages, users, currentUserId, rooms, currentRoomId,
-    addNetworkMessage, addMessageResponse, setCurrentRoom, createRoom, deleteRoom, refreshMessages,
+    addNetworkMessage, setCurrentRoom, createRoom, deleteRoom, renameRoom, refreshMessages,
   } = useStore();
+  const [, navigate] = useLocation();
 
   const [msg, setMsg] = useState("");
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [confirmDeleteRoom, setConfirmDeleteRoom] = useState<number | null>(null);
+  const [renamingRoomId, setRenamingRoomId] = useState<number | null>(null);
+  const [renameValue, setRenameValue] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const currentUser = users.find(u => u.id === currentUserId);
   const isFounder = currentUser?.isFounder || currentUser?.standing === "Command";
   const currentRoom = rooms.find(r => r.id === currentRoomId);
-
   const roomMessages = networkMessages.filter(m => m.roomId === currentRoomId);
 
   useEffect(() => {
@@ -33,9 +35,7 @@ export default function NetworkRoom() {
   }, [roomMessages.length, currentRoomId]);
 
   useEffect(() => {
-    if (currentRoomId) {
-      refreshMessages(currentRoomId);
-    }
+    if (currentRoomId) refreshMessages(currentRoomId);
   }, [currentRoomId]);
 
   const handleSend = () => {
@@ -55,15 +55,23 @@ export default function NetworkRoom() {
     } catch {}
   };
 
-  const handleDeleteRoom = async (id: number) => {
-    if (confirmDeleteRoom !== id) {
-      setConfirmDeleteRoom(id);
-      return;
-    }
-    try {
-      await deleteRoom(id);
-      setConfirmDeleteRoom(null);
-    } catch {}
+  const handleDeleteRoom = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    if (confirmDeleteRoom !== id) { setConfirmDeleteRoom(id); return; }
+    try { await deleteRoom(id); setConfirmDeleteRoom(null); } catch {}
+  };
+
+  const startRename = (e: React.MouseEvent, room: typeof rooms[0]) => {
+    e.stopPropagation();
+    setRenamingRoomId(room.id);
+    setRenameValue(room.name);
+    setConfirmDeleteRoom(null);
+  };
+
+  const submitRename = async (id: number) => {
+    if (!renameValue.trim()) { setRenamingRoomId(null); return; }
+    try { await renameRoom(id, renameValue.trim()); } catch {}
+    setRenamingRoomId(null);
   };
 
   return (
@@ -77,30 +85,67 @@ export default function NetworkRoom() {
           <div className="py-2 px-2 space-y-px">
             {rooms.map(room => {
               const isActive = room.id === currentRoomId;
-              const canDelete = isFounder && room.type === "custom";
+              const canManage = isFounder && room.type === "custom";
               const isConfirming = confirmDeleteRoom === room.id;
+              const isRenaming = renamingRoomId === room.id;
+
               return (
                 <div
                   key={room.id}
                   className={`group flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors ${
                     isActive
-                      ? "bg-zinc-800/60 text-zinc-100"
-                      : "text-zinc-500 hover:bg-zinc-800/30 hover:text-zinc-300"
+                      ? "bg-sky-950/30 text-sky-300 border-l border-sky-500/60"
+                      : "text-zinc-500 hover:bg-zinc-900/40 hover:text-zinc-300"
                   }`}
-                  onClick={() => { setCurrentRoom(room.id); setConfirmDeleteRoom(null); }}
+                  onClick={() => { if (!isRenaming) { setCurrentRoom(room.id); setConfirmDeleteRoom(null); } }}
                 >
-                  <Hash className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-sky-400" : "text-zinc-600"}`} />
-                  <span className="text-[12px] tracking-wide truncate flex-1">{room.name}</span>
-                  {canDelete && (
+                  <Hash className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-sky-400" : "text-zinc-700"}`} />
+
+                  {isRenaming ? (
+                    <input
+                      autoFocus
+                      value={renameValue}
+                      onChange={e => setRenameValue(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter") submitRename(room.id);
+                        if (e.key === "Escape") setRenamingRoomId(null);
+                        e.stopPropagation();
+                      }}
+                      onClick={e => e.stopPropagation()}
+                      className="flex-1 text-[12px] bg-transparent border-b border-sky-500/50 outline-none text-zinc-100 py-0.5 min-w-0"
+                    />
+                  ) : (
+                    <span className="text-[12px] tracking-wide truncate flex-1">{room.name}</span>
+                  )}
+
+                  {canManage && !isRenaming && (
+                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={e => startRename(e, room)}
+                        title="Rename channel"
+                        className="p-0.5"
+                      >
+                        <Pencil className="w-2.5 h-2.5 text-zinc-600 hover:text-sky-400" />
+                      </button>
+                      <button
+                        onClick={e => handleDeleteRoom(e, room.id)}
+                        title={isConfirming ? "Confirm delete" : "Delete channel"}
+                        className="p-0.5"
+                      >
+                        {isConfirming
+                          ? <Check className="w-2.5 h-2.5 text-red-400" />
+                          : <Trash2 className="w-2.5 h-2.5 text-zinc-600 hover:text-red-400" />
+                        }
+                      </button>
+                    </div>
+                  )}
+
+                  {isRenaming && (
                     <button
-                      className={`opacity-0 group-hover:opacity-100 shrink-0 transition-opacity ${isConfirming ? "opacity-100" : ""}`}
-                      onClick={(e) => { e.stopPropagation(); handleDeleteRoom(room.id); }}
-                      title={isConfirming ? "Confirm delete" : "Delete room"}
+                      onClick={e => { e.stopPropagation(); setRenamingRoomId(null); }}
+                      className="shrink-0 p-0.5"
                     >
-                      {isConfirming
-                        ? <Check className="w-3 h-3 text-red-400" />
-                        : <Trash2 className="w-3 h-3 text-zinc-600 hover:text-red-400" />
-                      }
+                      <X className="w-3 h-3 text-zinc-600 hover:text-zinc-300" />
                     </button>
                   )}
                 </div>
@@ -108,6 +153,7 @@ export default function NetworkRoom() {
             })}
           </div>
         </ScrollArea>
+
         {isFounder && (
           <div className="border-t border-zinc-800 p-2 shrink-0">
             {showCreateRoom ? (
@@ -154,20 +200,20 @@ export default function NetworkRoom() {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-zinc-800">
-        <div className="h-14 border-b border-zinc-800 flex items-center px-6 bg-zinc-950/50 shrink-0 gap-3">
+        <div className="h-14 border-b border-zinc-800 flex items-center px-6 bg-zinc-950/60 shrink-0 gap-3">
           <Hash className="w-4 h-4 text-sky-400 shrink-0" />
-          <span className="text-sm font-medium tracking-[0.15em] uppercase text-zinc-100">
+          <span className="text-sm font-medium tracking-[0.15em] uppercase text-zinc-200">
             {currentRoom?.name || "Network Room"}
           </span>
           {currentRoom?.type === "system" && (
-            <span className="text-[9px] border border-zinc-800 text-zinc-600 px-1.5 py-0.5 tracking-widest uppercase">System</span>
+            <span className="text-[9px] border border-zinc-800 text-zinc-700 px-1.5 py-0.5 tracking-widest uppercase">System</span>
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6" ref={scrollRef}>
-          <div className="space-y-6 max-w-4xl mx-auto">
+        <div className="flex-1 overflow-y-auto px-6 py-5" ref={scrollRef}>
+          <div className="space-y-4 max-w-4xl mx-auto">
             {roomMessages.length === 0 && (
-              <div className="text-center text-zinc-700 text-sm py-16 tracking-widest uppercase">
+              <div className="text-center text-zinc-700 text-xs py-16 tracking-widest uppercase font-mono">
                 No transmissions in this channel
               </div>
             )}
@@ -177,34 +223,28 @@ export default function NetworkRoom() {
               const isCommand = author?.standing === "Command";
 
               return (
-                <div key={m.id} className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className={`text-sm font-medium ${isCommand ? "text-amber-500" : isMe ? "text-emerald-400" : "text-zinc-300"}`}>
+                <div key={m.id} className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span className={`text-xs font-semibold tracking-wide ${isCommand ? "text-amber-400" : isMe ? "text-sky-400" : "text-zinc-300"}`}>
                       {author?.alias || m.userId}
                     </span>
                     {author && <StandingBadge standing={author.standing} grade={author.grade} />}
                     {author?.cardStyle && !isCommand && (
-                      <span className="text-[9px] uppercase tracking-widest text-zinc-500 border border-zinc-800 px-1.5 py-0.5">
+                      <span className="text-[9px] uppercase tracking-widest text-zinc-700 border border-zinc-800 px-1.5 py-0.5">
                         {author.cardStyle}
                       </span>
                     )}
-                    <span className="text-[10px] text-zinc-600 font-mono tracking-widest ml-auto">{m.timestamp}</span>
+                    <span className="text-[10px] text-zinc-700 font-mono tracking-widest ml-auto">{m.timestamp}</span>
                   </div>
 
-                  <div className={`text-[15px] p-4 leading-relaxed border ${
+                  <div className={`text-sm px-4 py-3 leading-relaxed border-l-2 ${
                     isCommand
-                      ? "bg-amber-950/10 border-amber-900/30 text-amber-100/90"
-                      : "bg-black/40 border-zinc-800/50 text-zinc-300"
+                      ? "border-l-amber-600/50 text-amber-100/80 bg-amber-950/10"
+                      : isMe
+                      ? "border-l-sky-600/50 text-zinc-200 bg-sky-950/10"
+                      : "border-l-zinc-700/50 text-zinc-300 bg-zinc-950/30"
                   }`}>
                     {m.text}
-                  </div>
-
-                  <div className="pl-4">
-                    <ResponseChips
-                      options={["ACKNOWLEDGED", "TRACKING", "VERIFYING", "LOGGED"]}
-                      selected={m.responses}
-                      onSelect={(resp) => addMessageResponse(m.id, resp)}
-                    />
                   </div>
                 </div>
               );
@@ -212,37 +252,43 @@ export default function NetworkRoom() {
           </div>
         </div>
 
-        <div className="p-4 border-t border-zinc-800 bg-zinc-950/80 shrink-0">
+        <div className="px-6 py-4 border-t border-zinc-800 bg-zinc-950/80 shrink-0">
           <div className="max-w-4xl mx-auto flex gap-3">
             <Input
               value={msg}
               onChange={(e) => setMsg(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder={currentRoom ? `Transmit to #${currentRoom.name.toLowerCase()}...` : "Transmit to network..."}
-              className="bg-black border-zinc-800 text-zinc-100 h-12 rounded-none focus-visible:ring-1 focus-visible:ring-sky-500/50"
+              className="bg-black border-zinc-800 text-zinc-200 h-11 rounded-none focus-visible:ring-1 focus-visible:ring-sky-500/40 placeholder:text-zinc-700"
             />
             <Button
               onClick={handleSend}
-              className="h-12 px-6 rounded-none bg-zinc-100 hover:bg-white text-black font-bold uppercase tracking-widest"
+              className="h-11 px-6 rounded-none bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 border border-sky-500/30 font-medium uppercase tracking-widest text-xs"
+              variant="ghost"
             >
-              <Send className="w-4 h-4 mr-2" />
-              Transmit
+              <Send className="w-3.5 h-3.5 mr-2" />
+              Send
             </Button>
           </div>
         </div>
       </div>
 
       {/* Personnel Panel */}
-      <div className="w-72 hidden lg:flex flex-col bg-zinc-950/30">
-        <div className="h-14 border-b border-zinc-800 flex items-center px-6 shrink-0">
-          <h3 className="text-xs tracking-[0.2em] uppercase text-zinc-500 flex items-center gap-2">
-            <Users className="w-4 h-4" /> Personnel ({users.length})
+      <div className="w-64 hidden lg:flex flex-col bg-zinc-950/40">
+        <div className="h-14 border-b border-zinc-800 flex items-center px-5 shrink-0">
+          <h3 className="text-[10px] tracking-[0.25em] uppercase text-zinc-600 flex items-center gap-2">
+            <Users className="w-3.5 h-3.5" /> Personnel ({users.length})
           </h3>
         </div>
-        <ScrollArea className="flex-1 p-4">
-          <div className="space-y-2">
+        <ScrollArea className="flex-1 py-2 px-2">
+          <div className="space-y-px">
             {users.map(u => (
-              <OperatorCard key={u.id} user={u} />
+              <OperatorCard
+                key={u.id}
+                user={u}
+                compact
+                onClick={() => navigate(`/operators/${u.id}`)}
+              />
             ))}
           </div>
         </ScrollArea>

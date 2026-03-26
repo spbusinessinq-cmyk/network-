@@ -3,7 +3,7 @@ import {
   apiLogin, apiRegister, apiVerifyToken, apiGetUsers, apiGetSignals, apiGetCases,
   apiGetMessages, apiCreateSignal, apiUpdateSignal, apiAddSignalThread, apiCreateCase,
   apiUpdateCase, apiSendMessage, apiAddMessageResponse, apiDeleteCase, apiDeleteSignal,
-  apiDeleteMessage, apiGetRooms, apiCreateRoom, apiDeleteRoom,
+  apiDeleteMessage, apiGetRooms, apiCreateRoom, apiDeleteRoom, apiRenameRoom,
   saveSession, clearSession, getSavedToken,
   type ApiUser, type ApiSignal, type ApiCase, type ApiMessage, type ApiRoom,
 } from "./api";
@@ -164,6 +164,7 @@ interface AppContextType extends AppState {
   setCurrentRoom: (roomId: number | null) => void;
   createRoom: (name: string, slug: string) => Promise<Room>;
   deleteRoom: (id: number) => Promise<void>;
+  renameRoom: (id: number, name: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -303,6 +304,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return mapped;
   }, []);
 
+  const renameRoom = useCallback(async (id: number, name: string) => {
+    const updated = await apiRenameRoom(id, name);
+    setState(s => ({
+      ...s,
+      rooms: s.rooms.map(r => r.id === id ? { ...r, name: updated.name } : r),
+    }));
+  }, []);
+
   const deleteRoom = useCallback(async (id: number) => {
     await apiDeleteRoom(id);
     setState(s => ({
@@ -424,6 +433,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCurrentRoom,
       createRoom,
       deleteRoom,
+      renameRoom,
     }}>
       {children}
     </AppContext.Provider>

@@ -3,6 +3,8 @@ import { useStore, STANDING_DOCTRINE, CREDENTIAL_DOCTRINE } from "@/lib/store";
 import { IDCard } from "@/components/IDCard";
 import { CheckSquare, Square, ShieldAlert, ShieldCheck } from "lucide-react";
 import { StandingBadge } from "@/components/StandingBadge";
+import { PresenceDot } from "@/components/PresenceDot";
+import { cn } from "@/lib/utils";
 
 export default function IdentityPage() {
   const { currentUserId, users } = useStore();
@@ -13,6 +15,8 @@ export default function IdentityPage() {
 
   const doctrine = STANDING_DOCTRINE[currentUser.standing];
   const credDoctrine = CREDENTIAL_DOCTRINE[currentUser.cardStyle];
+  const isCommand = currentUser.standing === "Command";
+  const isOnline = currentUser.presence.includes("ACTIVE") || currentUser.presence === "Online";
 
   const renderAdvancementChecklist = () => {
     if (currentUser.standing === "Command") {
@@ -76,89 +80,126 @@ export default function IdentityPage() {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto h-full flex flex-col gap-8">
-      <div className="mb-4">
-        <h1 className="text-2xl font-medium tracking-[0.1em] text-zinc-100 uppercase mb-2">Identity Hub</h1>
-        <p className="text-sm text-zinc-500">Your digital credential and network standing.</p>
+    <div className="h-full flex flex-col overflow-hidden">
+
+      {/* HEADER STRIP */}
+      <div className={cn(
+        "border-b border-zinc-800 bg-zinc-950/70 px-8 py-5 shrink-0",
+        isCommand ? "border-t-2 border-t-amber-500/30" : "border-t-2 border-t-sky-500/20"
+      )}>
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <PresenceDot status={isOnline ? "online" : "away"} />
+              <span className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-mono">Identity Hub</span>
+            </div>
+            <div className="flex items-baseline gap-3">
+              <h1 className={cn("text-2xl font-semibold tracking-[0.08em] uppercase", isCommand ? "text-amber-400" : "text-zinc-100")}>
+                {currentUser.alias}
+              </h1>
+              <span className="text-xs font-mono text-zinc-600 tracking-widest">{currentUser.id}</span>
+            </div>
+            <p className="text-xs text-zinc-500 mt-1">{currentUser.statusLine || currentUser.bio || "No status set."}</p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <StandingBadge standing={currentUser.standing} grade={currentUser.grade} className="text-[10px] px-3 py-1 h-auto" />
+            <span className="text-[9px] uppercase tracking-widest border border-zinc-800 text-zinc-500 px-2 py-0.5 hidden sm:block">{currentUser.accessClass}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Section 1: Credential */}
-        <div className="lg:col-span-5 flex flex-col items-center">
-          <IDCard 
-            user={currentUser} 
-            expanded={expanded} 
-            onExpand={() => setExpanded(!expanded)} 
-            size="lg"
-          />
-          <p className="text-center text-xs text-zinc-600 mt-4 tracking-widest uppercase">Click card to expand</p>
-        </div>
+      {/* MAIN CONTENT — scrollable */}
+      <div className="flex-1 overflow-y-auto rsr-scroll">
+        <div className="p-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-12 gap-8">
 
-        <div className="lg:col-span-7 space-y-6">
-          {/* Section 2: Standing & Advancement */}
-          <div className="border border-zinc-800 bg-zinc-950/50 p-6">
-            <h3 className="text-xs uppercase tracking-widest text-zinc-500 mb-6 border-b border-zinc-800 pb-3">Standing & Advancement</h3>
-            
-            <div className="flex flex-col gap-4 mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Current Standing</div>
-                  <div className="flex items-center gap-3">
-                    <StandingBadge standing={currentUser.standing} grade={currentUser.grade} className="text-sm px-3 py-1 h-auto" />
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Status</div>
-                  <div className="text-sm text-zinc-300">{currentUser.promotionStatus}</div>
-                </div>
-              </div>
-              <div className="text-sm text-zinc-400 leading-relaxed border-l-2 border-zinc-800 pl-4 py-1">
-                {doctrine.description}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-4">Advancement Checklist</div>
-              {renderAdvancementChecklist()}
-            </div>
-            
-            <div className="mt-6 pt-4 border-t border-zinc-800/50 flex justify-between">
+            {/* LEFT: ID Card + Credential Class */}
+            <div className="col-span-12 lg:col-span-5 space-y-5">
               <div>
-                <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Review Status</div>
-                <div className="text-xs text-zinc-300">{currentUser.reviewStatus}</div>
+                <div className="text-[9px] uppercase tracking-[0.25em] text-zinc-600 mb-3">Credential Card</div>
+                <IDCard
+                  user={currentUser}
+                  expanded={expanded}
+                  onExpand={() => setExpanded(!expanded)}
+                  size="lg"
+                />
+                <p className="text-center text-[9px] text-zinc-700 mt-2 tracking-widest uppercase">
+                  {expanded ? "Click to collapse" : "Click to expand"}
+                </p>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Total Contributions</div>
-                <div className="text-xs text-zinc-300">{currentUser.contributionCount}</div>
+
+              <div className="border border-zinc-800 bg-zinc-950/50 p-5 border-l-2 border-l-sky-700/40">
+                <h3 className="text-[9px] uppercase tracking-[0.25em] text-zinc-500 mb-2 pb-2 border-b border-zinc-800">
+                  Credential Class: {credDoctrine.name}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">{credDoctrine.description}</p>
               </div>
             </div>
-          </div>
-          
-          {/* Section 3: Credential Class Doctrine */}
-          <div className="border border-zinc-800 bg-zinc-950/50 p-6">
-            <h3 className="text-xs uppercase tracking-widest text-zinc-500 mb-4 border-b border-zinc-800 pb-3">Credential Class: {credDoctrine.name}</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              {credDoctrine.description}
-            </p>
-          </div>
-          
-          {/* Section 4: Access Scope */}
-          <div className="border border-zinc-800 bg-zinc-950/50 p-6">
-             <h3 className="text-xs uppercase tracking-widest text-zinc-500 mb-4 border-b border-zinc-800 pb-3">Access Scope</h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Access Class</div>
-                  <div className={`text-sm font-medium ${currentUser.standing === 'Command' ? 'text-amber-500' : 'text-sky-400'}`}>
-                    {currentUser.accessClass}
+
+            {/* RIGHT: Status + Access + Advancement */}
+            <div className="col-span-12 lg:col-span-7 space-y-5">
+
+              {/* Standing Block */}
+              <div className="border border-zinc-800 bg-zinc-950/50 p-6">
+                <h3 className="text-[10px] uppercase tracking-[0.25em] text-zinc-400 border-b border-zinc-800 pb-3 mb-5">Standing & Doctrine</h3>
+
+                <div className="space-y-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-2">Current Standing</div>
+                      <StandingBadge standing={currentUser.standing} grade={currentUser.grade} className="text-[10px] px-3 py-1 h-auto" />
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-1">Promotion Status</div>
+                      <div className="text-xs text-zinc-300">{currentUser.promotionStatus}</div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-zinc-400 leading-relaxed border-l-2 border-zinc-700 pl-3">
+                    {doctrine.description}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-800/50">
+                    <div>
+                      <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-1">Trust Level</div>
+                      <div className="text-xs text-zinc-400">{doctrine.trust}</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-1">Review Status</div>
+                      <div className="text-xs text-zinc-300">{currentUser.reviewStatus}</div>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Network Provisions</div>
-                  <div className="text-sm text-zinc-400">
-                    {doctrine.access}
+              </div>
+
+              {/* Access Scope */}
+              <div className="border border-zinc-800 bg-zinc-950/50 p-6">
+                <h3 className="text-[10px] uppercase tracking-[0.25em] text-zinc-400 border-b border-zinc-800 pb-3 mb-5">Access Scope</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-1">Access Class</div>
+                    <div className={`text-sm font-medium ${isCommand ? "text-amber-400" : "text-sky-400"}`}>
+                      {currentUser.accessClass}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-1">Contributions</div>
+                    <div className="text-sm text-zinc-300">{currentUser.contributionCount}</div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="text-[9px] text-zinc-600 uppercase tracking-widest mb-1">Network Provisions</div>
+                    <div className="text-xs text-zinc-400 leading-relaxed">{doctrine.access}</div>
                   </div>
                 </div>
-             </div>
+              </div>
+
+              {/* Advancement */}
+              <div className="border border-zinc-800 bg-zinc-950/50 p-6">
+                <h3 className="text-[10px] uppercase tracking-[0.25em] text-zinc-400 border-b border-zinc-800 pb-3 mb-5">Advancement</h3>
+                {renderAdvancementChecklist()}
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
