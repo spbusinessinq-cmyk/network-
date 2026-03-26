@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "RSR Network"
+version = "1.0.0"
+id = "artifacts/rsr-network"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21939
+
+[services.development]
+run = "pnpm --filter @workspace/rsr-network run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/rsr-network", "run", "build" ]
+publicDir = "artifacts/rsr-network/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21939"
+BASE_PATH = "/"
