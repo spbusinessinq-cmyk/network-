@@ -78,11 +78,11 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 240 10% 3%;
+  --background: 0 0% 1%;
 
   --foreground: 0 0% 90%;
 
-  --border: 240 6% 18%;
+  --border: 240 4% 10%;
 
   --card: 240 10% 4%;
 
@@ -196,11 +196,11 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 240 10% 3%;
+  --background: 0 0% 1%;
 
   --foreground: 0 0% 90%;
 
-  --border: 240 6% 18%;
+  --border: 240 4% 10%;
 
   --card: 240 10% 4%;
 

@@ -1,8 +1,9 @@
 import React from "react";
 import { useStore } from "@/lib/store";
-import { OperatorCard } from "@/components/OperatorCard";
 import { useLocation } from "wouter";
-import { Users } from "lucide-react";
+import { StandingBadge } from "@/components/StandingBadge";
+import { PresenceDot } from "@/components/PresenceDot";
+import { cn } from "@/lib/utils";
 
 export default function OperatorsPage() {
   const { users } = useStore();
@@ -13,33 +14,52 @@ export default function OperatorsPage() {
   const field = users.filter(u => u.standing === "Scout" || u.standing === "Operator");
   const observers = users.filter(u => u.standing === "Observer");
 
+  const OperatorRow = ({ user }: { user: typeof users[0] }) => {
+    const isCommand = user.standing === "Command";
+    const isOnline = user.presence.includes("ACTIVE") || user.presence === "Online";
+    return (
+      <div
+        onClick={() => navigate(`/operators/${user.id}`)}
+        className={cn(
+          "flex items-center gap-4 px-4 py-3 border border-white/[0.04] cursor-pointer transition-all group",
+          isCommand
+            ? "bg-amber-950/5 hover:bg-amber-950/10 hover:border-amber-900/20"
+            : "bg-black/10 hover:bg-white/[0.025] hover:border-white/[0.07]"
+        )}
+      >
+        <PresenceDot status={isOnline ? "online" : "away"} />
+        <div className="flex-1 min-w-0">
+          <span className={cn("text-sm tracking-wide", isCommand ? "text-amber-400" : "text-zinc-300 group-hover:text-zinc-100 transition-colors")}>
+            {user.alias}
+          </span>
+        </div>
+        <div className="text-[9px] text-zinc-700 uppercase tracking-widest hidden sm:block">{user.role}</div>
+        <div className="text-[9px] text-zinc-800 font-mono hidden md:block">{user.id}</div>
+        <StandingBadge standing={user.standing} grade={user.grade} />
+      </div>
+    );
+  };
+
   const Section = ({ title, ops }: { title: string; ops: typeof users }) => {
     if (ops.length === 0) return null;
     return (
-      <div className="mb-10">
-        <h3 className="text-xs uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-800 pb-2 mb-4 border-l-2 border-l-sky-700/50 pl-2">
-          {title} <span className="text-zinc-700 ml-2 font-mono">[{ops.length}]</span>
+      <div className="mb-8">
+        <h3 className="text-[9px] uppercase tracking-[0.25em] text-zinc-700 pb-2 mb-3 flex items-center gap-2">
+          <span>{title}</span>
+          <span className="text-zinc-800 font-mono">[{ops.length}]</span>
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {ops.map(u => (
-            <OperatorCard
-              key={u.id}
-              user={u}
-              onClick={() => navigate(`/operators/${u.id}`)}
-            />
-          ))}
+        <div className="space-y-px">
+          {ops.map(u => <OperatorRow key={u.id} user={u} />)}
         </div>
       </div>
     );
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-full overflow-y-auto">
+    <div className="p-8 max-w-4xl mx-auto h-full overflow-y-auto rsr-scroll">
       <div className="mb-8">
-        <h1 className="text-2xl font-medium tracking-[0.1em] text-zinc-100 uppercase mb-2 flex items-center gap-3">
-          <Users className="w-6 h-6 text-sky-400" /> Personnel Roster
-        </h1>
-        <p className="text-sm text-zinc-500">Active intelligence network operators and their current operational standing.</p>
+        <h1 className="text-lg font-medium tracking-[0.15em] text-zinc-300 uppercase mb-1">Personnel Roster</h1>
+        <p className="text-xs text-zinc-700">Active intelligence network operators and their current standing.</p>
       </div>
 
       <Section title="Command Authority" ops={command} />

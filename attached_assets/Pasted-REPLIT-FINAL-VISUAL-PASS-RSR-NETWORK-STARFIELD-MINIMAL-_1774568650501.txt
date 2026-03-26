@@ -1,0 +1,255 @@
+REPLIT FINAL VISUAL PASS — RSR NETWORK STARFIELD / MINIMAL GLASS / TACTICAL TERMINAL SURFACE
+
+You are upgrading the current **RSR NETWORK** build.
+
+Do not rebuild the product.
+Do not change the working backend logic.
+Do not redesign the information architecture.
+Do not add major new features.
+
+This pass is specifically for the final visual surface treatment.
+
+---
+
+## PRIMARY OBJECTIVE
+
+The current system works, but the interface still feels too boxed-in, too accent-heavy, and too dashboard-like.
+
+The goal now is to shift the visual feel toward:
+
+* minimal
+* premium
+* tactical
+* shard-like
+* glassy
+* terminal-grade
+* atmospheric
+* dark and controlled
+
+The interface should feel like:
+**text and critical UI floating over a dark command environment**
+
+not:
+**solid dark rectangles stacked everywhere**
+
+---
+
+1. ADD A LIVE STARFIELD BACKGROUND
+
+---
+
+Add a subtle full-screen animated starfield background behind the UI.
+
+This should be:
+
+* dark
+* sparse
+* elegant
+* atmospheric
+* premium
+
+The stars should be:
+
+* small
+* restrained
+* not dense
+* not bright
+* not distracting
+
+The effect should feel like deep-space atmosphere behind a command network.
+
+---
+
+2. ADD VERY SUBTLE SHOOTING STARS
+
+---
+
+Add occasional subtle shooting star motion in the background.
+
+Important:
+
+* very infrequent
+* very faint
+* very thin
+* smooth
+* premium
+* atmospheric only
+
+This is background mood, not a visual gimmick.
+
+No flashy streaks.
+No sci-fi overload.
+
+---
+
+3. PANELS MUST BECOME MORE MINIMAL AND GLASS-LIKE
+
+---
+
+Reduce the feeling of heavy boxed panels.
+
+Shift surfaces toward:
+
+* thinner borders
+* darker translucent fills
+* more open space
+* more subtle edge-light
+* lighter panel weight
+* more floating/glassy treatment
+
+Panels should feel like:
+
+* tactical glass plates
+* command shards
+* restrained overlays
+
+Not:
+
+* heavy dark bricks
+
+---
+
+4. REDUCE COLOR USAGE ACROSS THE APP
+
+---
+
+There is still too much visible accent color in too many places.
+
+Pull color back hard.
+
+Use accent only where truly needed:
+
+* founder-only authority markers
+* active selection
+* priority/danger
+* key interaction states
+
+The app should become more monochrome overall, with restrained cold highlights.
+
+General interface emphasis should come from:
+
+* spacing
+* hierarchy
+* typography
+* border contrast
+* transparency
+* motion
+  not constant color blocks
+
+---
+
+5. KEEP FOUNDER AUTHORITY DISTINCT BUT RESTRAINED
+
+---
+
+Founder identity can remain distinct, but it should not dominate the whole interface.
+
+Keep founder-specific distinction elegant and limited.
+
+The app overall should not look gold-themed or color-heavy.
+
+Founder should feel premium through:
+
+* rarity
+* placement
+* subtle material distinction
+* isolated authority markers
+
+---
+
+6. TEXT SHOULD FLOAT MORE CLEANLY OVER THE ENVIRONMENT
+
+---
+
+The text and interface should feel more integrated with the environment.
+
+Improve:
+
+* section spacing
+* panel breathing room
+* less visual heaviness around text
+* cleaner hierarchy
+* more elegant placement of headlines and metadata
+
+The result should feel like:
+**a tactical network interface suspended over a dark living backdrop**
+
+---
+
+7. TACTICAL TERMINAL FEEL
+
+---
+
+Push the overall surface feel slightly closer to:
+
+* high-end tactical terminal
+* black-glass command UI
+* premium ops console
+
+But do NOT:
+
+* make it noisy
+* clutter it with fake HUD graphics
+* turn it into a game clone
+* add unnecessary sci-fi elements
+
+Keep it believable and controlled.
+
+---
+
+8. PRESERVE ALL CURRENT FUNCTIONALITY
+
+---
+
+Do not break:
+
+* login
+* logout
+* registration
+* founder account
+* signals
+* cases
+* channels
+* messages
+* command tools
+* CRUD
+* routing
+* profile views
+* backend persistence
+
+This is a visual surface pass only.
+
+---
+
+9. FINAL OUTPUT
+
+---
+
+Return a polished updated build with:
+
+1. subtle live starfield background
+2. occasional restrained shooting stars
+3. more minimal glass-like panel treatment
+4. thinner, lighter panel surfaces
+5. far less accent overuse
+6. cleaner floating text/panel composition
+7. more tactical terminal atmosphere
+8. full existing functionality preserved
+
+---
+
+## FINAL RULE
+
+RSR NETWORK should now feel like:
+
+**a minimal shard-like tactical network suspended over a living starfield backdrop**
+
+It should not feel like:
+
+* a boxed-in dashboard
+* a color-heavy admin panel
+* a game clone
+* a cluttered sci-fi concept
+
+Everything should communicate:
+**depth, restraint, control, tactical polish, and premium command atmosphere.**
