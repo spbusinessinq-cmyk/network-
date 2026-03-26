@@ -76,6 +76,16 @@ export interface ApiMessage {
   text: string;
   timestamp: string;
   responses: string[];
+  roomId: number | null;
+}
+
+export interface ApiRoom {
+  id: number;
+  name: string;
+  slug: string;
+  type: string;
+  createdBy: string | null;
+  createdAt: string;
 }
 
 // Auth
@@ -136,16 +146,30 @@ export async function apiUpdateCase(id: number, updates: { status?: string; note
 }
 
 // Messages
-export async function apiGetMessages(): Promise<ApiMessage[]> {
-  return apiRequest("GET", "/messages");
+export async function apiGetMessages(roomId?: number): Promise<ApiMessage[]> {
+  const path = roomId ? `/messages?roomId=${roomId}` : "/messages";
+  return apiRequest("GET", path);
 }
 
-export async function apiSendMessage(text: string): Promise<ApiMessage> {
-  return apiRequest("POST", "/messages", { text });
+export async function apiSendMessage(text: string, roomId?: number): Promise<ApiMessage> {
+  return apiRequest("POST", "/messages", { text, roomId: roomId || null });
 }
 
 export async function apiAddMessageResponse(id: number, response: string): Promise<void> {
   return apiRequest("PATCH", `/messages/${id}/response`, { response });
+}
+
+// Rooms
+export async function apiGetRooms(): Promise<ApiRoom[]> {
+  return apiRequest("GET", "/rooms");
+}
+
+export async function apiCreateRoom(name: string, slug: string): Promise<ApiRoom> {
+  return apiRequest("POST", "/rooms", { name, slug });
+}
+
+export async function apiDeleteRoom(id: number): Promise<void> {
+  return apiRequest("DELETE", `/rooms/${id}`);
 }
 
 // Delete operations

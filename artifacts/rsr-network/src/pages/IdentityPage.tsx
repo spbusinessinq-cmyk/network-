@@ -34,7 +34,7 @@ export default function IdentityPage() {
             <span>Verification authority active</span>
           </div>
           <div className="flex items-center gap-3 text-zinc-400">
-            <ShieldAlert className="w-4 h-4 text-amber-500" />
+            <ShieldAlert className="w-4 h-4 text-sky-500" />
             <span>Command review and assignment required for further progression</span>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function IdentityPage() {
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">Access Class</div>
-                  <div className={`text-sm font-medium ${currentUser.accessClass === 'ELEVATED' ? 'text-amber-500' : 'text-emerald-500'}`}>
+                  <div className={`text-sm font-medium ${currentUser.standing === 'Command' ? 'text-amber-500' : 'text-sky-400'}`}>
                     {currentUser.accessClass}
                   </div>
                 </div>

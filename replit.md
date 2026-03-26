@@ -23,8 +23,9 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `users` — operator accounts (seeded: Black Rail/EIO/4451, Signal Echo/echo/echo, Operator Vanta/vanta/vanta, Cipher Nine/cipher/cipher)
 - `signals` — submitted signals with thread support
 - `cases` — case rooms with linked signals
-- `network_messages` — Network Room message feed
+- `network_messages` — Network Room message feed (has `room_id` FK to network_rooms)
 - `signal_threads` — per-signal thread messages
+- `network_rooms` — Network Room channel list (system rooms: General Net, Signal Review, Case Ops, Command Net, Field Reports)
 
 ### API Routes (all under /api)
 - `POST /auth/login` — returns JWT + user
@@ -34,8 +35,10 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `GET /signals` + `POST /signals` + `PATCH /signals/:id` — signal CRUD
 - `POST /signals/:id/thread` — add thread message
 - `GET /cases` + `POST /cases` + `PATCH /cases/:id` — case CRUD
-- `GET /messages` + `POST /messages` — network room
+- `GET /messages?roomId=X` + `POST /messages` — network room (roomId optional for filtering)
 - `PATCH /messages/:id/response` — add response chip
+- `DELETE /messages/:id` — delete message (Command oversight)
+- `GET /rooms` + `POST /rooms` + `DELETE /rooms/:id` — channel rooms CRUD
 
 ### Frontend API Layer
 - `src/lib/api.ts` — all fetch helpers, session management

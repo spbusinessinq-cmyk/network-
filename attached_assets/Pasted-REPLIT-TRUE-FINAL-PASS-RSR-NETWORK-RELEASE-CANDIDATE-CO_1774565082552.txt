@@ -1,0 +1,378 @@
+REPLIT TRUE FINAL PASS — RSR NETWORK RELEASE CANDIDATE / COLD-LIGHT VISUAL FIX / NETWORK ROOM REBUILD / FOUNDER DELETE / FULL AUDIT
+
+You are upgrading the current **RSR NETWORK** build for the true final release-candidate pass.
+
+The platform is already functional:
+
+* real backend
+* real auth
+* founder login
+* real users
+* real signals
+* real cases
+* network messages
+* sign out
+* command CRUD
+* welcome/access flow
+* command event feed
+* command tabs
+* delete routes
+
+This pass is about closing the last major gaps before calling it ready.
+
+Do not redesign the product from scratch.
+Do not break working backend flows.
+Do not waste time on random new experiments outside the scope below.
+
+---
+
+## PRIMARY OBJECTIVE
+
+This pass must solve the remaining problems:
+
+1. there is still too much orange/amber across the app
+2. the app still does not feel glassy/premium enough
+3. founder/admin needs delete control directly inside the signal side panel / drawer
+4. Network Room feels too flat and messy
+5. Network Room needs real inner rooms/channels that founder can manage
+6. the chat/comms area should feel more tactical/terminal-grade
+7. the build needs a true audit/stabilization sweep before release
+
+This pass should leave the product feeling:
+
+* colder
+* cleaner
+* more premium
+* more tactical
+* more command-grade
+* more structured
+* more audited and release-ready
+
+---
+
+1. REMOVE MOST REMAINING ORANGE / AMBER FROM GENERAL UI
+
+---
+
+There is still too much orange/amber in the interface.
+
+Reduce it aggressively across all general surfaces.
+
+Replace general accent usage with:
+
+* electro-luminescent blue
+* cold cyan
+* ice-blue
+* restrained blue-white highlight
+* existing emerald only where still useful
+
+Use red only for:
+
+* destructive actions
+* danger/priority
+* escalated states
+
+Gold/amber should remain only for:
+
+* founder card
+* founder identity chip
+* tiny founder-only authority markers
+
+The whole app should not feel orange-themed.
+
+---
+
+2. INCREASE GLASS / MATERIAL QUALITY
+
+---
+
+The interface still feels too matte/flat.
+
+Improve the material system so it feels more premium and glassy.
+
+Add:
+
+* cleaner layered panel surfaces
+* subtle transparency where appropriate
+* better depth separation
+* more premium black-glass feel
+* softer edge-light
+* refined reflection feel
+* darker but more expensive-looking materials
+
+Do not overdo blur.
+Do not make it frosted gimmick glass.
+Keep it tactical, cold, and premium.
+
+---
+
+3. FOUNDER DELETE CONTROL IN SIGNAL SIDE PANEL
+
+---
+
+In the signal detail side drawer/panel, founder/admin must be able to delete the signal directly from that panel.
+
+This is required.
+
+If founder is viewing a signal detail panel:
+
+* show delete action clearly
+* use serious destructive language
+* require confirmation modal
+* delete from backend
+* remove from feed/list immediately
+* close or refresh the side panel appropriately after deletion
+
+This must be real and reliable.
+
+---
+
+4. REBUILD NETWORK ROOM INTO A REAL CHANNEL/ROOM SYSTEM
+
+---
+
+The current Network Room is too flat and feels like a single endless comms feed.
+
+Rebuild it into a more structured communications environment.
+
+Add support for:
+
+* multiple inner rooms/channels
+* switching between rooms
+* room-specific message feeds
+* room-specific posting
+* founder/admin room management
+
+Examples of room ideas:
+
+* General Net
+* Signal Review
+* Case Ops
+* Command Net
+* Field Reports
+
+These should feel like internal comms channels, not Discord clones.
+
+---
+
+5. FOUNDER / COMMAND ROOM MANAGEMENT
+
+---
+
+Founder/admin must be able to manage Network Room channels.
+
+At minimum:
+
+* create room/channel
+* rename room/channel
+* delete/remove room/channel
+* maybe set room type or visibility if cleanly possible
+* select active room
+* persist room list and room messages
+
+If some rooms should be protected/system rooms, handle that cleanly.
+
+This must be wired to the backend if channel persistence is added in this pass.
+
+---
+
+6. MAKE NETWORK ROOM FEEL MORE TACTICAL / TERMINAL-LIKE
+
+---
+
+The chat/comms environment should feel more like a tactical operator terminal.
+
+Target feel:
+
+* Fallout terminal influence in density/seriousness
+* Division-grade tactical polish
+* dark command comms board
+* structured operator transmissions
+* gritty but premium, not cosplay
+
+Make it feel:
+
+* more intentional
+* more channel-based
+* more comms-focused
+* less like stacked generic chat cards
+
+Possible improvements:
+
+* denser message formatting
+* clearer transmission headers
+* room/channel rail or room selector
+* compact operator metadata
+* cleaner timestamps
+* tighter message grouping
+* more terminal/comms rhythm
+
+Do not turn it into a literal game UI clone.
+Keep it professional and believable.
+
+---
+
+7. CLEAN UP RESPONSE CHIP SYSTEM IN NETWORK ROOM
+
+---
+
+The ACKNOWLEDGED / TRACKING / VERIFYING / LOGGED system is fine in concept, but the presentation needs tightening.
+
+Make those controls feel more like:
+
+* operational status tags
+* command responses
+* comms handling states
+
+And less like repeated button clutter.
+
+Improve:
+
+* spacing
+* grouping
+* visual hierarchy
+* compactness
+* tactical feel
+
+If helpful, allow these to feel more like inline transmission state markers than bulky repeated action bars.
+
+---
+
+8. MAKE PAGES FEEL COLDER AND MORE ELITE OVERALL
+
+---
+
+Across the whole product:
+
+* reduce warmth
+* reduce amber sprawl
+* increase blue/cyan discipline
+* improve surface quality
+* improve type hierarchy
+* improve section clarity
+
+The app should feel like:
+**cold-light command hardware**
+not:
+**orange dashboard with dark background**
+
+---
+
+9. FULL RELEASE AUDIT / STABILIZATION SWEEP
+
+---
+
+Do a real end-to-end audit of the product before considering this pass done.
+
+Audit these areas:
+
+### Auth
+
+* founder login works
+* sign out works
+* registration works
+* session persistence works
+* refresh behavior is correct
+* logout clears founder state correctly
+
+### Role gating
+
+* founder sees command tools
+* non-founder does not inherit founder command UI
+* command-only actions stay protected
+
+### Signals
+
+* create works
+* edit works
+* delete works
+* delete from signal drawer works
+* priority/status changes persist
+
+### Cases
+
+* create works
+* edit works
+* delete/archive works
+* linking signals works
+* case data persists
+
+### Network Room
+
+* room/channel switching works
+* room creation works
+* room deletion works where allowed
+* message posting works
+* founder/admin message deletion works if available
+* messages persist correctly by room
+
+### UI
+
+* no dead buttons
+* no broken modals
+* no ugly overflow
+* no broken scrollbar behavior
+* no stale state after destructive actions
+* no half-finished controls
+
+Fix anything discovered in the audit.
+
+---
+
+10. PRESERVE ALL WORKING FUNCTIONALITY
+
+---
+
+Do not break:
+
+* auth
+* sign out
+* founder account
+* registration
+* command CRUD
+* cases
+* signals
+* event feed
+* profile/dossier
+* operator directory
+* existing backend persistence
+
+This pass is improvement + completion, not regression.
+
+---
+
+11. FINAL OUTPUT
+
+---
+
+Return a release-candidate build that includes:
+
+1. major reduction of orange/amber across general UI
+2. colder electro-luminescent blue/cyan visual discipline
+3. glassier premium panel materials
+4. founder/admin delete control inside signal detail side panel
+5. Network Room rebuilt into multi-room/channel comms
+6. founder/admin room creation and deletion controls
+7. tighter terminal/tactical communications feel
+8. cleaner response chip/status presentation
+9. full audit and stabilization fixes
+10. preserved working backend functionality
+
+---
+
+## FINAL RULE
+
+RSR NETWORK should now feel like:
+
+**a cold, premium, command-grade internal network with structured operator comms, real room management, founder oversight, and release-ready stability**
+
+It should not feel like:
+
+* an orange-themed dashboard
+* a flat chat feed
+* a half-polished beta
+* a literal game clone
+* a system with hidden broken edges
+
+Everything should communicate:
+**cold control, tactical polish, structured comms, founder authority, and release readiness.**

@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import {
   apiLogin, apiRegister, apiVerifyToken, apiGetUsers, apiGetSignals, apiGetCases,
   apiGetMessages, apiCreateSignal, apiUpdateSignal, apiAddSignalThread, apiCreateCase,
-  apiUpdateCase, apiSendMessage, apiAddMessageResponse, apiDeleteCase, apiDeleteSignal, apiDeleteMessage,
+  apiUpdateCase, apiSendMessage, apiAddMessageResponse, apiDeleteCase, apiDeleteSignal,
+  apiDeleteMessage, apiGetRooms, apiCreateRoom, apiDeleteRoom,
   saveSession, clearSession, getSavedToken,
-  type ApiUser, type ApiSignal, type ApiCase, type ApiMessage,
+  type ApiUser, type ApiSignal, type ApiCase, type ApiMessage, type ApiRoom,
 } from "./api";
 
 export type Standing = "Observer" | "Scout" | "Operator" | "Analyst" | "Command";
@@ -60,6 +61,16 @@ export interface ThreadMessage {
   text: string;
   timestamp: string;
   responses?: string[];
+  roomId?: number | null;
+}
+
+export interface Room {
+  id: number;
+  name: string;
+  slug: string;
+  type: string;
+  createdBy: string | null;
+  createdAt: string;
 }
 
 function mapApiUser(u: ApiUser): User {
@@ -113,7 +124,11 @@ function mapApiCase(c: ApiCase): Case {
 }
 
 function mapApiMessage(m: ApiMessage): ThreadMessage {
-  return { id: m.id, userId: m.userId, text: m.text, timestamp: m.timestamp, responses: m.responses };
+  return { id: m.id, userId: m.userId, text: m.text, timestamp: m.timestamp, responses: m.responses, roomId: m.roomId };
+}
+
+function mapApiRoom(r: ApiRoom): Room {
+  return { id: r.id, name: r.name, slug: r.slug, type: r.type, createdBy: r.createdBy, createdAt: r.createdAt };
 }
 
 interface AppState {
@@ -121,6 +136,8 @@ interface AppState {
   signals: Signal[];
   cases: Case[];
   networkMessages: ThreadMessage[];
+  rooms: Room[];
+  currentRoomId: number | null;
   currentUserId: string | null;
   isLoading: boolean;
   isInitialized: boolean;
@@ -139,11 +156,14 @@ interface AppContextType extends AppState {
   addCase: (newCase: Omit<Case, "id">) => Promise<void>;
   updateCase: (id: number, updates: Partial<Case>) => Promise<void>;
   deleteCase: (id: number) => Promise<void>;
-  addNetworkMessage: (msg: Omit<ThreadMessage, "id" | "timestamp">) => Promise<void>;
+  addNetworkMessage: (msg: Omit<ThreadMessage, "id" | "timestamp">, roomId?: number) => Promise<void>;
   addMessageResponse: (msgId: number, response: string) => Promise<void>;
   deleteNetworkMessage: (id: number) => Promise<void>;
   refreshSignals: () => Promise<void>;
-  refreshMessages: () => Promise<void>;
+  refreshMessages: (roomId?: number) => Promise<void>;
+  setCurrentRoom: (roomId: number | null) => void;
+  createRoom: (name: string, slug: string) => Promise<Room>;
+  deleteRoom: (id: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -154,26 +174,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     signals: [],
     cases: [],
     networkMessages: [],
+    rooms: [],
+    currentRoomId: null,
     currentUserId: null,
     isLoading: true,
     isInitialized: false,
   });
 
-  // Initialize: check saved session and load data
   useEffect(() => {
     async function init() {
       const token = getSavedToken();
       if (token) {
         try {
           const { user } = await apiVerifyToken(token);
-          const [users, signals, cases, messages] = await Promise.all([
-            apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(),
+          const [users, signals, cases, messages, rooms] = await Promise.all([
+            apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(), apiGetRooms(),
           ]);
+          const mappedRooms = rooms.map(mapApiRoom);
+          const defaultRoom = mappedRooms.find(r => r.slug === "general");
           setState({
             users: users.map(mapApiUser),
             signals: signals.map(mapApiSignal),
             cases: cases.map(mapApiCase),
             networkMessages: messages.map(mapApiMessage),
+            rooms: mappedRooms,
+            currentRoomId: defaultRoom?.id || mappedRooms[0]?.id || null,
             currentUserId: user.id,
             isLoading: false,
             isInitialized: true,
@@ -192,15 +217,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const { token, user } = await apiLogin(username, password);
       saveSession(token);
-      const [users, signals, cases, messages] = await Promise.all([
-        apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(),
+      const [users, signals, cases, messages, rooms] = await Promise.all([
+        apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(), apiGetRooms(),
       ]);
+      const mappedRooms = rooms.map(mapApiRoom);
+      const defaultRoom = mappedRooms.find(r => r.slug === "general");
       setState(s => ({
         ...s,
         users: users.map(mapApiUser),
         signals: signals.map(mapApiSignal),
         cases: cases.map(mapApiCase),
         networkMessages: messages.map(mapApiMessage),
+        rooms: mappedRooms,
+        currentRoomId: defaultRoom?.id || mappedRooms[0]?.id || null,
         currentUserId: user.id,
       }));
       return true;
@@ -213,9 +242,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const { token, user } = await apiRegister(alias, bio, cardStyle);
       saveSession(token);
-      const [users, signals, cases, messages] = await Promise.all([
-        apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(),
+      const [users, signals, cases, messages, rooms] = await Promise.all([
+        apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(), apiGetRooms(),
       ]);
+      const mappedRooms = rooms.map(mapApiRoom);
+      const defaultRoom = mappedRooms.find(r => r.slug === "general");
       const mapped = mapApiUser(user);
       setState(s => ({
         ...s,
@@ -223,6 +254,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         signals: signals.map(mapApiSignal),
         cases: cases.map(mapApiCase),
         networkMessages: messages.map(mapApiMessage),
+        rooms: mappedRooms,
+        currentRoomId: defaultRoom?.id || mappedRooms[0]?.id || null,
         currentUserId: user.id,
       }));
       return mapped;
@@ -234,7 +267,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const logoutUser = useCallback(() => {
     clearSession();
-    setState(s => ({ ...s, currentUserId: null, users: [], signals: [], cases: [], networkMessages: [] }));
+    setState(s => ({ ...s, currentUserId: null, users: [], signals: [], cases: [], networkMessages: [], rooms: [], currentRoomId: null }));
   }, []);
 
   const addUser = useCallback((user: User) => {
@@ -252,11 +285,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
-  const refreshMessages = useCallback(async () => {
+  const refreshMessages = useCallback(async (roomId?: number) => {
     try {
-      const messages = await apiGetMessages();
+      const messages = await apiGetMessages(roomId);
       setState(s => ({ ...s, networkMessages: messages.map(mapApiMessage) }));
     } catch {}
+  }, []);
+
+  const setCurrentRoom = useCallback((roomId: number | null) => {
+    setState(s => ({ ...s, currentRoomId: roomId }));
+  }, []);
+
+  const createRoom = useCallback(async (name: string, slug: string): Promise<Room> => {
+    const room = await apiCreateRoom(name, slug);
+    const mapped = mapApiRoom(room);
+    setState(s => ({ ...s, rooms: [...s.rooms, mapped] }));
+    return mapped;
+  }, []);
+
+  const deleteRoom = useCallback(async (id: number) => {
+    await apiDeleteRoom(id);
+    setState(s => ({
+      ...s,
+      rooms: s.rooms.filter(r => r.id !== id),
+      currentRoomId: s.currentRoomId === id ? (s.rooms.find(r => r.slug === "general")?.id || null) : s.currentRoomId,
+    }));
   }, []);
 
   const addSignal = useCallback(async (signalData: Omit<Signal, "id" | "timestamp" | "thread">) => {
@@ -314,8 +367,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(s => ({ ...s, cases: s.cases.map(c => c.id === id ? { ...c, ...updates } : c) }));
   }, []);
 
-  const addNetworkMessage = useCallback(async (msgInfo: Omit<ThreadMessage, "id" | "timestamp">) => {
-    const newMsg = await apiSendMessage(msgInfo.text);
+  const addNetworkMessage = useCallback(async (msgInfo: Omit<ThreadMessage, "id" | "timestamp">, roomId?: number) => {
+    const newMsg = await apiSendMessage(msgInfo.text, roomId);
     setState(s => ({ ...s, networkMessages: [...s.networkMessages, mapApiMessage(newMsg)] }));
   }, []);
 
@@ -368,6 +421,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deleteSignal,
       refreshSignals,
       refreshMessages,
+      setCurrentRoom,
+      createRoom,
+      deleteRoom,
     }}>
       {children}
     </AppContext.Provider>
@@ -380,7 +436,7 @@ export function useStore() {
   return context;
 }
 
-// ---- Doctrine constants (unchanged) ----
+// ---- Doctrine constants ----
 
 export const STANDING_DOCTRINE = {
   Observer: {

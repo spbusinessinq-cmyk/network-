@@ -6,7 +6,7 @@ import { ResponseChips } from "./ResponseChips";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, MapPin, Clock, Tag, AlertTriangle } from "lucide-react";
+import { Send, MapPin, Clock, Tag, AlertTriangle, Trash2 } from "lucide-react";
 
 interface SignalDetailDrawerProps {
   signalId: number | null;
@@ -15,39 +15,64 @@ interface SignalDetailDrawerProps {
 }
 
 export function SignalDetailDrawer({ signalId, open, onOpenChange }: SignalDetailDrawerProps) {
-  const { signals, currentUserId, users, addSignalThreadMessage, updateSignal } = useStore();
+  const { signals, currentUserId, users, addSignalThreadMessage, deleteSignal } = useStore();
   const signal = signals.find((s) => s.id === signalId);
   const [newMsg, setNewMsg] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   if (!signal) return null;
 
   const submitbyUser = users.find((u) => u.id === signal.submittedBy);
   const currentUser = users.find((u) => u.id === currentUserId);
+  const isFounder = currentUser?.isFounder || currentUser?.standing === "Command";
 
   const handleSend = () => {
     if (!newMsg.trim() || !currentUser) return;
-    addSignalThreadMessage(signal.id, {
-      userId: currentUser.id,
-      text: newMsg
-    });
+    addSignalThreadMessage(signal.id, { userId: currentUser.id, text: newMsg });
     setNewMsg("");
   };
 
+  const handleDelete = async () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+    await deleteSignal(signal.id);
+    onOpenChange(false);
+    setConfirmDelete(false);
+  };
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={(o) => { onOpenChange(o); setConfirmDelete(false); }}>
       <SheetContent side="right" className="w-full sm:max-w-md border-l border-zinc-800 bg-[#050607] p-0 flex flex-col rounded-none">
         <div className="p-6 border-b border-zinc-800 bg-zinc-950/50">
           <SheetHeader className="text-left space-y-4">
             <div className="flex justify-between items-start">
               <Badge className="bg-zinc-900 border-zinc-800 text-zinc-300 rounded-none tracking-wider text-[10px]">
-                SIGNAL #{signal.id.toString().padStart(4, '0')}
+                SIGNAL #{signal.id.toString().padStart(4, "0")}
               </Badge>
-              {signal.priority && (
-                <Badge className="bg-red-950/50 border-red-900/50 text-red-400 rounded-none flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" />
-                  PRIORITY
-                </Badge>
-              )}
+              <div className="flex items-center gap-2">
+                {signal.priority && (
+                  <Badge className="bg-red-950/50 border-red-900/50 text-red-400 rounded-none flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    PRIORITY
+                  </Badge>
+                )}
+                {isFounder && (
+                  <button
+                    onClick={handleDelete}
+                    className={`flex items-center gap-1.5 text-[10px] px-2 py-1 border transition-colors ${
+                      confirmDelete
+                        ? "border-red-700 text-red-400 bg-red-950/30 hover:bg-red-950/50"
+                        : "border-zinc-800 text-zinc-600 hover:text-red-400 hover:border-red-800"
+                    }`}
+                    title={confirmDelete ? "Confirm delete signal" : "Delete signal"}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    {confirmDelete ? "Confirm" : "Delete"}
+                  </button>
+                )}
+              </div>
             </div>
             <SheetTitle className="text-xl font-medium tracking-wide text-zinc-100 leading-snug">
               {signal.title}
@@ -80,7 +105,7 @@ export function SignalDetailDrawer({ signalId, open, onOpenChange }: SignalDetai
 
             <div>
               <h4 className="text-[10px] uppercase tracking-widest text-zinc-600 mb-3">Operational Response</h4>
-              <ResponseChips 
+              <ResponseChips
                 options={["ACKNOWLEDGED", "TRACKING", "VERIFYING", "ESCALATE", "LOGGED"]}
                 onSelect={() => {}}
               />
@@ -110,7 +135,7 @@ export function SignalDetailDrawer({ signalId, open, onOpenChange }: SignalDetai
 
         <div className="p-4 border-t border-zinc-800 bg-zinc-950">
           <div className="flex gap-2">
-            <Input 
+            <Input
               value={newMsg}
               onChange={(e) => setNewMsg(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}

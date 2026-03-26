@@ -1,22 +1,30 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { messagesTable } from "@workspace/db";
-import { desc } from "drizzle-orm";
+import { desc, eq, sql, isNull } from "drizzle-orm";
 import { requireAuth } from "../lib/auth.js";
-import { eq, sql } from "drizzle-orm";
 
 const router = Router();
 
-// GET /api/messages
-router.get("/", requireAuth, async (_req, res) => {
+// GET /api/messages?roomId=X
+router.get("/", requireAuth, async (req, res) => {
   try {
-    const msgs = await db.select().from(messagesTable).orderBy(messagesTable.createdAt);
+    const roomId = req.query.roomId ? parseInt(req.query.roomId as string) : null;
+    let msgs;
+    if (roomId) {
+      msgs = await db.select().from(messagesTable)
+        .where(eq(messagesTable.roomId, roomId))
+        .orderBy(messagesTable.createdAt);
+    } else {
+      msgs = await db.select().from(messagesTable).orderBy(messagesTable.createdAt);
+    }
     res.json(msgs.map(m => ({
       id: m.id,
       userId: m.userId,
       text: m.message,
       timestamp: m.createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       responses: m.responses,
+      roomId: m.roomId,
     })));
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
@@ -27,13 +35,14 @@ router.get("/", requireAuth, async (_req, res) => {
 router.post("/", requireAuth, async (req, res) => {
   try {
     const userId = (req as any).user.userId;
-    const { text, responses } = req.body;
+    const { text, responses, roomId } = req.body;
     if (!text?.trim()) { res.status(400).json({ error: "Message text required" }); return; }
 
     const [newMsg] = await db.insert(messagesTable).values({
       userId,
       message: text.trim(),
       responses: responses || [],
+      roomId: roomId || null,
     }).returning();
 
     res.status(201).json({
@@ -42,6 +51,7 @@ router.post("/", requireAuth, async (req, res) => {
       text: newMsg.message,
       timestamp: newMsg.createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       responses: newMsg.responses,
+      roomId: newMsg.roomId,
     });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
