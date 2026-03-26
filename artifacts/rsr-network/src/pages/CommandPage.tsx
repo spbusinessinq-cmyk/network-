@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StandingBadge } from "@/components/StandingBadge";
 
 export default function CommandPage() {
-  const { currentUserId, users, signals, cases, updateSignal, updateUser, addCase, updateCase, deleteCase, deleteSignal } = useStore();
+  const { currentUserId, users, signals, cases, updateSignal, updateUser, addCase, updateCase, deleteCase, deleteSignal, networkMessages, deleteNetworkMessage } = useStore();
   const currentUser = users.find(u => u.id === currentUserId);
   
   const [activeTab, setActiveTab] = useState("signals");
@@ -27,7 +27,7 @@ export default function CommandPage() {
   const [isSavingCase, setIsSavingCase] = useState(false);
 
   // --- CONFIRM DELETE STATE ---
-  const [confirmDelete, setConfirmDelete] = useState<{ type: "case" | "signal"; id: number; name: string } | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ type: "case" | "signal" | "message"; id: number; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [toast, setToast] = useState<{ msg: string; kind: "ok" | "err" } | null>(null);
 
@@ -43,6 +43,9 @@ export default function CommandPage() {
       if (confirmDelete.type === "case") {
         await deleteCase(confirmDelete.id);
         showToast("Case record removed.");
+      } else if (confirmDelete.type === "message") {
+        await deleteNetworkMessage(confirmDelete.id);
+        showToast("Transmission removed.");
       } else {
         await deleteSignal(confirmDelete.id);
         showToast("Signal removed.");
@@ -159,7 +162,7 @@ export default function CommandPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-full relative">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-full relative border-t-2 border-amber-500/40">
 
       {/* TOAST */}
       {toast && (
@@ -184,7 +187,7 @@ export default function CommandPage() {
               You are about to permanently remove:
             </p>
             <div className="bg-black/50 border border-zinc-800 p-3 mb-6 font-mono text-xs text-zinc-300 uppercase tracking-wider">
-              {confirmDelete.type === "case" ? "CASE" : "SIGNAL"}: {confirmDelete.name}
+              {confirmDelete.type === "case" ? "CASE" : confirmDelete.type === "signal" ? "SIGNAL" : "TRANSMISSION"}: {confirmDelete.name}
             </div>
             <p className="text-xs text-zinc-500 mb-6 uppercase tracking-wider">
               This action cannot be undone. All associated data will be removed.
@@ -215,6 +218,14 @@ export default function CommandPage() {
           <Shield className="w-6 h-6" /> NETWORK COMMAND CONSOLE
         </h1>
         <p className="text-sm text-zinc-400 font-mono">AUTHORITY LEVEL UNRESTRICTED. OVERSIGHT ACTIVE.</p>
+        <div className="flex gap-2 mt-3">
+          <span className="text-[9px] uppercase tracking-widest border border-amber-900/60 bg-amber-950/30 text-amber-400 px-2 py-0.5">
+            [{unverifiedCount} PENDING]
+          </span>
+          <span className="text-[9px] uppercase tracking-widest border border-red-900/60 bg-red-950/30 text-red-400 px-2 py-0.5">
+            [{cases.filter(c => c.status === "ESCALATED").length} ESCALATED]
+          </span>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -227,6 +238,9 @@ export default function CommandPage() {
           </TabsTrigger>
           <TabsTrigger value="personnel" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Personnel
+          </TabsTrigger>
+          <TabsTrigger value="messages" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+            Messages {networkMessages.length > 0 && <Badge className="ml-2 bg-zinc-900 text-zinc-400 border-zinc-800 rounded-none">{networkMessages.length}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="priority" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Priority Board {priorityCount > 0 && <Badge className="ml-2 bg-red-950 text-red-500 border-red-900 rounded-none">{priorityCount}</Badge>}
@@ -325,7 +339,7 @@ export default function CommandPage() {
           {viewState === "LIST" ? (
             <>
               <div className="flex justify-between items-end mb-6">
-                <h3 className="text-xs text-zinc-500 uppercase tracking-widest">Case Control</h3>
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-semibold border-b border-zinc-800/50 pb-2 mb-4">Case Control</h3>
                 <Button 
                   onClick={() => handleEditCase(null)}
                   className="bg-amber-950/20 text-amber-500 border border-amber-900/50 hover:bg-amber-900/30 rounded-none text-[10px] h-8 uppercase tracking-widest"
@@ -510,7 +524,7 @@ export default function CommandPage() {
                   <Button 
                     onClick={handleSaveCase}
                     disabled={isSavingCase || !caseForm.name || !caseForm.lead}
-                    className="bg-amber-500 text-amber-950 hover:bg-amber-400 rounded-none uppercase tracking-widest font-bold px-8"
+                    className="bg-amber-600 text-black border border-amber-400/60 hover:bg-amber-500 rounded-none uppercase tracking-widest font-bold px-8"
                   >
                     {isSavingCase ? "Saving..." : "Save Case Record"}
                   </Button>
@@ -599,6 +613,52 @@ export default function CommandPage() {
                 </div>
               ))}
            </div>
+        </TabsContent>
+
+        {/* --- MESSAGES TAB --- */}
+        <TabsContent value="messages" className="space-y-4">
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-semibold border-b border-zinc-800/50 pb-2 mb-4">
+            NETWORK COMMUNICATIONS OVERSIGHT
+          </h3>
+          <p className="text-xs text-zinc-500 mb-6">
+            Command review authority — all operator transmissions.
+          </p>
+          <div className="space-y-2">
+            {[...networkMessages].reverse().map(msg => (
+              <div key={msg.id} className="border border-zinc-800 bg-zinc-950/60 p-4 flex justify-between items-start gap-4 hover:bg-zinc-900/30 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-zinc-200 font-medium text-sm">{getUserAlias(msg.userId)}</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">{msg.userId}</span>
+                  </div>
+                  <div className="text-sm text-zinc-300">{msg.text}</div>
+                  {msg.responses && msg.responses.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {msg.responses.map((r, i) => (
+                        <span key={i} className="text-[9px] bg-zinc-900 border border-zinc-800 text-zinc-400 px-2 py-0.5 uppercase tracking-wider">
+                          RE: {r}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col items-end gap-3 shrink-0">
+                  <span className="text-[10px] text-zinc-600 font-mono">{msg.timestamp}</span>
+                  <button
+                    onClick={() => setConfirmDelete({ type: 'message', id: msg.id, name: msg.text.slice(0,50) })}
+                    className="text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {networkMessages.length === 0 && (
+              <div className="text-xs text-zinc-600 font-mono uppercase text-center p-8 border border-zinc-800 bg-zinc-950/40">
+                No active transmissions.
+              </div>
+            )}
+          </div>
         </TabsContent>
 
         {/* --- PRIORITY BOARD TAB --- */}

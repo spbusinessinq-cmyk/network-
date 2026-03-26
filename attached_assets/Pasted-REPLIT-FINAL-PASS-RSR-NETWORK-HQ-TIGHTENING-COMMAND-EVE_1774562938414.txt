@@ -1,0 +1,388 @@
+REPLIT FINAL PASS — RSR NETWORK HQ TIGHTENING / COMMAND EVENT FEED / MESSAGE CONTROL / DIVISION-GRADE POLISH
+
+You are upgrading the current **RSR NETWORK** build for the final tightening pass.
+
+The system is already real and functional:
+
+* real backend
+* real auth
+* founder login
+* real users
+* real signals
+* real cases
+* real network room messages
+* sign out
+* command CRUD
+* working welcome/access flow
+
+This pass is NOT for new platform architecture.
+This pass is NOT for backend expansion.
+This pass is NOT for random redesign ideas.
+
+This is the final tightening pass to make the app feel:
+
+* sharper
+* more tactical
+* more premium
+* more intentional
+* more like a command-grade system
+* less like a functional beta with chat spillover
+
+The target mood is:
+**dark, serious, tactical, clean, premium, division-grade command interface**
+
+Not a game clone.
+Not cheesy.
+Not overly orange.
+Not cluttered.
+But it should feel like something with real operational weight.
+
+---
+
+## PRIMARY OBJECTIVE
+
+Tighten the interface so the product feels fully intentional and command-focused.
+
+Main problems still to solve:
+
+* Network HQ still feels a little sparse/flat
+* the lower activity strip still reads too much like chat spillover
+* Command needs stronger oversight feel
+* message oversight/control should exist in Command
+* panels need a bit more density/hierarchy/punch
+* the whole thing needs a final tactical polish pass
+
+This pass should make the system feel like:
+
+* a private tactical headquarters
+* an operations console
+* a command dashboard with real authority
+* a premium intelligence / control surface
+
+---
+
+1. UPGRADE NETWORK HQ INTO A TRUE COMMAND OVERVIEW
+
+---
+
+Keep the current Network HQ structure, but tighten it significantly.
+
+Goals:
+
+* less empty space
+* stronger visual hierarchy
+* better density
+* more command presence
+* more immediate sense of “what matters right now”
+
+Improve:
+
+* the hero strip / top command summary
+* the layout balance between main content and side panels
+* priority signal emphasis
+* active case presentation
+* overall spacing rhythm
+* panel composition
+
+The HQ should feel like:
+
+* the central oversight page
+* the place the founder returns to constantly
+* the actual heartbeat of the network
+
+Not:
+
+* just big dark empty boxes with text inside
+
+---
+
+2. REPLACE THE CURRENT LOWER ACTIVITY STRIP WITH A REAL COMMAND EVENT FEED
+
+---
+
+The current lower strip is better than before, but it still feels too close to message spillover.
+
+Replace or refactor it into a true **Command Event Feed**.
+
+This feed should summarize important system events in a cleaner command-oriented way.
+
+Examples of good event types:
+
+* Signal submitted
+* Signal verified
+* Priority flag applied
+* Case created
+* Case updated
+* Case archived
+* Operator updated
+* Network Room message posted
+* Command action applied
+* Standing changed
+* Presence changed
+
+Each event row should feel compact, tactical, and readable.
+
+Recommended fields:
+
+* timestamp
+* event type
+* source operator
+* target object (signal/case/operator/message)
+* optional severity/state chip if useful
+
+Important:
+This should feel like system oversight, not like a raw chat replay.
+
+---
+
+3. KEEP RAW CONVERSATION IN NETWORK ROOM
+
+---
+
+The Network Room should remain the actual conversation space.
+
+Do not remove it.
+Do not overcomplicate it.
+
+But visually and structurally:
+
+* raw messages belong there
+* not on HQ
+* HQ should summarize network activity
+* Network Room should hold full operator comms
+
+Strengthen this separation clearly.
+
+---
+
+4. ADD MESSAGE OVERSIGHT INSIDE COMMAND
+
+---
+
+Add real message management inside Command.
+
+This is important.
+
+Command should be able to review and control Network Room messages in a dedicated oversight surface.
+
+Add a Messages area inside Command, or a clear message-management subsection.
+
+Command should be able to:
+
+* view recent network messages
+* see sender
+* see timestamp
+* delete a message
+* optionally hide/archive if useful
+* optionally jump/open in Network Room context if useful
+
+Do not make this feel like social media moderation.
+Make it feel like:
+
+* operator communications oversight
+* command review
+* network integrity control
+
+---
+
+5. TIGHTEN COMMAND LAYOUT AND POWER FEEL
+
+---
+
+The Command area works, but it still needs more authority and polish.
+
+Improve:
+
+* command header
+* panel grouping
+* section emphasis
+* action hierarchy
+* spacing
+* visual density
+* tab clarity
+* placement of important controls
+
+Command should feel like:
+
+* the highest authority surface in the app
+* the administrative heart of the network
+* the place real control happens
+
+Not:
+
+* just another dark tab set
+
+---
+
+6. ADD MORE TACTICAL VISUAL HIERARCHY
+
+---
+
+Without changing the design language, add a stronger tactical feel.
+
+Target:
+
+* something that feels premium and clean, like a high-end tactical interface
+* subtle “Division-grade” energy without becoming cosplay or game UI
+
+Use:
+
+* stronger panel contrast
+* slightly more intentional use of accent lines
+* refined emphasis on priority/command states
+* better header rhythm
+* cleaner spacing
+* stronger section breaks
+* more purposeful data grouping
+
+Avoid:
+
+* overglow
+* gimmicky scanning effects
+* fake sci-fi clutter
+* huge orange overload
+* game HUD nonsense
+
+It should feel **inspired by premium tactical UI**, not like a literal video game clone.
+
+---
+
+7. IMPROVE PRIORITY / ALERT READABILITY
+
+---
+
+Priority items should hit harder visually.
+
+Where useful:
+
+* stronger priority row treatment
+* cleaner contrast for urgent items
+* better distinction between normal vs command-relevant items
+* better placement of timestamps and status chips
+
+When the founder lands on HQ, the eye should immediately understand:
+
+* what needs attention
+* what changed
+* what command should review
+
+---
+
+8. IMPROVE SIDE PANEL USEFULNESS
+
+---
+
+The right-side support panels should feel more useful and less generic.
+
+Improve:
+
+* quick access block hierarchy
+* personnel summary density
+* command-state visibility
+* less dead padding
+* stronger “always useful” feel
+
+These side panels should feel like tactical support rails, not filler.
+
+---
+
+9. CLEAN UP SECTION DISTINCTION
+
+---
+
+Continue making each area feel distinct without redesigning everything.
+
+Desired section identity:
+
+* Network HQ = command overview
+* Network Room = communications feed
+* Signals = intake / review
+* Cases = dossier / investigations
+* Operators = personnel roster
+* Profile = operator dossier
+* Command = authority / control
+
+Tighten layouts and emphasis so this separation is more obvious.
+
+---
+
+10. MAINTAIN ALL CURRENT REAL FUNCTIONALITY
+
+---
+
+Do not break existing working flows.
+
+All of the following must remain intact:
+
+* founder login
+* sign out
+* registration
+* role-gated access
+* real signals
+* real cases
+* real messages
+* delete flows
+* command CRUD
+* persisted backend behavior
+
+This pass is polish + command-feel + oversight cleanup.
+Not functional rollback.
+
+---
+
+11. NO MAJOR NEW SYSTEMS
+
+---
+
+Do not burn time on:
+
+* backend rewrites
+* new auth architecture
+* notifications
+* file uploads
+* realtime sockets
+* unrelated feature expansion
+
+Only do what improves:
+
+* HQ tightness
+* command oversight feel
+* message oversight
+* layout hierarchy
+* final tactical quality
+
+---
+
+12. FINAL OUTPUT
+
+---
+
+Return a cleaned, tightened, final-quality build with:
+
+1. stronger Network HQ composition
+2. true Command Event Feed replacing raw chat-style activity spill
+3. clearer separation between HQ oversight and Network Room conversation
+4. message oversight/management inside Command
+5. sharper Command layout and authority feel
+6. better priority readability
+7. tighter side panel usefulness
+8. stronger tactical premium feel across the app
+9. preserved full real functionality
+
+---
+
+## FINAL RULE
+
+This pass should make RSR NETWORK feel like:
+
+**a premium tactical headquarters platform with real command oversight, structured event visibility, and controlled operator communications**
+
+It should not feel like:
+
+* a beta with leftover rough edges
+* a chat app with admin tabs
+* a flat dark dashboard
+* a literal video game clone
+
+Everything should communicate:
+**authority, tactical polish, control, hierarchy, and real command presence.**

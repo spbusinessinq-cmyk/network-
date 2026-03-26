@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { StandingBadge } from "@/components/StandingBadge";
 
+type EventEntry = { id: string; timestamp: string; type: string; label: string; actor: string; subject: string; severity: 'info' | 'priority' | 'command' };
+
 function getPersonalizedGreeting(standing: string) {
   switch (standing) {
     case "Command": return "COMMAND ACTIVE — AUTHORITY LEVEL UNRESTRICTED";
@@ -100,6 +102,33 @@ export default function CommandDeckPage() {
   const getUserAlias = (id: string) => users.find(u => u.id === id)?.alias || "UNKNOWN";
   const getUserStanding = (id: string) => users.find(u => u.id === id)?.standing || "Observer";
 
+  const eventFeed = useMemo(() => {
+    const evs: EventEntry[] = [];
+    
+    signals.slice(-5).forEach(s => {
+      let severity: 'info' | 'priority' | 'command' = 'info';
+      let label = 'SIGNAL SUBMITTED';
+      if (s.priority) { severity = 'priority'; label = 'SIGNAL PRIORITY'; }
+      else if (s.status === 'VERIFIED') { severity = 'command'; label = 'SIGNAL VERIFIED'; }
+      else if (s.status === 'ARCHIVED') { severity = 'info'; label = 'SIGNAL ARCHIVED'; }
+      evs.push({ id: `sig-${s.id}`, timestamp: s.timestamp, type: 'SIGNAL', label, actor: getUserAlias(s.submittedBy), subject: s.title, severity });
+    });
+    
+    cases.slice(-5).forEach(c => {
+      let severity: 'info' | 'priority' | 'command' = 'info';
+      let label = `CASE ${c.status}`;
+      if (c.status === 'ESCALATED') severity = 'priority';
+      else if (c.status === 'ACTIVE') severity = 'command';
+      evs.push({ id: `case-${c.id}`, timestamp: 'LIVE', type: 'CASE', label, actor: getUserAlias(c.lead), subject: c.name, severity });
+    });
+    
+    networkMessages.slice(-4).forEach(m => {
+      evs.push({ id: `msg-${m.id}`, timestamp: m.timestamp, type: 'MSG', label: 'TRANSMISSION', actor: getUserAlias(m.userId), subject: m.text.length > 40 ? m.text.slice(0, 40) + '...' : m.text, severity: 'info' });
+    });
+    
+    return evs.reverse().slice(0, 10);
+  }, [signals, cases, networkMessages, users]);
+
   return (
     <div className="h-full flex flex-col p-4 gap-4 overflow-hidden max-h-[calc(100vh-3.5rem)]">
       
@@ -113,7 +142,7 @@ export default function CommandDeckPage() {
         
         <div className="flex items-center gap-6 z-10 w-full md:w-auto">
           <div className="flex flex-col">
-            <div className="flex items-center gap-3 mb-1">
+            <div className={`flex items-center gap-3 mb-1 ${isCommand ? 'border-l-2 border-amber-500 pl-3' : ''}`}>
               <Shield className={`w-5 h-5 ${isCommand ? 'text-amber-500' : 'text-emerald-500'}`} />
               <h1 className="text-xl font-medium tracking-[0.15em] uppercase text-zinc-100">
                 Network Command Console
@@ -154,7 +183,7 @@ export default function CommandDeckPage() {
           </div>
           <div className="flex flex-col items-end justify-center ml-4 gap-1">
             <span className="text-xs font-mono tracking-widest text-zinc-400">{timeStr}</span>
-            <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${isCommand ? 'text-amber-500' : 'text-emerald-500/70'}`}>
+            <span className={`text-[10px] font-semibold tracking-[0.2em] uppercase ${isCommand ? 'text-amber-500' : 'text-emerald-500/70'}`}>
               {getPersonalizedGreeting(currentUser.standing)}
             </span>
           </div>
@@ -175,14 +204,14 @@ export default function CommandDeckPage() {
             className="flex-1 flex flex-col border border-zinc-800 bg-zinc-950/40 overflow-hidden"
           >
             <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between group">
-              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Priority Signals</h2>
+              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-300 border-l-2 border-zinc-700 pl-2">Priority Signals</h2>
               <Link href="/signals" className="text-[10px] text-emerald-500 hover:text-emerald-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                 → Inspect
               </Link>
             </div>
             <div className="flex-1 overflow-auto divide-y divide-zinc-800/50">
               {prioritySignals.map((signal) => (
-                <div key={signal.id} className="p-3 hover:bg-zinc-900/30 transition-colors flex items-center justify-between group">
+                <div key={signal.id} className={`p-3 hover:bg-zinc-900/30 transition-colors flex items-center justify-between group ${signal.priority ? 'border-l-2 border-l-red-500' : signal.status === 'VERIFIED' ? 'border-l-2 border-l-emerald-500/50' : ''}`}>
                   <div className="flex items-start gap-3 overflow-hidden">
                     <div className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${getSignalStatusColor(signal.status)}`} />
                     <div className="flex flex-col gap-1 min-w-0">
@@ -236,14 +265,14 @@ export default function CommandDeckPage() {
             className="flex-1 flex flex-col border border-zinc-800 bg-zinc-950/40 overflow-hidden"
           >
             <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between group">
-              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Active Cases</h2>
+              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-300 border-l-2 border-zinc-700 pl-2">Active Cases</h2>
               <Link href="/cases" className="text-[10px] text-emerald-500 hover:text-emerald-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                 → Enter
               </Link>
             </div>
             <div className="flex-1 overflow-auto divide-y divide-zinc-800/50">
               {cases.map((c) => (
-                <div key={c.id} className="p-3 hover:bg-zinc-900/30 transition-colors flex items-center justify-between group">
+                <div key={c.id} className={`p-3 hover:bg-zinc-900/30 transition-colors flex items-center justify-between group ${c.status === 'ESCALATED' ? 'bg-red-950/20' : ''}`}>
                   <div className="flex items-center gap-4">
                     <span className={`text-[9px] uppercase tracking-widest px-2 py-0.5 border w-24 text-center shrink-0 ${getCaseStatusColor(c.status)}`}>
                       {c.status}
@@ -282,7 +311,7 @@ export default function CommandDeckPage() {
             className="shrink-0 border border-zinc-800 bg-zinc-950/40 flex flex-col"
           >
             <div className="border-b border-zinc-800 bg-black/40 p-2 px-4">
-              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Quick Access</h2>
+              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-300 border-l-2 border-zinc-700 pl-2">Quick Access</h2>
             </div>
             <div className="p-3 flex flex-col gap-2">
               {[
@@ -293,10 +322,10 @@ export default function CommandDeckPage() {
                 { label: "Dossier", path: "/profile", icon: UserCircle, sub: "Operational record" },
                 ...(isCommand ? [{ label: "Command Authority", path: "/command", icon: Shield, sub: "Restricted access", isCommand: true }] : [])
               ].map((item, i) => (
-                <Link key={i} href={item.path} className={`flex items-center justify-between p-2.5 border transition-all duration-200 group ${
+                <Link key={i} href={item.path} className={`flex items-center justify-between p-2.5 border-l-2 border-y border-r transition-all duration-200 group ${
                   item.isCommand 
-                    ? "border-amber-900/30 bg-amber-950/10 hover:bg-amber-900/30 hover:border-amber-500/50 text-amber-500/80 hover:text-amber-400" 
-                    : "border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/80 hover:border-zinc-600 text-zinc-400 hover:text-zinc-200"
+                    ? "border-amber-900/30 border-l-amber-900/30 bg-amber-950/10 hover:bg-amber-900/30 hover:border-l-amber-600/50 text-amber-500/80 hover:text-amber-400" 
+                    : "border-zinc-800 border-l-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/80 hover:border-l-zinc-700 text-zinc-400 hover:text-zinc-200"
                 }`}>
                   <div className="flex items-center gap-3">
                     <item.icon className={`w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity ${item.isCommand ? 'text-amber-500' : 'text-emerald-500'}`} />
@@ -319,7 +348,7 @@ export default function CommandDeckPage() {
             className="flex-1 border border-zinc-800 bg-zinc-950/40 flex flex-col overflow-hidden min-h-[200px]"
           >
             <div className="shrink-0 border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between">
-              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Personnel</h2>
+              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-300 border-l-2 border-zinc-700 pl-2">Personnel</h2>
               <span className="text-[10px] text-zinc-500 font-mono">[{users.length}]</span>
             </div>
             <div className="flex-1 overflow-auto p-2 flex flex-col gap-1">
@@ -355,7 +384,7 @@ export default function CommandDeckPage() {
             className="shrink-0 border border-zinc-800 bg-zinc-950/40 flex flex-col"
           >
             <div className="border-b border-zinc-800 bg-black/40 p-2 px-4 flex items-center justify-between">
-              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Network Status</h2>
+              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-300 border-l-2 border-zinc-700 pl-2">Network Status</h2>
               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.8)]" title="Live Refresh Active" />
             </div>
             <div className="p-4 grid grid-cols-2 gap-y-3 gap-x-4">
@@ -391,31 +420,38 @@ export default function CommandDeckPage() {
         </div>
       </div>
 
-      {/* BOTTOM STRIP: MISSION LOG */}
+      {/* BOTTOM STRIP: COMMAND EVENT FEED */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="shrink-0 border border-zinc-800 bg-zinc-950/60 flex items-stretch"
+        className="shrink-0 border border-zinc-800 bg-zinc-950/60 flex items-stretch h-[44px] overflow-hidden"
       >
-        <div className="bg-black/60 px-4 border-r border-zinc-800 flex flex-col justify-center shrink-0 py-2.5 min-w-[120px]">
+        <div className="bg-black/60 px-4 border-r border-zinc-800 flex flex-col justify-center shrink-0 min-w-[120px]">
           <div className="flex items-center gap-2">
-            <Terminal className="w-3 h-3 text-emerald-500" />
-            <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Activity</h2>
+            <Shield className="w-3 h-3 text-amber-500" />
+            <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-400">Event Feed</h2>
           </div>
-          <div className="text-[9px] text-zinc-600 font-mono mt-0.5 uppercase tracking-wider">Recent</div>
+          <div className="text-[9px] text-zinc-600 font-mono mt-0.5 uppercase tracking-wider">Command Oversight</div>
         </div>
-        <div className="flex-1 flex items-center min-w-0 px-4 py-2">
-          <div className="flex items-center gap-0 w-full min-w-0 divide-x divide-zinc-800/60">
-            {networkMessages.slice(-4).map((msg, i) => (
-              <div key={msg.id} className={`flex items-center gap-2 text-[11px] font-mono min-w-0 ${i === 0 ? 'pr-4' : 'px-4'}`}>
-                <span className="text-zinc-600 shrink-0">{msg.timestamp}</span>
-                <span className="text-emerald-600 uppercase shrink-0">{getUserAlias(msg.userId)}</span>
-                <span className="text-zinc-500 shrink-0">/</span>
-                <span className="text-zinc-400 truncate">{msg.text}</span>
+        <div className="flex-1 flex items-center min-w-0 px-4">
+          <div className="flex items-center gap-4 w-full min-w-0 overflow-hidden">
+            {eventFeed.map((ev, i) => (
+              <div key={ev.id} className="flex items-center whitespace-nowrap border-r border-zinc-800/50 pr-4 mr-0 last:border-0 last:pr-0">
+                <span className={`text-[9px] uppercase tracking-widest mr-3 ${
+                  ev.severity === 'priority' ? 'text-red-400 bg-red-950/40 border border-red-900/40 px-1.5 py-0.5' :
+                  ev.severity === 'command' ? 'text-amber-400 bg-amber-950/30 border border-amber-900/30 px-1.5 py-0.5' :
+                  'text-zinc-400 bg-zinc-900/40 border border-zinc-800 px-1.5 py-0.5'
+                }`}>
+                  {ev.label}
+                </span>
+                <span className="text-emerald-600 uppercase text-[10px] mr-2">{ev.actor}</span>
+                <span className="text-zinc-700 mr-2">/</span>
+                <span className="text-zinc-300 text-[11px] max-w-[180px] truncate">{ev.subject}</span>
+                <span className="text-zinc-600 font-mono text-[9px] ml-2">{ev.timestamp}</span>
               </div>
             ))}
-            {networkMessages.length === 0 && (
+            {eventFeed.length === 0 && (
               <span className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest">No recent activity.</span>
             )}
           </div>
