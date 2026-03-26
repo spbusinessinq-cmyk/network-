@@ -11,10 +11,39 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
 - **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
+- **Database**: PostgreSQL (Replit built-in) + Drizzle ORM
+- **Auth**: JWT (jsonwebtoken + bcryptjs), token stored in localStorage
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+
+## RSR Network Backend
+
+### Database Tables
+- `users` — operator accounts (seeded: Black Rail/EIO/4451, Signal Echo/echo/echo, Operator Vanta/vanta/vanta, Cipher Nine/cipher/cipher)
+- `signals` — submitted signals with thread support
+- `cases` — case rooms with linked signals
+- `network_messages` — Network Room message feed
+- `signal_threads` — per-signal thread messages
+
+### API Routes (all under /api)
+- `POST /auth/login` — returns JWT + user
+- `POST /auth/register` — creates user + returns JWT
+- `POST /auth/verify` — validates token, returns user
+- `GET /users` — list all operators (auth required)
+- `GET /signals` + `POST /signals` + `PATCH /signals/:id` — signal CRUD
+- `POST /signals/:id/thread` — add thread message
+- `GET /cases` + `POST /cases` + `PATCH /cases/:id` — case CRUD
+- `GET /messages` + `POST /messages` — network room
+- `PATCH /messages/:id/response` — add response chip
+
+### Frontend API Layer
+- `src/lib/api.ts` — all fetch helpers, session management
+- `src/lib/store.tsx` — React context backed by real API calls, session persisted via localStorage JWT
+- Vite dev proxy: `/api` → `http://localhost:8080`
+
+### Seed Script
+- `scripts/seed-rsr.mjs` — run `node scripts/seed-rsr.mjs` to re-seed
 
 ## Structure
 

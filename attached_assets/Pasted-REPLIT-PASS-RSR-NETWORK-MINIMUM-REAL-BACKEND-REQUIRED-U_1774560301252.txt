@@ -1,0 +1,297 @@
+REPLIT PASS — RSR NETWORK MINIMUM REAL BACKEND + REQUIRED UI WIRING
+
+You are upgrading the current RSR NETWORK build.
+
+This pass is NOT for a major redesign.
+This pass is for building the minimum real backend needed to make the platform persistent and usable.
+
+Use the existing UI.
+Do not waste time on visual redesign.
+Only make UI changes that are required to support real authentication, persistence, founder access, and real data rendering.
+
+---
+
+## PRIMARY OBJECTIVE
+
+Build a thin real backend for RSR NETWORK and wire the current UI into it.
+
+Preferred stack:
+
+* Supabase Auth
+* Supabase Postgres
+* frontend session handling
+* simple protected founder/command access logic
+
+The goal is to move the app from local/seeded behavior to real persistence.
+
+---
+
+## THIS PASS MUST INCLUDE UI WIRING
+
+Do not only build database/backend code.
+
+Also wire the current UI to the real backend so the app actually works end-to-end.
+
+Required UI wiring includes:
+
+* login screen connected to real auth
+* session-aware app entry
+* founder account loading correctly into the interface
+* signal submit form writing to database
+* signal feed reading from database
+* cases reading from database
+* network room messages writing/reading from database if implemented
+* command visibility based on real founder/session state
+
+Only make UI changes that are necessary for these flows to work.
+
+---
+
+## REQUIRED FEATURES
+
+Build these first:
+
+1. real login/auth flow
+2. persistent founder account
+3. persistent users table
+4. persistent signals table
+5. persistent cases table
+6. persistent network room messages table if time allows
+
+If time remains after core items, add:
+
+* signal threads
+* case room messages / notes
+
+---
+
+1. AUTH / LOGIN
+
+---
+
+Replace the fake/local login with a real login flow.
+
+Use a real auth/session system.
+
+Founder account must exist and work.
+
+Founder credentials:
+
+* username: EIO
+* password: 4451
+
+After login, founder should load into the command identity:
+
+* alias: Black Rail
+* standing: Command
+* credential class: Gold
+* access class: Elevated
+* presence: Command Active
+* rsr_id: RSR-000001
+
+Gold remains founder-only.
+
+UI requirement:
+
+* login screen must authenticate for real
+* app must persist session
+* founder must land inside the app with command access visible
+
+---
+
+2. USERS TABLE
+
+---
+
+Create a real users table with fields like:
+
+* id
+* username
+* alias
+* bio
+* status_line
+* rsr_id
+* role
+* standing
+* grade
+* credential_class
+* access_class
+* presence
+* is_founder
+* created_at
+
+Normal user onboarding should create real user records.
+
+UI requirement:
+
+* join/create profile flow should write a real user record
+* logged-in user identity should render from database-backed data
+
+---
+
+3. SIGNALS TABLE
+
+---
+
+Create real persistent signal storage.
+
+Fields:
+
+* id
+* title
+* description
+* category
+* location
+* status
+* priority
+* submitted_by
+* case_id
+* created_at
+
+Signal submission form should create real rows.
+Signal feed should load from the database.
+
+UI requirement:
+
+* submit signal form must save real data
+* signal feed must render real database results
+
+---
+
+4. CASES TABLE
+
+---
+
+Create real cases storage.
+
+Fields:
+
+* id
+* title
+* summary
+* status
+* lead_user_id
+* created_at
+
+Case pages should read from this table.
+
+UI requirement:
+
+* case list and case detail areas should render from stored data
+
+---
+
+5. NETWORK ROOM MESSAGES
+
+---
+
+If possible in this pass, add persistent Network Room messages.
+
+Fields:
+
+* id
+* user_id
+* message
+* created_at
+
+Message posting should save and reload from the database.
+
+This does not need realtime yet.
+Simple fetch + render is enough.
+
+UI requirement:
+
+* message submit box posts real messages
+* message list renders saved messages
+
+---
+
+6. OPTIONAL TABLES IF TIME ALLOWS
+
+---
+
+Only after the core is complete, add:
+
+signal_threads
+
+* id
+* signal_id
+* user_id
+* message
+* created_at
+
+case_messages
+
+* id
+* case_id
+* user_id
+* message
+* created_at
+
+Do not prioritize these above auth/users/signals/cases.
+
+---
+
+7. FOUNDER ACCESS RULES
+
+---
+
+Founder / command account should:
+
+* see Command nav
+* retain gold credential
+* retain command access
+* retain command identity styling
+
+Normal users should not get gold or command access.
+
+UI requirement:
+
+* command UI visibility must be based on real session/user state
+
+---
+
+8. KEEP UI MOSTLY AS-IS
+
+---
+
+Do not spend this pass redesigning.
+Use the existing UI and wire it to real data.
+
+Focus on:
+
+* persistence
+* authentication
+* data loading
+* save flows
+* founder access
+* minimum required UI logic changes
+
+---
+
+9. FINAL GOAL
+
+---
+
+By the end of this pass, the app should no longer depend on fake local-only data for core operations.
+
+At minimum, these must be real:
+
+* founder login
+* user records
+* signals
+* cases
+
+And ideally:
+
+* network room messages
+
+---
+
+## FINAL RULE
+
+This pass is about making RSR NETWORK function for real.
+
+Prioritize:
+**auth, persistence, founder identity, and core UI/backend wiring**
+over polish.

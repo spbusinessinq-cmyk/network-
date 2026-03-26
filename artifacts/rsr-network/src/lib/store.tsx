@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import {
+  apiLogin, apiRegister, apiVerifyToken, apiGetUsers, apiGetSignals, apiGetCases,
+  apiGetMessages, apiCreateSignal, apiUpdateSignal, apiAddSignalThread, apiCreateCase,
+  apiUpdateCase, apiSendMessage, apiAddMessageResponse, saveSession, clearSession, getSavedToken,
+  type ApiUser, type ApiSignal, type ApiCase, type ApiMessage,
+} from "./api";
 
 export type Standing = "Observer" | "Scout" | "Operator" | "Analyst" | "Command";
 export type CardStyle = "obsidian" | "steel" | "ice" | "graphite" | "gold";
@@ -8,19 +14,19 @@ export interface User {
   alias: string;
   role: string;
   standing: Standing;
+  cardStyle: CardStyle;
+  bio: string;
+  presence: string;
+  joinDate: string;
   grade: "I" | "II" | "III" | null;
   username: string;
-  password?: string;
   accessClass: string;
   credentialMeaning: string;
   statusLine: string;
   contributionCount: number;
   promotionStatus: "Eligible" | "Under Review" | "Not Eligible" | "Command Reserved";
   reviewStatus: "Approved" | "Pending" | "Active" | "Command Assigned";
-  cardStyle: CardStyle;
-  bio: string;
-  presence: string;
-  joinDate: string;
+  isFounder?: boolean;
 }
 
 export interface Signal {
@@ -55,19 +61,308 @@ export interface ThreadMessage {
   responses?: string[];
 }
 
+function mapApiUser(u: ApiUser): User {
+  return {
+    id: u.id,
+    alias: u.alias,
+    role: u.role,
+    standing: u.standing as Standing,
+    cardStyle: u.cardStyle as CardStyle,
+    bio: u.bio,
+    presence: u.presence,
+    joinDate: u.joinDate,
+    grade: u.grade as "I" | "II" | "III" | null,
+    username: u.username,
+    accessClass: u.accessClass,
+    credentialMeaning: u.credentialMeaning,
+    statusLine: u.statusLine,
+    contributionCount: u.contributionCount,
+    promotionStatus: u.promotionStatus as User["promotionStatus"],
+    reviewStatus: u.reviewStatus as User["reviewStatus"],
+    isFounder: u.isFounder,
+  };
+}
+
+function mapApiSignal(s: ApiSignal): Signal {
+  return {
+    id: s.id,
+    title: s.title,
+    category: s.category,
+    location: s.location,
+    submittedBy: s.submittedBy,
+    status: s.status as Signal["status"],
+    priority: s.priority,
+    caseId: s.caseId,
+    timestamp: s.timestamp,
+    description: s.description,
+    thread: s.thread.map(t => ({ id: t.id, userId: t.userId, text: t.text, timestamp: t.timestamp })),
+  };
+}
+
+function mapApiCase(c: ApiCase): Case {
+  return {
+    id: c.id,
+    name: c.name,
+    status: c.status as Case["status"],
+    lead: c.lead,
+    summary: c.summary,
+    linkedSignals: c.linkedSignals,
+    notes: c.notes,
+  };
+}
+
+function mapApiMessage(m: ApiMessage): ThreadMessage {
+  return { id: m.id, userId: m.userId, text: m.text, timestamp: m.timestamp, responses: m.responses };
+}
+
 interface AppState {
   users: User[];
   signals: Signal[];
   cases: Case[];
   networkMessages: ThreadMessage[];
   currentUserId: string | null;
+  isLoading: boolean;
+  isInitialized: boolean;
 }
+
+interface AppContextType extends AppState {
+  loginUser: (username: string, password: string) => Promise<boolean>;
+  registerUser: (alias: string, bio: string, cardStyle: CardStyle) => Promise<User | null>;
+  logoutUser: () => void;
+  addUser: (user: User) => void;
+  updateUser: (id: string, updates: Partial<User>) => void;
+  addSignal: (signal: Omit<Signal, "id" | "timestamp" | "thread">) => Promise<void>;
+  updateSignal: (id: number, updates: Partial<Signal>) => Promise<void>;
+  addSignalThreadMessage: (signalId: number, msg: Omit<ThreadMessage, "id" | "timestamp">) => Promise<void>;
+  addCase: (newCase: Omit<Case, "id">) => Promise<void>;
+  updateCase: (id: number, updates: Partial<Case>) => Promise<void>;
+  addNetworkMessage: (msg: Omit<ThreadMessage, "id" | "timestamp">) => Promise<void>;
+  addMessageResponse: (msgId: number, response: string) => Promise<void>;
+  refreshSignals: () => Promise<void>;
+  refreshMessages: () => Promise<void>;
+}
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<AppState>({
+    users: [],
+    signals: [],
+    cases: [],
+    networkMessages: [],
+    currentUserId: null,
+    isLoading: true,
+    isInitialized: false,
+  });
+
+  // Initialize: check saved session and load data
+  useEffect(() => {
+    async function init() {
+      const token = getSavedToken();
+      if (token) {
+        try {
+          const { user } = await apiVerifyToken(token);
+          const [users, signals, cases, messages] = await Promise.all([
+            apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(),
+          ]);
+          setState({
+            users: users.map(mapApiUser),
+            signals: signals.map(mapApiSignal),
+            cases: cases.map(mapApiCase),
+            networkMessages: messages.map(mapApiMessage),
+            currentUserId: user.id,
+            isLoading: false,
+            isInitialized: true,
+          });
+          return;
+        } catch {
+          clearSession();
+        }
+      }
+      setState(s => ({ ...s, isLoading: false, isInitialized: true }));
+    }
+    init();
+  }, []);
+
+  const loginUser = useCallback(async (username: string, password: string): Promise<boolean> => {
+    try {
+      const { token, user } = await apiLogin(username, password);
+      saveSession(token);
+      const [users, signals, cases, messages] = await Promise.all([
+        apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(),
+      ]);
+      setState(s => ({
+        ...s,
+        users: users.map(mapApiUser),
+        signals: signals.map(mapApiSignal),
+        cases: cases.map(mapApiCase),
+        networkMessages: messages.map(mapApiMessage),
+        currentUserId: user.id,
+      }));
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const registerUser = useCallback(async (alias: string, bio: string, cardStyle: CardStyle): Promise<User | null> => {
+    try {
+      const { token, user } = await apiRegister(alias, bio, cardStyle);
+      saveSession(token);
+      const [users, signals, cases, messages] = await Promise.all([
+        apiGetUsers(), apiGetSignals(), apiGetCases(), apiGetMessages(),
+      ]);
+      const mapped = mapApiUser(user);
+      setState(s => ({
+        ...s,
+        users: users.map(mapApiUser),
+        signals: signals.map(mapApiSignal),
+        cases: cases.map(mapApiCase),
+        networkMessages: messages.map(mapApiMessage),
+        currentUserId: user.id,
+      }));
+      return mapped;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Registration failed";
+      throw new Error(msg);
+    }
+  }, []);
+
+  const logoutUser = useCallback(() => {
+    clearSession();
+    setState(s => ({ ...s, currentUserId: null, users: [], signals: [], cases: [], networkMessages: [] }));
+  }, []);
+
+  const addUser = useCallback((user: User) => {
+    setState(s => ({ ...s, users: [...s.users, user] }));
+  }, []);
+
+  const updateUser = useCallback((id: string, updates: Partial<User>) => {
+    setState(s => ({ ...s, users: s.users.map(u => u.id === id ? { ...u, ...updates } : u) }));
+  }, []);
+
+  const refreshSignals = useCallback(async () => {
+    try {
+      const signals = await apiGetSignals();
+      setState(s => ({ ...s, signals: signals.map(mapApiSignal) }));
+    } catch {}
+  }, []);
+
+  const refreshMessages = useCallback(async () => {
+    try {
+      const messages = await apiGetMessages();
+      setState(s => ({ ...s, networkMessages: messages.map(mapApiMessage) }));
+    } catch {}
+  }, []);
+
+  const addSignal = useCallback(async (signalData: Omit<Signal, "id" | "timestamp" | "thread">) => {
+    const newSig = await apiCreateSignal({
+      title: signalData.title,
+      description: signalData.description || "",
+      category: signalData.category,
+      location: signalData.location,
+      status: signalData.status,
+      priority: signalData.priority,
+      caseId: signalData.caseId,
+    });
+    setState(s => ({ ...s, signals: [mapApiSignal(newSig), ...s.signals] }));
+  }, []);
+
+  const updateSignal = useCallback(async (id: number, updates: Partial<Signal>) => {
+    await apiUpdateSignal(id, {
+      status: updates.status,
+      priority: updates.priority,
+      caseId: updates.caseId,
+    });
+    setState(s => ({ ...s, signals: s.signals.map(sig => sig.id === id ? { ...sig, ...updates } : sig) }));
+  }, []);
+
+  const addSignalThreadMessage = useCallback(async (signalId: number, msgInfo: Omit<ThreadMessage, "id" | "timestamp">) => {
+    const newMsg = await apiAddSignalThread(signalId, msgInfo.text);
+    setState(s => ({
+      ...s,
+      signals: s.signals.map(sig => {
+        if (sig.id === signalId) {
+          return { ...sig, thread: [...sig.thread, { id: newMsg.id, userId: newMsg.userId, text: newMsg.text, timestamp: newMsg.timestamp }] };
+        }
+        return sig;
+      }),
+    }));
+  }, []);
+
+  const addCase = useCallback(async (caseData: Omit<Case, "id">) => {
+    const newCase = await apiCreateCase({
+      name: caseData.name,
+      summary: caseData.summary,
+      status: caseData.status,
+      lead: caseData.lead,
+      notes: caseData.notes,
+    });
+    setState(s => ({ ...s, cases: [mapApiCase(newCase), ...s.cases] }));
+  }, []);
+
+  const updateCase = useCallback(async (id: number, updates: Partial<Case>) => {
+    await apiUpdateCase(id, {
+      status: updates.status,
+      notes: updates.notes,
+      summary: updates.summary,
+    });
+    setState(s => ({ ...s, cases: s.cases.map(c => c.id === id ? { ...c, ...updates } : c) }));
+  }, []);
+
+  const addNetworkMessage = useCallback(async (msgInfo: Omit<ThreadMessage, "id" | "timestamp">) => {
+    const newMsg = await apiSendMessage(msgInfo.text);
+    setState(s => ({ ...s, networkMessages: [...s.networkMessages, mapApiMessage(newMsg)] }));
+  }, []);
+
+  const addMessageResponse = useCallback(async (msgId: number, response: string) => {
+    await apiAddMessageResponse(msgId, response);
+    setState(s => ({
+      ...s,
+      networkMessages: s.networkMessages.map(m => {
+        if (m.id === msgId) {
+          const resps = m.responses || [];
+          if (!resps.includes(response)) return { ...m, responses: [...resps, response] };
+        }
+        return m;
+      }),
+    }));
+  }, []);
+
+  return (
+    <AppContext.Provider value={{
+      ...state,
+      loginUser,
+      registerUser,
+      logoutUser,
+      addUser,
+      updateUser,
+      addSignal,
+      updateSignal,
+      addSignalThreadMessage,
+      addCase,
+      updateCase,
+      addNetworkMessage,
+      addMessageResponse,
+      refreshSignals,
+      refreshMessages,
+    }}>
+      {children}
+    </AppContext.Provider>
+  );
+}
+
+export function useStore() {
+  const context = useContext(AppContext);
+  if (context === undefined) throw new Error("useStore must be used within an AppProvider");
+  return context;
+}
+
+// ---- Doctrine constants (unchanged) ----
 
 export const STANDING_DOCTRINE = {
   Observer: {
-    label: "Observer",
-    tier: 1,
-    badgeColor: "zinc",
+    label: "Observer", tier: 1, badgeColor: "zinc",
     description: "Entry-level network standing. Intake and observation with limited participation. Early credential state.",
     access: "Read access to Signal Feed and Network Room. No case participation.",
     trust: "Unverified. Standing under evaluation.",
@@ -75,9 +370,7 @@ export const STANDING_DOCTRINE = {
     advancement: "Complete profile, submit valid signals, demonstrate appropriate Network Room conduct."
   },
   Scout: {
-    label: "Scout",
-    tier: 2,
-    badgeColor: "slate",
+    label: "Scout", tier: 2, badgeColor: "slate",
     description: "Early trusted contributor. Active room participation, signal engagement, and growing trust.",
     access: "Signal submission, Network Room participation, limited case viewing.",
     trust: "Initial trust established through contribution.",
@@ -85,9 +378,7 @@ export const STANDING_DOCTRINE = {
     advancement: "Contribute multiple useful signals, engage in case discussion, maintain stable standing."
   },
   Operator: {
-    label: "Operator",
-    tier: 3,
-    badgeColor: "red",
+    label: "Operator", tier: 3, badgeColor: "red",
     description: "Proven field-level contributor. Broader room access, case participation, and stronger operational standing.",
     access: "Full signal submission, case room participation, cross-room access.",
     trust: "Operational trust. Contribution record verified.",
@@ -95,9 +386,7 @@ export const STANDING_DOCTRINE = {
     advancement: "Support verified threads, contribute meaningful case notes, assist in review synthesis."
   },
   Analyst: {
-    label: "Analyst",
-    tier: 4,
-    badgeColor: "white",
+    label: "Analyst", tier: 4, badgeColor: "white",
     description: "High-trust review and synthesis role. Verification, case support, refinement, and signal interpretation.",
     access: "Verification authority, case lead candidacy, signal routing.",
     trust: "Elevated trust. Review authority active.",
@@ -105,9 +394,7 @@ export const STANDING_DOCTRINE = {
     advancement: "Command review and assignment required. Not standard progression."
   },
   Command: {
-    label: "Command",
-    tier: 5,
-    badgeColor: "gold",
+    label: "Command", tier: 5, badgeColor: "gold",
     description: "Reserved executive authority. Oversight, access control, network direction, and founder-level standing.",
     access: "Full network authority. Command section unrestricted. User and case control.",
     trust: "Absolute. Founder-assigned.",
@@ -123,316 +410,3 @@ export const CREDENTIAL_DOCTRINE = {
   graphite: { name: "Graphite", description: "Neutral general network credential. Broad utility, minimal specialization." },
   gold: { name: "Gold", description: "Restricted command credential. Founder-class authority. Not user-selectable." }
 } as const;
-
-const initialUsers: User[] = [
-  {
-    alias: "Black Rail",
-    id: "RSR-000001",
-    role: "Founder",
-    username: "EIO",
-    password: "4451",
-    grade: null,
-    accessClass: "ELEVATED",
-    standing: "Command",
-    cardStyle: "gold",
-    credentialMeaning: "Restricted command credential. Founder-class authority.",
-    statusLine: "Network oversight active.",
-    contributionCount: 47,
-    promotionStatus: "Command Reserved",
-    reviewStatus: "Command Assigned",
-    bio: "Network founder. Command authority.",
-    presence: "COMMAND ACTIVE",
-    joinDate: "2025-11-01",
-  },
-  {
-    alias: "Signal Echo",
-    id: "RSR-000103",
-    role: "Analyst",
-    username: "echo",
-    password: "echo",
-    grade: "II",
-    accessClass: "FIELD",
-    standing: "Analyst",
-    cardStyle: "obsidian",
-    credentialMeaning: "Verification and intelligence review credential.",
-    statusLine: "Pattern analysis in progress.",
-    contributionCount: 31,
-    promotionStatus: "Under Review",
-    reviewStatus: "Active",
-    bio: "Signal verification and pattern analysis.",
-    presence: "Reviewing Signals",
-    joinDate: "2026-01-08",
-  },
-  {
-    alias: "Operator Vanta",
-    id: "RSR-000214",
-    role: "Scout",
-    username: "vanta",
-    password: "vanta",
-    grade: "I",
-    accessClass: "STANDARD",
-    standing: "Scout",
-    cardStyle: "steel",
-    credentialMeaning: "Structured support and field-aligned credential.",
-    statusLine: "Field observation active.",
-    contributionCount: 12,
-    promotionStatus: "Eligible",
-    reviewStatus: "Pending",
-    bio: "Field observation and signal intake.",
-    presence: "Online",
-    joinDate: "2026-03-10",
-  },
-  {
-    alias: "Cipher Nine",
-    id: "RSR-000089",
-    role: "Operator",
-    username: "cipher",
-    password: "cipher",
-    grade: "III",
-    accessClass: "FIELD",
-    standing: "Operator",
-    cardStyle: "graphite",
-    credentialMeaning: "Low-signature operational credential.",
-    statusLine: "Infrastructure surveillance ongoing.",
-    contributionCount: 24,
-    promotionStatus: "Not Eligible",
-    reviewStatus: "Active",
-    bio: "Infrastructure and logistics surveillance.",
-    presence: "In Case Room",
-    joinDate: "2026-01-22",
-  },
-];
-
-const initialSignals: Signal[] = [
-  {
-    id: 1,
-    title: "Procurement anomaly flagged at downtown contract node",
-    category: "Political",
-    location: "Los Angeles",
-    submittedBy: "RSR-000214",
-    status: "VERIFIED",
-    priority: true,
-    caseId: 1,
-    timestamp: "08:42",
-    description: "Source points to linked vendor activity and timing overlap with public works revisions. High probability of systemic manipulation.",
-    thread: [
-      { id: 101, userId: "RSR-000103", text: "Cross-referencing vendor lists now.", timestamp: "08:45" }
-    ]
-  },
-  {
-    id: 2,
-    title: "Permit cluster activity near federal corridor",
-    category: "Local",
-    location: "Wilshire Corridor",
-    submittedBy: "RSR-000103",
-    status: "VERIFIED",
-    priority: false,
-    caseId: 2,
-    timestamp: "07:16",
-    description: "Permit clustering suggests coordinated street action window later this week. Monitoring organizer channels for confirmation.",
-    thread: []
-  },
-  {
-    id: 3,
-    title: "Logistics slowdown signal — port disruption pattern",
-    category: "Economic",
-    location: "Port Node",
-    submittedBy: "RSR-000089",
-    status: "UNVERIFIED",
-    priority: false,
-    caseId: null,
-    timestamp: "06:29",
-    description: "Several shipping inputs indicate soft disruption and delayed fulfillment pathing. May be early indicator of labor action.",
-    thread: []
-  },
-];
-
-const initialCases: Case[] = [
-  {
-    id: 1,
-    name: "LA Infrastructure Watch",
-    status: "ACTIVE",
-    lead: "RSR-000001",
-    summary: "Urban contract irregularities, ownership mapping, and incident clustering.",
-    linkedSignals: [1],
-    notes: ["Money flow mapping in progress.", "FOIA targets identified."],
-  },
-  {
-    id: 2,
-    name: "Federal Corridor Monitoring",
-    status: "MONITORING",
-    lead: "RSR-000103",
-    summary: "Permit activity, coordination indicators, and escalation tracking.",
-    linkedSignals: [2],
-    notes: ["Monitor permit updates.", "Track organizer pattern shifts."],
-  },
-];
-
-const initialNetworkMessages: ThreadMessage[] = [
-  { id: 1, userId: "RSR-000001", text: "Network operational. Stand by for inbound signals.", timestamp: "06:00", responses: ["ACKNOWLEDGED"] },
-  { id: 2, userId: "RSR-000214", text: "Vanta online. Moving to observation point.", timestamp: "06:15", responses: ["LOGGED"] },
-  { id: 3, userId: "RSR-000103", text: "Verifying overnight stream. High noise ratio.", timestamp: "07:05", responses: ["TRACKING"] },
-];
-
-interface AppContextType extends AppState {
-  setCurrentUserId: (id: string | null) => void;
-  loginUser: (username: string, password?: string) => boolean;
-  logoutUser: () => void;
-  addUser: (user: User) => void;
-  updateUser: (id: string, updates: Partial<User>) => void;
-  addSignal: (signal: Omit<Signal, "id" | "timestamp" | "thread">) => void;
-  updateSignal: (id: number, updates: Partial<Signal>) => void;
-  addSignalThreadMessage: (signalId: number, msg: Omit<ThreadMessage, "id" | "timestamp">) => void;
-  addCase: (newCase: Omit<Case, "id">) => void;
-  updateCase: (id: number, updates: Partial<Case>) => void;
-  addNetworkMessage: (msg: Omit<ThreadMessage, "id" | "timestamp">) => void;
-  addMessageResponse: (msgId: number, response: string) => void;
-}
-
-const AppContext = createContext<AppContextType | undefined>(undefined);
-
-export function AppProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AppState>({
-    users: initialUsers,
-    signals: initialSignals,
-    cases: initialCases,
-    networkMessages: initialNetworkMessages,
-    currentUserId: null,
-  });
-
-  const setCurrentUserId = (id: string | null) => setState((s) => ({ ...s, currentUserId: id }));
-
-  const loginUser = (username: string, password?: string): boolean => {
-    const match = state.users.find(u => 
-      u.username.toLowerCase() === username.toLowerCase() && 
-      (password ? u.password === password : true)
-    );
-    if (match) {
-      setCurrentUserId(match.id);
-      return true;
-    }
-    return false;
-  };
-
-  const logoutUser = () => {
-    setCurrentUserId(null);
-  };
-
-  const addUser = (user: User) => setState((s) => ({ ...s, users: [...s.users, user] }));
-  
-  const updateUser = (id: string, updates: Partial<User>) =>
-    setState((s) => ({
-      ...s,
-      users: s.users.map((u) => (u.id === id ? { ...u, ...updates } : u)),
-    }));
-
-  const addSignal = (signalInfo: Omit<Signal, "id" | "timestamp" | "thread">) => {
-    setState((s) => {
-      const newSignal: Signal = {
-        ...signalInfo,
-        id: Math.max(0, ...s.signals.map((sig) => sig.id)) + 1,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        thread: [],
-      };
-      return { ...s, signals: [newSignal, ...s.signals] };
-    });
-  };
-
-  const updateSignal = (id: number, updates: Partial<Signal>) =>
-    setState((s) => ({
-      ...s,
-      signals: s.signals.map((sig) => (sig.id === id ? { ...sig, ...updates } : sig)),
-    }));
-
-  const addSignalThreadMessage = (signalId: number, msgInfo: Omit<ThreadMessage, "id" | "timestamp">) => {
-    setState((s) => {
-      return {
-        ...s,
-        signals: s.signals.map((sig) => {
-          if (sig.id === signalId) {
-            const newMsg: ThreadMessage = {
-              ...msgInfo,
-              id: Date.now(),
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            return { ...sig, thread: [...sig.thread, newMsg] };
-          }
-          return sig;
-        })
-      };
-    });
-  };
-
-  const addCase = (caseInfo: Omit<Case, "id">) => {
-    setState((s) => {
-      const newCase: Case = {
-        ...caseInfo,
-        id: Math.max(0, ...s.cases.map((c) => c.id)) + 1,
-      };
-      return { ...s, cases: [newCase, ...s.cases] };
-    });
-  };
-
-  const updateCase = (id: number, updates: Partial<Case>) =>
-    setState((s) => ({
-      ...s,
-      cases: s.cases.map((c) => (c.id === id ? { ...c, ...updates } : c)),
-    }));
-
-  const addNetworkMessage = (msgInfo: Omit<ThreadMessage, "id" | "timestamp">) => {
-    setState((s) => {
-      const newMsg: ThreadMessage = {
-        ...msgInfo,
-        id: Date.now(),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        responses: []
-      };
-      return { ...s, networkMessages: [...s.networkMessages, newMsg] };
-    });
-  };
-
-  const addMessageResponse = (msgId: number, response: string) => {
-    setState((s) => ({
-      ...s,
-      networkMessages: s.networkMessages.map((m) => {
-        if (m.id === msgId) {
-          const resps = m.responses || [];
-          if (!resps.includes(response)) {
-            return { ...m, responses: [...resps, response] };
-          }
-        }
-        return m;
-      })
-    }));
-  };
-
-  return (
-    <AppContext.Provider
-      value={{
-        ...state,
-        setCurrentUserId,
-        loginUser,
-        logoutUser,
-        addUser,
-        updateUser,
-        addSignal,
-        updateSignal,
-        addSignalThreadMessage,
-        addCase,
-        updateCase,
-        addNetworkMessage,
-        addMessageResponse
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
-}
-
-export function useStore() {
-  const context = useContext(AppContext);
-  if (context === undefined) {
-    throw new Error("useStore must be used within an AppProvider");
-  }
-  return context;
-}

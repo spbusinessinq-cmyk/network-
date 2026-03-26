@@ -10,65 +10,60 @@ import { IDCard } from "@/components/IDCard";
 
 export default function AccessGate() {
   const [, setLocation] = useLocation();
-  const { loginUser, addUser, setCurrentUserId } = useStore();
+  const { loginUser, registerUser } = useStore();
   
   const [view, setView] = useState<"login" | "join">("login");
   
-  // Login state
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  // Join state
   const [alias, setAlias] = useState("");
   const [bio, setBio] = useState("");
   const [cardStyle, setCardStyle] = useState<CardStyle>("steel");
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [joinError, setJoinError] = useState("");
   const [issuing, setIssuing] = useState(false);
   const [generatedUser, setGeneratedUser] = useState<any>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(false);
-    
-    if (loginUser(loginUsername, loginPassword)) {
-      setLocation("/");
-    } else {
+    setLoginLoading(true);
+    try {
+      const success = await loginUser(loginUsername, loginPassword);
+      if (success) {
+        setLocation("/");
+      } else {
+        setLoginError(true);
+      }
+    } catch {
       setLoginError(true);
+    } finally {
+      setLoginLoading(false);
     }
   };
 
-  const handleJoin = (e: React.FormEvent) => {
+  const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!alias.trim()) return;
-
-    const newId = `RSR-${String(Math.floor(Math.random() * 900000) + 100000)}`;
-    const user = {
-      id: newId,
-      alias,
-      username: alias.toLowerCase().replace(/\s+/g, ""),
-      role: "Viewer",
-      standing: "Observer" as const,
-      grade: "I" as const,
-      accessClass: "STANDARD",
-      credentialMeaning: CREDENTIAL_DOCTRINE[cardStyle].description,
-      statusLine: "Awaiting assignment.",
-      contributionCount: 0,
-      promotionStatus: "Under Review" as const,
-      reviewStatus: "Pending" as const,
-      cardStyle,
-      bio: bio || "Awaiting classification.",
-      presence: "Online",
-      joinDate: new Date().toISOString().split("T")[0],
-    };
-
-    setGeneratedUser(user);
-    setIssuing(true);
-
-    setTimeout(() => {
-      addUser(user);
-      setCurrentUserId(user.id);
-      setLocation("/");
-    }, 2500);
+    setJoinError("");
+    setJoinLoading(true);
+    try {
+      const user = await registerUser(alias, bio, cardStyle);
+      if (user) {
+        setGeneratedUser(user);
+        setIssuing(true);
+        setTimeout(() => {
+          setLocation("/");
+        }, 2500);
+      }
+    } catch (err) {
+      setJoinError(err instanceof Error ? err.message : "Registration failed.");
+    } finally {
+      setJoinLoading(false);
+    }
   };
 
   const cardOptions: { value: CardStyle; label: string }[] = [
@@ -127,6 +122,7 @@ export default function AccessGate() {
                       onChange={(e) => setLoginUsername(e.target.value)}
                       className="bg-black/50 border-zinc-800 text-zinc-200 rounded-none h-12"
                       placeholder="Enter operator alias or ID"
+                      autoComplete="off"
                     />
                   </div>
 
@@ -139,6 +135,7 @@ export default function AccessGate() {
                       onChange={(e) => setLoginPassword(e.target.value)}
                       className="bg-black/50 border-zinc-800 text-zinc-200 rounded-none h-12 font-mono"
                       placeholder="••••••••"
+                      autoComplete="current-password"
                     />
                   </div>
 
@@ -152,8 +149,12 @@ export default function AccessGate() {
                     </motion.div>
                   )}
 
-                  <Button type="submit" className="w-full h-12 rounded-none border-zinc-700 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:text-emerald-300 border border-emerald-900/50 tracking-widest uppercase font-bold mt-4 transition-colors">
-                    Authenticate
+                  <Button 
+                    type="submit" 
+                    disabled={loginLoading}
+                    className="w-full h-12 rounded-none border-zinc-700 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-900/40 hover:text-emerald-300 border border-emerald-900/50 tracking-widest uppercase font-bold mt-4 transition-colors disabled:opacity-50"
+                  >
+                    {loginLoading ? "AUTHENTICATING..." : "AUTHENTICATE"}
                   </Button>
 
                   <div className="text-center mt-6">
@@ -184,6 +185,7 @@ export default function AccessGate() {
                       onChange={(e) => setAlias(e.target.value)}
                       className="bg-black/50 border-zinc-800 text-zinc-200 rounded-none h-12"
                       placeholder="e.g. Cipher Nine"
+                      autoComplete="off"
                     />
                   </div>
 
@@ -218,8 +220,22 @@ export default function AccessGate() {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full h-12 rounded-none border border-zinc-700 bg-zinc-100 text-black hover:bg-white tracking-widest uppercase font-bold mt-4 transition-colors">
-                    Submit Request
+                  {joinError && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-xs text-red-400 bg-red-950/30 border border-red-900/50 p-3"
+                    >
+                      {joinError}
+                    </motion.div>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    disabled={joinLoading}
+                    className="w-full h-12 rounded-none border border-zinc-700 bg-zinc-100 text-black hover:bg-white tracking-widest uppercase font-bold mt-4 transition-colors disabled:opacity-50"
+                  >
+                    {joinLoading ? "PROCESSING..." : "Submit Request"}
                   </Button>
 
                   <div className="text-center mt-6">
