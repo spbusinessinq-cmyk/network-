@@ -1,0 +1,135 @@
+REPLIT MICRO LOCK PASS — NETWORK ROOM CHANNEL DELETE / COMMAND CHANNEL CONTROL FINAL FIX
+
+You are upgrading the current **RSR NETWORK** build.
+
+The platform is otherwise in strong shape.
+Do not redesign anything.
+Do not change architecture.
+Do not break working auth, users, signals, cases, messages, promotion flows, starfield, or profile routing.
+
+This is a small lock pass to close one remaining founder-control gap:
+
+**founder/admin still cannot properly delete channels from inside Network Room, and channel control must feel complete.**
+
+---
+
+## PRIMARY OBJECTIVE
+
+Complete founder/admin channel deletion and channel management so channel control is truly finished.
+
+Right now channel management is incomplete unless founder/admin can actually remove channels cleanly from the interface.
+
+---
+
+1. ENABLE REAL CHANNEL DELETE IN NETWORK ROOM
+
+---
+
+Founder/admin must be able to delete custom channels directly inside the Network Room.
+
+Requirements:
+
+* delete control visible for founder/admin on eligible custom channels
+* protected/system channels remain protected if intended
+* delete requires confirmation
+* delete hits real backend or persistent store
+* deleted channel disappears immediately from the UI
+* if the currently open channel is deleted, app switches safely to another valid room
+* no stale selected-room state remains
+* no ghost channel remains after refresh
+
+The control must actually work, not just appear.
+
+---
+
+2. ADD / FIX CHANNEL DELETE IN COMMAND
+
+---
+
+Founder/admin must also be able to manage channels from Command.
+
+Add or fix a channel management surface inside Command that includes:
+
+* view channels
+* rename channels
+* reorder channels
+* delete custom channels
+* system/protected room protection if intended
+
+This should feel like real command oversight of network communications.
+
+---
+
+3. KEEP CHANNEL RULES CLEAN
+
+---
+
+Suggested rules:
+
+* system channels cannot be deleted
+* custom channels can be deleted
+* founder/admin only can rename/delete/reorder
+* room order persists
+* room rename persists
+* room delete persists
+
+If this logic already exists partly, finish it fully.
+
+---
+
+4. FINAL CHANNEL AUDIT
+
+---
+
+Before considering this complete, verify all of the following:
+
+* founder/admin can create a channel
+* founder/admin can rename a channel
+* founder/admin can reorder a channel
+* founder/admin can delete a custom channel
+* founder/admin cannot delete protected system channels if they are meant to be protected
+* deleting the active channel safely moves the user to another room
+* deleted channels do not reappear after reload
+* Network Room and Command stay in sync
+
+---
+
+5. DO NOT TOUCH UNRELATED SYSTEMS
+
+---
+
+Do not spend time changing:
+
+* auth
+* promotion flow
+* card flip
+* unread dot
+* signals
+* cases
+* profile layout
+* visual theme
+
+Only fix the remaining channel deletion/control gap.
+
+---
+
+6. FINAL OUTPUT
+
+---
+
+Return the build with:
+
+* working founder/admin channel delete in Network Room
+* working founder/admin channel delete in Command
+* persistent channel state after deletion
+* safe fallback when deleting the active room
+* no regressions to any other working systems
+
+---
+
+## FINAL RULE
+
+This pass closes the last missing founder-control gap.
+
+After this, channel management should feel:
+**complete, real, and fully command-controlled**

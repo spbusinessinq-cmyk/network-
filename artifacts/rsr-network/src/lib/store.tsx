@@ -319,11 +319,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteRoom = useCallback(async (id: number) => {
     await apiDeleteRoom(id);
-    setState(s => ({
-      ...s,
-      rooms: s.rooms.filter(r => r.id !== id),
-      currentRoomId: s.currentRoomId === id ? (s.rooms.find(r => r.slug === "general")?.id || null) : s.currentRoomId,
-    }));
+    setState(s => {
+      const remaining = s.rooms.filter(r => r.id !== id);
+      let nextRoomId = s.currentRoomId;
+      if (s.currentRoomId === id) {
+        const general = remaining.find(r => r.slug === "general");
+        nextRoomId = general?.id ?? remaining[0]?.id ?? null;
+      }
+      return { ...s, rooms: remaining, currentRoomId: nextRoomId };
+    });
   }, []);
 
   const addSignal = useCallback(async (signalData: Omit<Signal, "id" | "timestamp" | "thread">) => {

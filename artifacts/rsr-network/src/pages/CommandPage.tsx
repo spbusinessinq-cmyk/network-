@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useStore, Case, Signal, Standing } from "@/lib/store";
+import React, { useState, useMemo } from "react";
+import { useStore, Case, Signal, Standing, Room } from "@/lib/store";
 import {
   Shield, AlertTriangle, CheckCircle2, Archive, Plus, Flag, X, Trash2,
-  UserX, UserCheck, Pencil, Check, Ban, Lock
+  UserX, UserCheck, Pencil, Check, Ban, Lock, Hash, ChevronUp, ChevronDown, ShieldOff
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils";
 
 export default function CommandPage() {
   const {
-    currentUserId, users, signals, cases, updateSignal, updateUser,
+    currentUserId, users, signals, cases, rooms, updateSignal, updateUser,
     addCase, updateCase, deleteCase, deleteSignal, networkMessages, deleteNetworkMessage,
-    updateUserOnServer, removeUserFromNetwork
+    updateUserOnServer, removeUserFromNetwork, createRoom, deleteRoom, renameRoom,
   } = useStore();
   const currentUser = users.find(u => u.id === currentUserId);
 
@@ -248,6 +248,7 @@ export default function CommandPage() {
             { value: "messages",  label: "Messages",      badge: networkMessages.length > 0 ? networkMessages.length : null, badgeClass: "bg-zinc-900 text-zinc-400 border-zinc-800" },
             { value: "priority",  label: "Priority Board", badge: priorityCount > 0 ? priorityCount : null, badgeClass: "bg-red-950 text-red-500 border-red-900" },
             { value: "intake",    label: "Intake",        badge: users.filter(u => u.standing === "Observer").length > 0 ? users.filter(u => u.standing === "Observer").length : null, badgeClass: "bg-amber-950/50 text-amber-500 border-amber-900/50" },
+          { value: "channels",  label: "Channels",      badge: rooms.filter(r => r.type === "custom").length > 0 ? rooms.filter(r => r.type === "custom").length : null, badgeClass: "bg-zinc-900 text-zinc-400 border-zinc-800" },
           ].map(({ value, label, badge, badgeClass }) => (
             <TabsTrigger key={value} value={value}
               className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-600 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
@@ -679,6 +680,26 @@ export default function CommandPage() {
           </div>
         </TabsContent>
 
+        {/* CHANNELS */}
+        <TabsContent value="channels">
+          <ChannelPanel
+            rooms={rooms}
+            onCreateRoom={async (name) => {
+              const slug = name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+              try { await createRoom(name, slug); showToast(`Channel #${name} created.`); }
+              catch (err) { showToast(err instanceof Error ? err.message : "Create failed.", "err"); }
+            }}
+            onRenameRoom={async (id, name) => {
+              try { await renameRoom(id, name); showToast("Channel renamed."); }
+              catch (err) { showToast(err instanceof Error ? err.message : "Rename failed.", "err"); }
+            }}
+            onDeleteRoom={async (id, name) => {
+              try { await deleteRoom(id); showToast(`Channel #${name} removed.`); }
+              catch (err) { showToast(err instanceof Error ? err.message : "Cannot delete system channel.", "err"); }
+            }}
+          />
+        </TabsContent>
+
         {/* INTAKE */}
         <TabsContent value="intake">
           <IntakePanel
@@ -706,6 +727,255 @@ interface IntakePanelProps {
   onPromote: (id: string, standing: string) => Promise<void>;
   onRemoveDirect: (id: string, alias: string) => Promise<void>;
 }
+
+// ── CHANNEL PANEL ──────────────────────────────────────────────────────────
+
+interface ChannelPanelProps {
+  rooms: Room[];
+  onCreateRoom: (name: string) => Promise<void>;
+  onRenameRoom: (id: number, name: string) => Promise<void>;
+  onDeleteRoom: (id: number, name: string) => Promise<void>;
+}
+
+function loadOrder(): number[] {
+  try { return JSON.parse(localStorage.getItem("rsr_room_order") || "[]"); } catch { return []; }
+}
+function saveOrder(o: number[]) { localStorage.setItem("rsr_room_order", JSON.stringify(o)); }
+
+function ChannelPanel({ rooms, onCreateRoom, onRenameRoom, onDeleteRoom }: ChannelPanelProps) {
+  const [order, setOrder] = useState<number[]>(loadOrder);
+  const [renamingId, setRenamingId] = useState<number | null>(null);
+  const [renameVal, setRenameVal] = useState("");
+  const [savingRename, setSavingRename] = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [newName, setNewName] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+
+  const sortedRooms = useMemo(() => {
+    if (!order.length) return rooms;
+    const map = new Map(order.map((id, i) => [id, i]));
+    return [...rooms].sort((a, b) => (map.get(a.id) ?? 9999) - (map.get(b.id) ?? 9999));
+  }, [rooms, order]);
+
+  const move = (id: number, dir: -1 | 1) => {
+    const current = sortedRooms.map(r => r.id);
+    const idx = current.indexOf(id);
+    const next = idx + dir;
+    if (next < 0 || next >= current.length) return;
+    [current[idx], current[next]] = [current[next], current[idx]];
+    setOrder([...current]);
+    saveOrder(current);
+  };
+
+  const startRename = (room: Room) => {
+    setRenamingId(room.id);
+    setRenameVal(room.name);
+    setConfirmDeleteId(null);
+  };
+
+  const submitRename = async (id: number) => {
+    if (!renameVal.trim()) { setRenamingId(null); return; }
+    setSavingRename(id);
+    try { await onRenameRoom(id, renameVal.trim()); } catch {}
+    setSavingRename(null);
+    setRenamingId(null);
+  };
+
+  const handleDelete = async (id: number, name: string) => {
+    if (confirmDeleteId !== id) { setConfirmDeleteId(id); return; }
+    setDeletingId(id);
+    try {
+      await onDeleteRoom(id, name);
+      setConfirmDeleteId(null);
+      const newOrder = order.filter(oid => oid !== id);
+      setOrder(newOrder);
+      saveOrder(newOrder);
+    } catch {}
+    setDeletingId(null);
+  };
+
+  const handleCreate = async () => {
+    if (!newName.trim()) return;
+    setCreating(true);
+    try { await onCreateRoom(newName.trim()); setNewName(""); setShowCreate(false); } catch {}
+    setCreating(false);
+  };
+
+  return (
+    <div className="space-y-4 max-w-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-300">Channel Management</h2>
+          <p className="text-[10px] text-zinc-600 mt-1 uppercase tracking-widest">
+            {rooms.filter(r => r.type === "system").length} system · {rooms.filter(r => r.type === "custom").length} custom
+          </p>
+        </div>
+        <button
+          onClick={() => { setShowCreate(s => !s); setNewName(""); }}
+          className="flex items-center gap-2 text-[10px] uppercase tracking-widest border border-white/[0.06] text-zinc-500 hover:text-amber-600 hover:border-amber-900/40 px-3 py-1.5 transition-colors"
+        >
+          <Plus className="w-3 h-3" /> New Channel
+        </button>
+      </div>
+
+      {/* Create form */}
+      {showCreate && (
+        <div className="border border-amber-900/30 bg-amber-950/10 p-4 flex flex-col sm:flex-row gap-2 mb-6">
+          <input
+            autoFocus
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") handleCreate(); if (e.key === "Escape") setShowCreate(false); }}
+            placeholder="Channel name…"
+            className="flex-1 bg-black/40 border border-white/[0.06] text-zinc-300 text-sm px-3 py-1.5 outline-none focus:border-amber-700/40"
+          />
+          <button
+            onClick={handleCreate}
+            disabled={creating || !newName.trim()}
+            className="text-[10px] uppercase tracking-widest border border-amber-800/50 bg-amber-950/30 text-amber-400 hover:bg-amber-900/30 px-4 py-1.5 disabled:opacity-40 transition-colors"
+          >
+            {creating ? "Creating…" : "Create"}
+          </button>
+          <button onClick={() => setShowCreate(false)} className="text-zinc-700 hover:text-zinc-400 px-2">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Channel list */}
+      <div className="space-y-2">
+        {sortedRooms.length === 0 && (
+          <div className="p-8 border border-zinc-800 text-center text-zinc-600 text-xs uppercase tracking-widest">No channels.</div>
+        )}
+        {sortedRooms.map((room, idx) => {
+          const isSystem = room.type === "system";
+          const isRenaming = renamingId === room.id;
+          const isConfirming = confirmDeleteId === room.id;
+          const isDeleting = deletingId === room.id;
+          const isFirst = idx === 0;
+          const isLast = idx === sortedRooms.length - 1;
+
+          return (
+            <div
+              key={room.id}
+              className={cn(
+                "border bg-zinc-950/60 p-4 flex items-center gap-4 transition-colors",
+                isSystem ? "border-zinc-800/50 opacity-70" : "border-zinc-800",
+                isConfirming && "border-red-900/50 bg-red-950/10",
+                isDeleting && "opacity-40 pointer-events-none",
+              )}
+            >
+              {/* Channel icon + name */}
+              <Hash className={cn("w-3.5 h-3.5 shrink-0", isSystem ? "text-zinc-700" : "text-zinc-600")} />
+
+              <div className="flex-1 min-w-0">
+                {isRenaming ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      autoFocus
+                      value={renameVal}
+                      onChange={e => setRenameVal(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") submitRename(room.id); if (e.key === "Escape") setRenamingId(null); }}
+                      className="flex-1 bg-transparent border-b border-amber-700/50 text-zinc-200 text-sm outline-none py-0.5 min-w-0"
+                    />
+                    <button onClick={() => submitRename(room.id)} disabled={savingRename === room.id} className="text-emerald-500 hover:text-emerald-400">
+                      <Check className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => setRenamingId(null)} className="text-zinc-600 hover:text-zinc-400">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <span className={cn("text-sm font-medium uppercase tracking-wide", isSystem ? "text-zinc-500" : "text-zinc-300")}>
+                      {room.name}
+                    </span>
+                    <span className="text-[8px] font-mono text-zinc-700">#{room.slug}</span>
+                    <span className={cn("text-[8px] uppercase tracking-widest border px-1.5 py-0.5",
+                      isSystem
+                        ? "border-zinc-800 text-zinc-700"
+                        : "border-zinc-700/50 text-zinc-600"
+                    )}>
+                      {room.type}
+                    </span>
+                    {isConfirming && (
+                      <span className="text-[9px] text-red-500 uppercase tracking-widest font-mono">Delete?</span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Controls */}
+              <div className="flex items-center gap-1 shrink-0">
+                {/* Reorder — all rooms */}
+                <button onClick={() => move(room.id, -1)} disabled={isFirst} className="p-1 disabled:opacity-20 text-zinc-700 hover:text-zinc-400" title="Move up">
+                  <ChevronUp className="w-3 h-3" />
+                </button>
+                <button onClick={() => move(room.id, 1)} disabled={isLast} className="p-1 disabled:opacity-20 text-zinc-700 hover:text-zinc-400" title="Move down">
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+
+                {isSystem ? (
+                  <span className="flex items-center gap-1 text-[8px] uppercase tracking-widest text-zinc-800 ml-1 font-mono border border-zinc-900 px-2 py-1">
+                    <ShieldOff className="w-2.5 h-2.5" /> Protected
+                  </span>
+                ) : (
+                  <>
+                    {/* Rename */}
+                    {!isRenaming && !isConfirming && (
+                      <button onClick={() => startRename(room)} className="p-1 text-zinc-700 hover:text-zinc-400 ml-1" title="Rename">
+                        <Pencil className="w-3 h-3" />
+                      </button>
+                    )}
+
+                    {/* Delete / confirm */}
+                    {isConfirming ? (
+                      <div className="flex items-center gap-1 ml-1">
+                        <button
+                          onClick={() => handleDelete(room.id, room.name)}
+                          disabled={isDeleting}
+                          className="flex items-center gap-1 text-[9px] uppercase tracking-widest border border-red-800/60 bg-red-950/30 text-red-400 hover:bg-red-900/40 px-2 py-1 transition-colors disabled:opacity-40"
+                        >
+                          <Check className="w-2.5 h-2.5" /> Confirm
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="p-1 text-zinc-600 hover:text-zinc-400"
+                          title="Cancel"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : !isRenaming && (
+                      <button
+                        onClick={() => handleDelete(room.id, room.name)}
+                        className="p-1 text-zinc-700 hover:text-red-600 ml-0.5"
+                        title="Delete channel"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="border-t border-white/[0.04] pt-4 mt-6">
+        <div className="text-[8px] text-zinc-800 uppercase tracking-widest leading-relaxed">
+          System channels cannot be renamed or deleted. Reorder persists across Network Room and Command.
+          Custom channels and their messages are permanently removed on deletion.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── INTAKE PANEL ───────────────────────────────────────────────────────────
 
 function IntakePanel({ users, currentUserId, onPromote, onRemoveDirect }: IntakePanelProps) {
   const observers = users.filter(u => u.standing === "Observer");

@@ -32,9 +32,11 @@ export default function NetworkRoom() {
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [confirmDeleteRoom, setConfirmDeleteRoom] = useState<number | null>(null);
+  const [deletingRoomId, setDeletingRoomId] = useState<number | null>(null);
   const [renamingRoomId, setRenamingRoomId] = useState<number | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [roomOrder, setRoomOrder] = useState<number[]>(loadRoomOrder);
+  const [roomError, setRoomError] = useState<string | null>(null);
   const [confirmDeleteMsg, setConfirmDeleteMsg] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -85,14 +87,32 @@ export default function NetworkRoom() {
 
   const handleDeleteRoom = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
-    if (confirmDeleteRoom !== id) { setConfirmDeleteRoom(id); return; }
+    if (confirmDeleteRoom !== id) {
+      setConfirmDeleteRoom(id);
+      setRoomError(null);
+      return;
+    }
+    setDeletingRoomId(id);
     try {
       await deleteRoom(id);
       setConfirmDeleteRoom(null);
+      setRoomError(null);
       const newOrder = roomOrder.filter(rid => rid !== id);
       setRoomOrder(newOrder);
       saveRoomOrder(newOrder);
-    } catch {}
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Delete failed";
+      setRoomError(msg);
+      setConfirmDeleteRoom(null);
+    } finally {
+      setDeletingRoomId(null);
+    }
+  };
+
+  const cancelDeleteRoom = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setConfirmDeleteRoom(null);
+    setRoomError(null);
   };
 
   const startRename = (e: React.MouseEvent, room: typeof rooms[0]) => {
@@ -147,6 +167,8 @@ export default function NetworkRoom() {
               const isFirst = idx === 0;
               const isLast = idx === sortedRooms.length - 1;
 
+              const isDeleting = deletingRoomId === room.id;
+
               return (
                 <div
                   key={room.id}
@@ -154,11 +176,15 @@ export default function NetworkRoom() {
                     "group flex items-center gap-1.5 px-2 py-2 cursor-pointer transition-colors border-l",
                     isActive
                       ? "bg-white/[0.05] text-zinc-300 border-l-zinc-600/40"
-                      : "text-zinc-700 hover:bg-white/[0.02] hover:text-zinc-500 border-l-transparent"
+                      : "text-zinc-700 hover:bg-white/[0.02] hover:text-zinc-500 border-l-transparent",
+                    isConfirming && "bg-red-950/10 border-l-red-900/30",
+                    isDeleting && "opacity-50 pointer-events-none",
                   )}
-                  onClick={() => { if (!isRenaming) { setCurrentRoom(room.id); setConfirmDeleteRoom(null); } }}
+                  onClick={() => {
+                    if (!isRenaming && !isConfirming) { setCurrentRoom(room.id); }
+                  }}
                 >
-                  <Hash className={cn("w-3 h-3 shrink-0", isActive ? "text-zinc-600" : "text-zinc-800")} />
+                  <Hash className={cn("w-3 h-3 shrink-0", isActive ? "text-zinc-600" : isConfirming ? "text-red-800" : "text-zinc-800")} />
 
                   {isRenaming ? (
                     <input
@@ -173,11 +199,15 @@ export default function NetworkRoom() {
                       onClick={e => e.stopPropagation()}
                       className="flex-1 text-[11px] bg-transparent border-b border-zinc-700/50 outline-none text-zinc-200 py-0.5 min-w-0"
                     />
+                  ) : isConfirming ? (
+                    /* Confirmation row — always visible, replaces normal label */
+                    <span className="text-[10px] text-red-500 flex-1 tracking-wide">Delete?</span>
                   ) : (
                     <span className="text-[11px] tracking-wide truncate flex-1">{room.name}</span>
                   )}
 
-                  {!isRenaming && (
+                  {/* Channel control strip */}
+                  {!isRenaming && !isConfirming && (
                     <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0 shrink-0 transition-opacity">
                       {canReorder && (
                         <>
@@ -194,13 +224,32 @@ export default function NetworkRoom() {
                           <button onClick={e => startRename(e, room)} className="p-0.5" title="Rename">
                             <Pencil className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
                           </button>
-                          <button onClick={e => handleDeleteRoom(e, room.id)} className="p-0.5" title={isConfirming ? "Confirm" : "Delete"}>
-                            {isConfirming
-                              ? <Check className="w-2.5 h-2.5 text-red-500" />
-                              : <Trash2 className="w-2.5 h-2.5 text-zinc-700 hover:text-red-600" />}
+                          <button onClick={e => handleDeleteRoom(e, room.id)} className="p-0.5" title="Delete channel">
+                            <Trash2 className="w-2.5 h-2.5 text-zinc-700 hover:text-red-600" />
                           </button>
                         </>
                       )}
+                    </div>
+                  )}
+
+                  {/* Confirm delete — always visible when confirming */}
+                  {isConfirming && canManageContent && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={e => handleDeleteRoom(e, room.id)}
+                        disabled={isDeleting}
+                        className="p-0.5 text-red-500 hover:text-red-400 disabled:opacity-40"
+                        title="Confirm delete"
+                      >
+                        <Check className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={cancelDeleteRoom}
+                        className="p-0.5 text-zinc-600 hover:text-zinc-400"
+                        title="Cancel"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </div>
                   )}
 
@@ -214,6 +263,12 @@ export default function NetworkRoom() {
             })}
           </div>
         </ScrollArea>
+
+        {roomError && (
+          <div className="px-3 py-2 bg-red-950/30 border-t border-red-900/40 text-[9px] text-red-500 uppercase tracking-widest font-mono">
+            {roomError}
+          </div>
+        )}
 
         {isFounder && (
           <div className="border-t border-white/[0.04] p-2 shrink-0">
