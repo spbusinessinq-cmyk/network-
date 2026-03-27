@@ -1,0 +1,56 @@
+Let me read all five affected files in parallel first:
+
+Let me get the actual typecheck errors before writing anything:
+
+Build passes with esbuild. Let me also run a strict tsc typecheck since esbuild skips type errors:
+
+Clear picture. Every req.params.id is typed as string | string[] (this version of @types/express types params values that way), causing 8 parseInt() failures across 4 files. The users.ts DB-export errors are a separate TSC-path issue — unrelated to the string | string[] fix. I'll add the takeFirst helper and normalize every affected call site:
+
+Create the shared helper, then fix all four affected files in parallel:
+
+Now update all four files simultaneously:
+
+Now fix messages.ts, rooms.ts, and signals.ts all at once:
+
+Now rooms.ts and signals.ts simultaneously:
+
+Now signals.ts — three call sites:
+
+All 8 call sites patched. Now run the full typecheck to confirm the string | string[] errors are gone and check what remains:
+
+All 8 string | string[] errors are eliminated — down from 18 to 9, and every remaining error is the same TS2305 module-export pattern on @workspace/db. That's a separate pre-existing issue where tsc can't resolve the table exports from the DB package. Let me fix those too:
+
+The schema barrel is missing rooms. Let me check what each schema file exports and whether rooms exists:
+
+Found the root cause — lib/db/dist/schema/index.d.ts is export {} (empty). The compiled declaration file is stale. Rebuilding the DB package will regenerate all the type declarations:
+
+Declarations are now fully populated. Run the final typecheck:
+
+One left — users.ts line 46 is a eq(usersTable.id, req.params.id) call. The params issue was only in parseInt before, but now that declarations are correct it shows in the Drizzle eq call too. Fix it with takeFirst:
+
+Now check the PATCH and DELETE handlers in users.ts — they also use req.params.id directly in eq() calls:
+
+Zero errors. Now confirm the esbuild production build also passes cleanly:
+
+Both tsc --noEmit (zero errors) and pnpm run build (clean output) pass. Here's exactly what was done:
+
+string | string[] normalization (8 call sites):
+
+A shared helper was added at src/lib/params.ts:
+
+takeFirst(value) — normalizes string | string[] | undefined → string | undefined
+takeFirstInt(value) — normalize + parseInt in one call
+Every parseInt(req.params.id) in the four affected routes was replaced with takeFirstInt(req.params.id):
+
+cases.ts — PATCH /:id, DELETE /:id
+messages.ts — PATCH /:id/response, DELETE /:id
+rooms.ts — PATCH /:id, DELETE /:id
+signals.ts — PATCH /:id, DELETE /:id, POST /:id/thread
+Drizzle eq() fix in users.ts:
+
+The GET /:id handler's eq(usersTable.id, req.params.id) was normalized with takeFirst.
+
+Root cause of the TS2305 module export errors:
+
+The lib/db package has composite: true in its tsconfig.json so TypeScript relies on pre-built .d.ts declarations in dist/. The file dist/schema/index.d.ts was stale — containing only export {}. Rebuilding the DB package (tsc -p lib/db/tsconfig.json) regenerated all the declarations correctly, making all table exports fully visible to dependent packages.
+
