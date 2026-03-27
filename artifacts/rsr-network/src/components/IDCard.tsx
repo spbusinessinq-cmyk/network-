@@ -48,7 +48,7 @@ export function IDCard({ user, expanded, onExpand, size = "md", className }: IDC
     }
   };
 
-  const cardHeightClass = size === "sm" ? "h-40" : expanded ? "min-h-[260px]" : "h-64";
+  const cardHeightClass = size === "sm" ? "h-40" : expanded ? "h-[420px]" : "h-[300px]";
   const isCommand = user.standing === "Command";
 
   return (
