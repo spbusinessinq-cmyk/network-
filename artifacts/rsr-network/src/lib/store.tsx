@@ -27,8 +27,9 @@ export interface User {
   credentialMeaning: string;
   statusLine: string;
   contributionCount: number;
-  promotionStatus: "Eligible" | "Under Review" | "Not Eligible" | "Command Reserved";
-  reviewStatus: "Approved" | "Pending" | "Active" | "Command Assigned";
+  promotionStatus: "Eligible" | "Under Review" | "Not Eligible" | "Command Reserved" | "Approved" | "Denied";
+  reviewStatus: "Approved" | "Pending" | "Active" | "Command Assigned" | "Denied";
+  status: "active" | "restricted" | "banned";
   isFounder?: boolean;
 }
 
@@ -92,6 +93,7 @@ function mapApiUser(u: ApiUser): User {
     contributionCount: u.contributionCount,
     promotionStatus: u.promotionStatus as User["promotionStatus"],
     reviewStatus: u.reviewStatus as User["reviewStatus"],
+    status: (u.status as User["status"]) || "active",
     isFounder: u.isFounder,
   };
 }
@@ -166,7 +168,7 @@ interface AppContextType extends AppState {
   createRoom: (name: string, slug: string) => Promise<Room>;
   deleteRoom: (id: number) => Promise<void>;
   renameRoom: (id: number, name: string) => Promise<void>;
-  updateUserOnServer: (id: string, updates: { standing?: string; grade?: string | null; accessClass?: string; reviewStatus?: string; promotionStatus?: string }) => Promise<void>;
+  updateUserOnServer: (id: string, updates: { standing?: string; grade?: string | null; accessClass?: string; reviewStatus?: string; promotionStatus?: string; alias?: string; status?: string; presence?: string }) => Promise<void>;
   removeUserFromNetwork: (id: string) => Promise<void>;
 }
 
@@ -413,7 +415,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(s => ({ ...s, networkMessages: s.networkMessages.filter(m => m.id !== id) }));
   }, []);
 
-  const updateUserOnServer = useCallback(async (id: string, updates: { standing?: string; grade?: string | null; accessClass?: string; reviewStatus?: string; promotionStatus?: string }) => {
+  const updateUserOnServer = useCallback(async (id: string, updates: { standing?: string; grade?: string | null; accessClass?: string; reviewStatus?: string; promotionStatus?: string; alias?: string; status?: string; presence?: string }) => {
     const updated = await apiUpdateUser(id, updates);
     setState(s => ({ ...s, users: s.users.map(u => u.id === id ? mapApiUser(updated) : u) }));
   }, []);

@@ -1,0 +1,389 @@
+REPLIT TRUE LAST PASS — RSR NETWORK ADMIN LOCK / CARD FLIP FIX / CHAT CONTROL / DEPLOY AUDIT / RANK APPROVAL SYSTEM
+
+You are upgrading the current **RSR NETWORK** build.
+
+The platform is extremely close.
+Do not redesign the product.
+Do not change the architecture.
+Do not break working backend flows.
+
+This is the true last tightening pass before deployment.
+
+---
+
+## PRIMARY OBJECTIVE
+
+Close the final gaps in admin control, card behavior, chat moderation, personnel control, and deployment readiness.
+
+Current issues to solve:
+
+1. the card flip is visually flipping the text itself instead of giving a clean readable back face
+2. founder/admin still does NOT have full user control
+3. founder/admin still cannot delete messages directly from the Network Room chat log
+4. clicking an operator name inside chat should open that operator’s profile/dossier
+5. Network Room should show a visible notification indicator in the left nav when there is unread/new activity
+6. founder/admin needs a true rank approval / personnel management system
+7. final audit is required to confirm deploy-readiness
+
+This pass should leave the product:
+
+* fully manageable
+* fully moderated
+* visually correct
+* founder-controlled
+* deployment-ready
+
+---
+
+1. FIX THE CARD FLIP PROPERLY
+
+---
+
+The current card flip is wrong because the text is visually mirrored/reversed.
+
+Fix the credential card flip so it behaves like a proper two-sided card.
+
+Requirements:
+
+* front face reads normally
+* back face reads normally
+* no mirrored/reversed text
+* no ghosting
+* no overlap
+* preserve smooth 3D flip feel
+* keep the dedicated control row below the card
+
+Technical expectation:
+
+* proper front and back layers
+* correct rotateY handling
+* correct backfaceVisibility handling
+* correct transform structure so the back is readable after flip
+
+Apply this everywhere cards render:
+
+* Identity Hub
+* Profile/Dossier
+* any expanded credential view
+
+---
+
+2. FULL FOUNDER / ADMIN USER CONTROL
+
+---
+
+Founder/admin must have full real user management controls.
+
+Right now seeing user info is not enough.
+
+Add founder/admin controls to manage operators, including at minimum:
+
+* edit operator alias/name
+* remove user
+* restrict user
+* ban user
+* change standing
+* change presence if allowed
+* review pending requests
+* approve/reject requests
+* protect founder account from destructive actions
+
+If “ban” and “restrict” are separate states, define them cleanly:
+
+Suggested:
+
+* Restrict = reduced access / no command / limited room activity
+* Ban = blocked from network access entirely
+
+These controls must:
+
+* be visible in Command
+* persist to backend
+* update UI immediately
+* be role-gated founder/admin only
+
+This is critical.
+
+---
+
+3. ADD A REAL RANK APPROVAL / PROMOTION SYSTEM
+
+---
+
+Founder/admin needs a proper promotion approval system, not just a dropdown.
+
+Build a real personnel promotion flow.
+
+At minimum support:
+
+* operator submits or accumulates a promotion request / promotion-ready state
+* founder/admin can review promotion status
+* founder/admin can approve rank-up
+* founder/admin can deny rank-up
+* founder/admin can manually assign standing if needed
+* founder/admin can see current standing and proposed next standing
+* founder/admin can see review status such as:
+
+  * Pending Review
+  * Approved
+  * Denied
+  * Manual Assignment
+* founder/admin can override standing manually when appropriate
+
+If there is no automated promotion request yet, add a command-side approval model such as:
+
+* Approve to Scout
+* Approve to Operator
+* Approve to Analyst
+
+This should feel like real personnel command control.
+
+Do not make it gamey.
+Do not make it XP-based.
+Keep it command-grade and serious.
+
+---
+
+4. CHAT MESSAGE DELETE DIRECTLY IN NETWORK ROOM
+
+---
+
+Founder/admin must be able to delete a message directly from the visible Network Room feed.
+
+Do not force founder to go somewhere else.
+
+Add a clean direct delete/moderation control on each message row in Network Room for founder/admin.
+
+Requirements:
+
+* founder/admin only
+* visible on hover or cleanly integrated
+* confirmation required
+* delete from backend
+* remove from UI immediately
+* no stale state
+
+This should feel like direct command moderation of the live comms feed.
+
+---
+
+5. CLICKING OPERATOR NAMES IN CHAT MUST OPEN THEIR PROFILE
+
+---
+
+When an operator name is clicked inside the Network Room feed, it should navigate to that operator’s profile/dossier.
+
+Requirements:
+
+* works from message sender name
+* routes cleanly
+* supports founder viewing any operator profile
+* does not break room state when returning if possible
+
+This is required.
+
+---
+
+6. NETWORK ROOM NAV ALERT / NOTIFICATION STATE
+
+---
+
+If there are new/unread messages in Network Room, the left nav item should show a visible alert state.
+
+Add a tasteful tactical alert indicator next to Network Room in the left rail.
+
+Use something like:
+
+* small red pulsing warning dot
+  or
+* small red exclamation indicator
+  or
+* compact unread count badge if clean
+
+The user specifically wants a red warning/exclamation feel.
+
+Requirements:
+
+* only show when there is real new/unread room activity
+* clear/reset when appropriate
+* do not make it huge or noisy
+* keep it tactical and premium
+
+---
+
+7. COMPLETE CHANNEL ADMIN CONTROL CHECK
+
+---
+
+Verify founder/admin channel controls are truly complete.
+
+Required:
+
+* create channel
+* rename channel
+* reorder works
+* delete works
+* protected channels remain protected if intended
+* active channel updates correctly after rename/reorder/delete
+
+If any of these are incomplete or unstable, fix them.
+
+---
+
+8. COMPLETE USER REQUEST / INTAKE CONTROL CHECK
+
+---
+
+Verify founder/admin can fully manage incoming operators.
+
+Required:
+
+* view requests / intake users
+* approve
+* reject
+* promote
+* remove
+* restrict if applicable
+* ban if added
+* persist all changes
+
+No fake buttons.
+No read-only admin state.
+
+---
+
+9. FINAL COMMAND CONTROL LOCK
+
+---
+
+The founder/admin experience should now truly feel like full control.
+
+Command must feel like:
+
+* complete oversight
+* complete user control
+* complete rank approval control
+* complete comms control
+* complete channel control
+* complete intake control
+
+Not partial control.
+
+Make sure founder/admin can actually act everywhere that matters.
+
+---
+
+10. FINAL AUDIT / DEPLOY READINESS SWEEP
+
+---
+
+Do a real final audit before considering this done.
+
+Audit the following:
+
+### Auth
+
+* founder login works
+* sign out works
+* registration works
+* banned/restricted behavior works correctly if added
+* session persistence works
+* refresh behavior works
+
+### User/Admin control
+
+* founder can edit operator alias
+* founder can remove users
+* founder can restrict users
+* founder can ban users if implemented
+* founder can approve/deny promotions
+* founder can manually assign rank
+* founder cannot accidentally destroy protected founder account
+* intake management works
+
+### Signals
+
+* create works
+* edit works
+* delete from drawer works
+* delete updates feed correctly
+
+### Network Room
+
+* channels work
+* rename works
+* reorder works
+* delete works
+* founder can delete messages directly in feed
+* clicking operator names opens profiles
+* unread/new nav notification works correctly
+
+### Cards / identity
+
+* card flip works cleanly
+* front reads normally
+* back reads normally
+* no mirrored text remains
+
+### UI
+
+* no dead buttons
+* no broken modal flows
+* no stale deleted items remain on screen
+* no obvious collisions remain
+
+Fix anything found.
+
+---
+
+11. DEPLOY-READY CLEANUP
+
+---
+
+Leave the app deploy-ready.
+
+Make sure:
+
+* build passes cleanly
+* no debug junk remains
+* no temporary moderation hacks remain
+* no obvious unfinished states remain
+* repo stays push-ready
+
+---
+
+12. FINAL OUTPUT
+
+---
+
+Return a final locked build with:
+
+1. properly fixed readable card flip
+2. full founder/admin user control
+3. real alias editing
+4. real rank approval / promotion system
+5. direct message delete inside Network Room
+6. clickable operator names in chat routing to profiles
+7. left-nav Network Room notification indicator for new activity
+8. verified complete channel management
+9. verified intake/request management
+10. full final audit completed
+11. deploy-ready cleanup complete
+
+---
+
+## FINAL RULE
+
+This pass should make RSR NETWORK feel:
+
+**fully controlled, fully moderated, rank-managed, visually correct, and ready to deploy**
+
+It should not feel like:
+
+* partially moderated
+* missing direct personnel authority
+* missing promotion approval controls
+* almost finished
+
+Everything should communicate:
+**complete founder authority, personnel control, live command readiness, and finished system quality.**

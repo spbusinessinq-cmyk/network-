@@ -39,6 +39,7 @@ export interface ApiUser {
   contributionCount: number;
   promotionStatus: string;
   reviewStatus: string;
+  status: string;
   isFounder: boolean;
   username: string;
 }
@@ -89,124 +90,110 @@ export interface ApiRoom {
 }
 
 // Auth
-export async function apiLogin(username: string, password: string): Promise<{ token: string; user: ApiUser }> {
-  return apiRequest("POST", "/auth/login", { username, password });
+export async function apiLogin(username: string, password: string) {
+  return apiRequest<{ token: string; user: ApiUser }>("POST", "/auth/login", { username, password });
 }
 
-export async function apiRegister(alias: string, bio: string, cardStyle: string): Promise<{ token: string; user: ApiUser }> {
-  return apiRequest("POST", "/auth/register", { alias, bio, cardStyle });
+export async function apiRegister(alias: string, bio: string, cardStyle: string) {
+  return apiRequest<{ token: string; user: ApiUser }>("POST", "/auth/register", { alias, bio, cardStyle });
 }
 
-export async function apiVerifyToken(token: string): Promise<{ user: ApiUser }> {
-  const res = await fetch(`${BASE}/auth/verify`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token }),
-  });
-  if (!res.ok) throw new Error("Invalid token");
-  return res.json();
+export async function apiVerifyToken(token: string) {
+  return apiRequest<{ user: ApiUser }>("POST", "/auth/verify", { token });
 }
 
 // Users
-export async function apiGetUsers(): Promise<ApiUser[]> {
-  return apiRequest("GET", "/users");
+export async function apiGetUsers() {
+  return apiRequest<ApiUser[]>("GET", "/users");
+}
+
+export async function apiUpdateUser(id: string, updates: Record<string, unknown>) {
+  return apiRequest<ApiUser>("PATCH", `/users/${id}`, updates);
+}
+
+export async function apiDeleteUser(id: string) {
+  return apiRequest<{ ok: boolean }>("DELETE", `/users/${id}`);
 }
 
 // Signals
-export async function apiGetSignals(): Promise<ApiSignal[]> {
-  return apiRequest("GET", "/signals");
+export async function apiGetSignals() {
+  return apiRequest<ApiSignal[]>("GET", "/signals");
 }
 
-export async function apiCreateSignal(data: {
-  title: string; description: string; category: string; location: string;
-  status: string; priority: boolean; caseId?: number | null;
-}): Promise<ApiSignal> {
-  return apiRequest("POST", "/signals", data);
+export async function apiCreateSignal(data: Omit<ApiSignal, "id" | "submittedBy" | "timestamp" | "createdAt" | "thread">) {
+  return apiRequest<ApiSignal>("POST", "/signals", data);
 }
 
-export async function apiUpdateSignal(id: number, updates: { status?: string; priority?: boolean; caseId?: number | null }): Promise<void> {
-  return apiRequest("PATCH", `/signals/${id}`, updates);
+export async function apiUpdateSignal(id: number, updates: Partial<Pick<ApiSignal, "status" | "priority" | "caseId">>) {
+  return apiRequest<ApiSignal>("PATCH", `/signals/${id}`, updates);
 }
 
-export async function apiAddSignalThread(signalId: number, message: string): Promise<{ id: number; userId: string; text: string; timestamp: string }> {
-  return apiRequest("POST", `/signals/${signalId}/thread`, { message });
+export async function apiAddSignalThread(signalId: number, text: string) {
+  return apiRequest<{ id: number; userId: string; text: string; timestamp: string }>("POST", `/signals/${signalId}/thread`, { text });
+}
+
+export async function apiDeleteSignal(id: number) {
+  return apiRequest<{ success: boolean }>("DELETE", `/signals/${id}`);
 }
 
 // Cases
-export async function apiGetCases(): Promise<ApiCase[]> {
-  return apiRequest("GET", "/cases");
+export async function apiGetCases() {
+  return apiRequest<ApiCase[]>("GET", "/cases");
 }
 
-export async function apiCreateCase(data: { name: string; summary: string; status: string; lead: string; notes: string[] }): Promise<ApiCase> {
-  return apiRequest("POST", "/cases", data);
+export async function apiCreateCase(data: Omit<ApiCase, "id" | "linkedSignals" | "createdAt" | "updatedAt">) {
+  return apiRequest<ApiCase>("POST", "/cases", data);
 }
 
-export async function apiUpdateCase(id: number, updates: { status?: string; notes?: string[]; summary?: string }): Promise<void> {
-  return apiRequest("PATCH", `/cases/${id}`, updates);
+export async function apiUpdateCase(id: number, updates: Partial<ApiCase>) {
+  return apiRequest<ApiCase>("PATCH", `/cases/${id}`, updates);
 }
 
-// Messages
-export async function apiGetMessages(roomId?: number): Promise<ApiMessage[]> {
-  const path = roomId ? `/messages?roomId=${roomId}` : "/messages";
-  return apiRequest("GET", path);
+export async function apiDeleteCase(id: number) {
+  return apiRequest<{ success: boolean }>("DELETE", `/cases/${id}`);
 }
 
-export async function apiSendMessage(text: string, roomId?: number): Promise<ApiMessage> {
-  return apiRequest("POST", "/messages", { text, roomId: roomId || null });
+// Network Messages
+export async function apiGetMessages(roomId?: number) {
+  const q = roomId ? `?roomId=${roomId}` : "";
+  return apiRequest<ApiMessage[]>("GET", `/messages${q}`);
 }
 
-export async function apiAddMessageResponse(id: number, response: string): Promise<void> {
-  return apiRequest("PATCH", `/messages/${id}/response`, { response });
+export async function apiSendMessage(text: string, roomId?: number) {
+  return apiRequest<ApiMessage>("POST", "/messages", { text, roomId });
+}
+
+export async function apiAddMessageResponse(msgId: number, response: string) {
+  return apiRequest<{ success: boolean }>("PATCH", `/messages/${msgId}/response`, { response });
+}
+
+export async function apiDeleteMessage(id: number) {
+  return apiRequest<{ success: boolean }>("DELETE", `/messages/${id}`);
 }
 
 // Rooms
-export async function apiGetRooms(): Promise<ApiRoom[]> {
-  return apiRequest("GET", "/rooms");
+export async function apiGetRooms() {
+  return apiRequest<ApiRoom[]>("GET", "/rooms");
 }
 
-export async function apiCreateRoom(name: string, slug: string): Promise<ApiRoom> {
-  return apiRequest("POST", "/rooms", { name, slug });
+export async function apiCreateRoom(name: string, slug: string) {
+  return apiRequest<ApiRoom>("POST", "/rooms", { name, slug });
 }
 
-export async function apiDeleteRoom(id: number): Promise<void> {
-  return apiRequest("DELETE", `/rooms/${id}`);
+export async function apiRenameRoom(id: number, name: string) {
+  return apiRequest<ApiRoom>("PATCH", `/rooms/${id}`, { name });
 }
 
-export async function apiRenameRoom(id: number, name: string): Promise<ApiRoom> {
-  return apiRequest("PATCH", `/rooms/${id}`, { name });
+export async function apiDeleteRoom(id: number) {
+  return apiRequest<{ success: boolean }>("DELETE", `/rooms/${id}`);
 }
 
-// User management (Command only)
-export async function apiUpdateUser(id: string, updates: {
-  standing?: string; grade?: string | null; accessClass?: string;
-  role?: string; reviewStatus?: string; promotionStatus?: string; bio?: string; statusLine?: string;
-}): Promise<ApiUser> {
-  return apiRequest("PATCH", `/users/${id}`, updates);
-}
-
-export async function apiDeleteUser(id: string): Promise<void> {
-  return apiRequest("DELETE", `/users/${id}`);
-}
-
-// Delete operations
-export async function apiDeleteCase(id: number): Promise<void> {
-  return apiRequest("DELETE", `/cases/${id}`);
-}
-
-export async function apiDeleteSignal(id: number): Promise<void> {
-  return apiRequest("DELETE", `/signals/${id}`);
-}
-
-export async function apiDeleteMessage(id: number): Promise<void> {
-  return apiRequest("DELETE", `/messages/${id}`);
-}
-
-// Session management
-export function saveSession(token: string): void {
+// Session helpers
+export function saveSession(token: string) {
   localStorage.setItem("rsr_token", token);
 }
 
-export function clearSession(): void {
+export function clearSession() {
   localStorage.removeItem("rsr_token");
 }
 

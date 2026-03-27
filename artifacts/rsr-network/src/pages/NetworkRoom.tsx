@@ -23,7 +23,8 @@ function saveRoomOrder(order: number[]) {
 export default function NetworkRoom() {
   const {
     networkMessages, users, currentUserId, rooms, currentRoomId,
-    addNetworkMessage, setCurrentRoom, createRoom, deleteRoom, renameRoom, refreshMessages,
+    addNetworkMessage, setCurrentRoom, createRoom, deleteRoom, renameRoom,
+    deleteNetworkMessage, refreshMessages,
   } = useStore();
   const [, navigate] = useLocation();
 
@@ -34,6 +35,7 @@ export default function NetworkRoom() {
   const [renamingRoomId, setRenamingRoomId] = useState<number | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [roomOrder, setRoomOrder] = useState<number[]>(loadRoomOrder);
+  const [confirmDeleteMsg, setConfirmDeleteMsg] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const currentUser = users.find(u => u.id === currentUserId);
@@ -58,6 +60,11 @@ export default function NetworkRoom() {
   useEffect(() => {
     if (currentRoomId) refreshMessages(currentRoomId);
   }, [currentRoomId]);
+
+  // Mark messages as seen when visiting this room
+  useEffect(() => {
+    localStorage.setItem("rsr_network_seen", String(networkMessages.length));
+  }, [networkMessages.length]);
 
   const handleSend = () => {
     if (!msg.trim() || !currentUser) return;
@@ -113,6 +120,15 @@ export default function NetworkRoom() {
     saveRoomOrder(currentOrder);
   };
 
+  const handleDeleteMessage = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    if (confirmDeleteMsg !== id) { setConfirmDeleteMsg(id); return; }
+    try {
+      await deleteNetworkMessage(id);
+      setConfirmDeleteMsg(null);
+    } catch {}
+  };
+
   return (
     <div className="h-full flex flex-row overflow-hidden">
       {/* Channel Rail */}
@@ -161,25 +177,14 @@ export default function NetworkRoom() {
                     <span className="text-[11px] tracking-wide truncate flex-1">{room.name}</span>
                   )}
 
-                  {/* Management controls — visible on hover for founder */}
                   {!isRenaming && (
                     <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0 shrink-0 transition-opacity">
                       {canReorder && (
                         <>
-                          <button
-                            onClick={e => moveRoom(e, room.id, -1)}
-                            disabled={isFirst}
-                            className="p-0.5 disabled:opacity-20"
-                            title="Move up"
-                          >
+                          <button onClick={e => moveRoom(e, room.id, -1)} disabled={isFirst} className="p-0.5 disabled:opacity-20" title="Move up">
                             <ChevronUp className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
                           </button>
-                          <button
-                            onClick={e => moveRoom(e, room.id, 1)}
-                            disabled={isLast}
-                            className="p-0.5 disabled:opacity-20"
-                            title="Move down"
-                          >
+                          <button onClick={e => moveRoom(e, room.id, 1)} disabled={isLast} className="p-0.5 disabled:opacity-20" title="Move down">
                             <ChevronDown className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
                           </button>
                         </>
@@ -189,7 +194,7 @@ export default function NetworkRoom() {
                           <button onClick={e => startRename(e, room)} className="p-0.5" title="Rename">
                             <Pencil className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
                           </button>
-                          <button onClick={e => handleDeleteRoom(e, room.id)} className="p-0.5" title={isConfirming ? "Confirm delete" : "Delete channel"}>
+                          <button onClick={e => handleDeleteRoom(e, room.id)} className="p-0.5" title={isConfirming ? "Confirm" : "Delete"}>
                             {isConfirming
                               ? <Check className="w-2.5 h-2.5 text-red-500" />
                               : <Trash2 className="w-2.5 h-2.5 text-zinc-700 hover:text-red-600" />}
@@ -263,17 +268,40 @@ export default function NetworkRoom() {
               const author = users.find(u => u.id === m.userId);
               const isMe = currentUserId === m.userId;
               const isCommand = author?.standing === "Command";
+              const isConfirmingDel = confirmDeleteMsg === m.id;
 
               return (
                 <div key={m.id} className="flex flex-col gap-1.5 group">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={cn("text-[11px] font-medium tracking-wide",
-                      isCommand ? "text-amber-500" : isMe ? "text-zinc-300" : "text-zinc-500"
-                    )}>
+                    <button
+                      onClick={() => author && navigate(`/operators/${author.id}`)}
+                      className={cn(
+                        "text-[11px] font-medium tracking-wide transition-opacity hover:opacity-70",
+                        isCommand ? "text-amber-500" : isMe ? "text-zinc-300" : "text-zinc-500"
+                      )}
+                      title={`View ${author?.alias || m.userId} profile`}
+                    >
                       {author?.alias || m.userId}
-                    </span>
+                    </button>
                     {author && <StandingBadge standing={author.standing} grade={author.grade} />}
                     <span className="text-[9px] text-zinc-800 font-mono tracking-widest ml-auto">{m.timestamp}</span>
+
+                    {/* Founder-only inline delete */}
+                    {isFounder && (
+                      <button
+                        onClick={e => handleDeleteMessage(e, m.id)}
+                        className={cn(
+                          "opacity-0 group-hover:opacity-100 transition-all text-[8px] uppercase tracking-widest flex items-center gap-1 px-1.5 py-0.5 border",
+                          isConfirmingDel
+                            ? "opacity-100 text-red-400 border-red-800/50 bg-red-950/20"
+                            : "text-zinc-700 border-white/[0.04] hover:text-red-600 hover:border-red-900/40"
+                        )}
+                        title={isConfirmingDel ? "Click again to confirm removal" : "Remove transmission"}
+                      >
+                        <Trash2 className="w-2.5 h-2.5" />
+                        {isConfirmingDel ? "Confirm" : ""}
+                      </button>
+                    )}
                   </div>
 
                   <div className={cn("text-sm leading-relaxed pl-3 border-l",

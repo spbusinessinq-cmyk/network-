@@ -21,6 +21,7 @@ export const usersTable = pgTable("users", {
   contributionCount: integer("contribution_count").notNull().default(0),
   promotionStatus: text("promotion_status").notNull().default("Not Eligible"),
   reviewStatus: text("review_status").notNull().default("Pending"),
+  status: text("status").notNull().default("active"),
   isFounder: boolean("is_founder").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

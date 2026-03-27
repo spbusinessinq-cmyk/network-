@@ -25,6 +25,7 @@ function toFrontendUser(u: typeof usersTable.$inferSelect) {
     contributionCount: u.contributionCount,
     promotionStatus: u.promotionStatus,
     reviewStatus: u.reviewStatus,
+    status: (u as any).status || "active",
     isFounder: u.isFounder,
     username: u.username,
   };
@@ -57,10 +58,15 @@ router.post("/login", async (req, res) => {
       return;
     }
 
+    const userStatus = (user as any).status || "active";
+    if (userStatus === "banned") {
+      res.status(403).json({ error: "NETWORK ACCESS REVOKED. Contact Command to appeal." });
+      return;
+    }
+
     const token = signToken({ userId: user.id, isFounder: user.isFounder });
     res.json({ token, user: toFrontendUser(user) });
-  } catch (err) {
-    console.error("Login error:", err);
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -106,11 +112,10 @@ router.post("/register", async (req, res) => {
       isFounder: false,
     };
 
-    await db.insert(usersTable).values(newUser);
+    await db.insert(usersTable).values(newUser as any);
     const token = signToken({ userId: rsrId, isFounder: false });
     res.status(201).json({ token, user: toFrontendUser(newUser as any) });
-  } catch (err) {
-    console.error("Register error:", err);
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -129,8 +134,14 @@ router.post("/verify", async (req, res) => {
     const user = results[0];
     if (!user) { res.status(401).json({ error: "User not found" }); return; }
 
+    const userStatus = (user as any).status || "active";
+    if (userStatus === "banned") {
+      res.status(403).json({ error: "NETWORK ACCESS REVOKED." });
+      return;
+    }
+
     res.json({ user: toFrontendUser(user) });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 });

@@ -27,6 +27,17 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `signal_threads` — per-signal thread messages
 - `network_rooms` — Network Room channel list (system rooms: General Net, Signal Review, Case Ops, Command Net, Field Reports)
 
+### True-Final Pass Features (v3)
+- **DB schema — status column**: `status text NOT NULL DEFAULT 'active'` added to `users` table. Values: `active | restricted | banned`.
+- **Auth ban check**: Login and token verify both check user `status`. Banned users receive HTTP 403 "NETWORK ACCESS REVOKED" and cannot enter.
+- **IDCard flip (pure CSS 3D)**: Full rewrite with CSS `preserve-3d` + `backfaceVisibility: hidden` on both absolutely-positioned faces. Framer Motion only wraps for entrance animation (no conflicting 3D). Flip button is a dedicated strip below the card.
+- **NetworkRoom — inline message delete**: Hover-reveal trash icon per message (founder only). Two-click confirmation pattern (click once to arm, again to confirm). Author name is a clickable link → `/operators/:id`.
+- **AppShell — unread notification dot**: Tracks `localStorage.rsr_network_seen` count. Red pulsing dot on "Network Room" nav item when unseen messages exist. Auto-clears on `/network` visit.
+- **CommandPage — Personnel tab upgrades**: Inline alias editing (hover pencil → input → save). Status controls (active/restricted/banned buttons with icons). Promotion request queue: when `promotionStatus === "Under Review"`, operator card shows approve/deny buttons. Approving auto-promotes to next standing tier (never to Command automatically).
+- **IdentityPage — Request Promotion**: Non-Command operators see a "Request Promotion" button in the Advancement panel. PATCHes `promotionStatus` to "Under Review". State-aware: shows current status (Denied = re-submit option, Under Review = pending message, Approved = success note).
+- **Users PATCH route**: `alias` and `status` added to Command-allowed update fields. `toFrontendUser` returns `status` field in both auth.ts and users.ts.
+- **CommandPage tabs**: Tab active color changed to amber to match Command aesthetic.
+
 ### Final Pass Features (v2)
 - **StarfieldCanvas**: Layered 3-depth stars (foreground/mid/background), much brighter and more defined. Radial glow on foreground stars. Occasional shooting stars (9–25s interval, 0.3 max opacity). Canvas z-0 fixed behind all content.
 - **IDCard flip**: Flip button (RotateCcw) on bottom-right of card. Front/back with `rotateY` spring animation, `preserve-3d`. Back shows credential class, access class, standing, role, join date, network provision.

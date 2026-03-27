@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useStore, STANDING_DOCTRINE, CREDENTIAL_DOCTRINE } from "@/lib/store";
 import { IDCard } from "@/components/IDCard";
-import { CheckSquare, Square, ShieldAlert, ShieldCheck } from "lucide-react";
+import { CheckSquare, Square, ShieldAlert, ShieldCheck, ChevronRight } from "lucide-react";
 import { StandingBadge } from "@/components/StandingBadge";
 import { PresenceDot } from "@/components/PresenceDot";
 import { cn } from "@/lib/utils";
 
 export default function IdentityPage() {
-  const { currentUserId, users } = useStore();
+  const { currentUserId, users, updateUserOnServer } = useStore();
   const currentUser = users.find(u => u.id === currentUserId);
   const [expanded, setExpanded] = useState(false);
+  const [requestingPromo, setRequestingPromo] = useState(false);
+  const [promoMsg, setPromoMsg] = useState<{ text: string; kind: "ok" | "err" } | null>(null);
 
   if (!currentUser) return null;
 
@@ -18,8 +20,27 @@ export default function IdentityPage() {
   const isCommand = currentUser.standing === "Command";
   const isOnline = currentUser.presence.includes("ACTIVE") || currentUser.presence === "Online";
 
+  const canRequestPromo = !isCommand
+    && currentUser.promotionStatus !== "Under Review"
+    && currentUser.promotionStatus !== "Command Reserved";
+
+  const handleRequestPromotion = async () => {
+    if (!canRequestPromo || requestingPromo) return;
+    setRequestingPromo(true);
+    try {
+      await updateUserOnServer(currentUser.id, { promotionStatus: "Under Review" });
+      setPromoMsg({ text: "Promotion request submitted. Command will review.", kind: "ok" });
+      setTimeout(() => setPromoMsg(null), 4000);
+    } catch {
+      setPromoMsg({ text: "Request failed. Try again.", kind: "err" });
+      setTimeout(() => setPromoMsg(null), 4000);
+    } finally {
+      setRequestingPromo(false);
+    }
+  };
+
   const renderAdvancementChecklist = () => {
-    if (currentUser.standing === "Command") {
+    if (isCommand) {
       return (
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-3 text-amber-600/80">
@@ -125,7 +146,12 @@ export default function IdentityPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-[9px] text-zinc-700 uppercase tracking-widest mb-1">Promotion Status</div>
-                      <div className="text-xs text-zinc-500">{currentUser.promotionStatus}</div>
+                      <div className={cn("text-xs",
+                        currentUser.promotionStatus === "Under Review" && "text-emerald-500",
+                        currentUser.promotionStatus === "Approved" && "text-emerald-400",
+                        currentUser.promotionStatus === "Denied" && "text-red-500",
+                        !["Under Review","Approved","Denied"].includes(currentUser.promotionStatus) && "text-zinc-500"
+                      )}>{currentUser.promotionStatus}</div>
                     </div>
                   </div>
                   <p className="text-xs text-zinc-600 leading-relaxed">{doctrine.description}</p>
@@ -165,6 +191,55 @@ export default function IdentityPage() {
               <div className="border border-white/[0.05] bg-black/20 p-6">
                 <h3 className="text-[9px] uppercase tracking-[0.25em] text-zinc-600 border-b border-white/[0.04] pb-2.5 mb-5">Advancement</h3>
                 {renderAdvancementChecklist()}
+
+                {/* Promotion Request — non-Command only */}
+                {!isCommand && (
+                  <div className="mt-5 pt-4 border-t border-white/[0.04]">
+                    {currentUser.promotionStatus === "Under Review" ? (
+                      <div className="text-[10px] text-emerald-500 uppercase tracking-widest font-mono flex items-center gap-2 py-2">
+                        <ChevronRight className="w-3 h-3" />
+                        Promotion request submitted — pending Command review
+                      </div>
+                    ) : currentUser.promotionStatus === "Approved" ? (
+                      <div className="text-[10px] text-emerald-400 uppercase tracking-widest font-mono flex items-center gap-2 py-2">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        Promotion approved by Command
+                      </div>
+                    ) : currentUser.promotionStatus === "Denied" ? (
+                      <div className="space-y-2">
+                        <div className="text-[10px] text-red-500 uppercase tracking-widest font-mono py-1">Promotion denied — contact Command to discuss</div>
+                        <button
+                          onClick={handleRequestPromotion}
+                          disabled={requestingPromo}
+                          className="text-[9px] uppercase tracking-widest border border-white/[0.05] text-zinc-700 hover:text-zinc-400 hover:border-white/[0.09] px-4 py-1.5 transition-colors disabled:opacity-40"
+                        >
+                          {requestingPromo ? "Submitting…" : "Re-submit Request"}
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleRequestPromotion}
+                        disabled={requestingPromo || !canRequestPromo}
+                        className={cn(
+                          "flex items-center gap-2 text-[10px] uppercase tracking-widest border px-4 py-2 transition-colors disabled:opacity-40",
+                          canRequestPromo
+                            ? "border-zinc-700/60 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200 hover:bg-white/[0.02]"
+                            : "border-white/[0.04] text-zinc-700 cursor-not-allowed"
+                        )}
+                      >
+                        <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                        {requestingPromo ? "Submitting…" : "Request Promotion"}
+                      </button>
+                    )}
+                    {promoMsg && (
+                      <p className={cn("text-[9px] uppercase tracking-widest mt-2 font-mono",
+                        promoMsg.kind === "ok" ? "text-emerald-600" : "text-red-500"
+                      )}>
+                        {promoMsg.text}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
             </div>

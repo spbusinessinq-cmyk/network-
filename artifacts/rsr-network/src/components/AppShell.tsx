@@ -20,12 +20,29 @@ interface AppShellProps {
   children: React.ReactNode;
 }
 
+function getSeenCount(): number {
+  try { return parseInt(localStorage.getItem("rsr_network_seen") || "0", 10); } catch { return 0; }
+}
+
 export function AppShell({ children }: AppShellProps) {
   const [location] = useLocation();
-  const { currentUserId, users, signals, cases, logoutUser } = useStore();
+  const { currentUserId, users, signals, cases, networkMessages, logoutUser } = useStore();
   const currentUser = users.find((u) => u.id === currentUserId);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Unread network message tracking
+  const [seenCount, setSeenCount] = useState(getSeenCount);
+  const hasUnread = networkMessages.length > seenCount;
+
+  // When user navigates to /network, mark all as seen
+  useEffect(() => {
+    if (location === "/network") {
+      const current = networkMessages.length;
+      setSeenCount(current);
+      localStorage.setItem("rsr_network_seen", String(current));
+    }
+  }, [location, networkMessages.length]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -38,13 +55,13 @@ export function AppShell({ children }: AppShellProps) {
   }, []);
 
   const navItems = [
-    { label: "Network HQ", path: "/", icon: LayoutDashboard },
-    { label: "Identity", path: "/identity", icon: Fingerprint },
-    { label: "Network Room", path: "/network", icon: Radio },
-    { label: "Signals", path: "/signals", icon: Radar },
-    { label: "Cases", path: "/cases", icon: FolderOpen },
-    { label: "Operators", path: "/operators", icon: Users },
-    { label: "Profile", path: "/profile", icon: UserCircle },
+    { label: "Network HQ",    path: "/",         icon: LayoutDashboard },
+    { label: "Identity",      path: "/identity",  icon: Fingerprint },
+    { label: "Network Room",  path: "/network",   icon: Radio, unread: hasUnread },
+    { label: "Signals",       path: "/signals",   icon: Radar },
+    { label: "Cases",         path: "/cases",     icon: FolderOpen },
+    { label: "Operators",     path: "/operators", icon: Users },
+    { label: "Profile",       path: "/profile",   icon: UserCircle },
   ];
 
   const isAdmin = currentUser?.standing === "Command";
@@ -57,7 +74,6 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-[#020203] text-zinc-100 flex flex-col font-sans">
-      {/* Starfield — fixed absolute base layer */}
       <StarfieldCanvas />
 
       {/* Top Header */}
@@ -157,7 +173,11 @@ export function AppShell({ children }: AppShellProps) {
                     : "text-zinc-600 hover:bg-white/[0.03] hover:text-zinc-400 border-l border-l-transparent"
                 )}>
                   <item.icon className={cn("w-3.5 h-3.5 shrink-0 transition-colors", active ? "text-zinc-400" : "text-zinc-600 group-hover:text-zinc-400")} />
-                  <span className="tracking-widest uppercase text-[10px]">{item.label}</span>
+                  <span className="tracking-widest uppercase text-[10px] flex-1">{item.label}</span>
+                  {/* Unread indicator */}
+                  {(item as any).unread && location !== item.path && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" title="New activity" />
+                  )}
                 </Link>
               );
             })}
