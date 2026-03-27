@@ -1,13 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useStore } from "@/lib/store";
 import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Users, Plus, Trash2, Hash, X, Check, Pencil } from "lucide-react";
+import { Send, Users, Plus, Trash2, Hash, X, Check, Pencil, ChevronUp, ChevronDown } from "lucide-react";
 import { StandingBadge } from "@/components/StandingBadge";
 import { PresenceDot } from "@/components/PresenceDot";
 import { cn } from "@/lib/utils";
+
+function loadRoomOrder(): number[] {
+  try {
+    const stored = localStorage.getItem("rsr_room_order");
+    return stored ? JSON.parse(stored) : [];
+  } catch { return []; }
+}
+
+function saveRoomOrder(order: number[]) {
+  localStorage.setItem("rsr_room_order", JSON.stringify(order));
+}
 
 export default function NetworkRoom() {
   const {
@@ -22,12 +33,23 @@ export default function NetworkRoom() {
   const [confirmDeleteRoom, setConfirmDeleteRoom] = useState<number | null>(null);
   const [renamingRoomId, setRenamingRoomId] = useState<number | null>(null);
   const [renameValue, setRenameValue] = useState("");
+  const [roomOrder, setRoomOrder] = useState<number[]>(loadRoomOrder);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const currentUser = users.find(u => u.id === currentUserId);
   const isFounder = currentUser?.isFounder || currentUser?.standing === "Command";
   const currentRoom = rooms.find(r => r.id === currentRoomId);
   const roomMessages = networkMessages.filter(m => m.roomId === currentRoomId);
+
+  const sortedRooms = useMemo(() => {
+    if (roomOrder.length === 0) return rooms;
+    const orderMap = new Map(roomOrder.map((id, i) => [id, i]));
+    return [...rooms].sort((a, b) => {
+      const ai = orderMap.has(a.id) ? orderMap.get(a.id)! : 9999;
+      const bi = orderMap.has(b.id) ? orderMap.get(b.id)! : 9999;
+      return ai - bi;
+    });
+  }, [rooms, roomOrder]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -57,7 +79,13 @@ export default function NetworkRoom() {
   const handleDeleteRoom = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     if (confirmDeleteRoom !== id) { setConfirmDeleteRoom(id); return; }
-    try { await deleteRoom(id); setConfirmDeleteRoom(null); } catch {}
+    try {
+      await deleteRoom(id);
+      setConfirmDeleteRoom(null);
+      const newOrder = roomOrder.filter(rid => rid !== id);
+      setRoomOrder(newOrder);
+      saveRoomOrder(newOrder);
+    } catch {}
   };
 
   const startRename = (e: React.MouseEvent, room: typeof rooms[0]) => {
@@ -73,26 +101,41 @@ export default function NetworkRoom() {
     setRenamingRoomId(null);
   };
 
+  const moveRoom = (e: React.MouseEvent, id: number, dir: -1 | 1) => {
+    e.stopPropagation();
+    const currentOrder = sortedRooms.map(r => r.id);
+    const idx = currentOrder.indexOf(id);
+    if (idx < 0) return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= currentOrder.length) return;
+    [currentOrder[idx], currentOrder[newIdx]] = [currentOrder[newIdx], currentOrder[idx]];
+    setRoomOrder([...currentOrder]);
+    saveRoomOrder(currentOrder);
+  };
+
   return (
     <div className="h-full flex flex-row overflow-hidden">
       {/* Channel Rail */}
-      <div className="w-48 flex-shrink-0 bg-black/30 border-r border-white/[0.04] flex flex-col">
+      <div className="w-52 flex-shrink-0 bg-black/30 border-r border-white/[0.04] flex flex-col">
         <div className="h-12 border-b border-white/[0.04] flex items-center px-4 shrink-0">
           <span className="text-[9px] tracking-[0.3em] uppercase text-zinc-700">Channels</span>
         </div>
         <ScrollArea className="flex-1">
           <div className="py-2 px-1.5 space-y-px">
-            {rooms.map(room => {
+            {sortedRooms.map((room, idx) => {
               const isActive = room.id === currentRoomId;
-              const canManage = isFounder && room.type === "custom";
+              const canManageContent = isFounder && room.type === "custom";
+              const canReorder = isFounder;
               const isConfirming = confirmDeleteRoom === room.id;
               const isRenaming = renamingRoomId === room.id;
+              const isFirst = idx === 0;
+              const isLast = idx === sortedRooms.length - 1;
 
               return (
                 <div
                   key={room.id}
                   className={cn(
-                    "group flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors border-l",
+                    "group flex items-center gap-1.5 px-2 py-2 cursor-pointer transition-colors border-l",
                     isActive
                       ? "bg-white/[0.05] text-zinc-300 border-l-zinc-600/40"
                       : "text-zinc-700 hover:bg-white/[0.02] hover:text-zinc-500 border-l-transparent"
@@ -118,16 +161,41 @@ export default function NetworkRoom() {
                     <span className="text-[11px] tracking-wide truncate flex-1">{room.name}</span>
                   )}
 
-                  {canManage && !isRenaming && (
-                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 shrink-0">
-                      <button onClick={e => startRename(e, room)} className="p-0.5">
-                        <Pencil className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
-                      </button>
-                      <button onClick={e => handleDeleteRoom(e, room.id)} className="p-0.5">
-                        {isConfirming
-                          ? <Check className="w-2.5 h-2.5 text-red-500" />
-                          : <Trash2 className="w-2.5 h-2.5 text-zinc-700 hover:text-red-600" />}
-                      </button>
+                  {/* Management controls — visible on hover for founder */}
+                  {!isRenaming && (
+                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0 shrink-0 transition-opacity">
+                      {canReorder && (
+                        <>
+                          <button
+                            onClick={e => moveRoom(e, room.id, -1)}
+                            disabled={isFirst}
+                            className="p-0.5 disabled:opacity-20"
+                            title="Move up"
+                          >
+                            <ChevronUp className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
+                          </button>
+                          <button
+                            onClick={e => moveRoom(e, room.id, 1)}
+                            disabled={isLast}
+                            className="p-0.5 disabled:opacity-20"
+                            title="Move down"
+                          >
+                            <ChevronDown className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
+                          </button>
+                        </>
+                      )}
+                      {canManageContent && (
+                        <>
+                          <button onClick={e => startRename(e, room)} className="p-0.5" title="Rename">
+                            <Pencil className="w-2.5 h-2.5 text-zinc-700 hover:text-zinc-400" />
+                          </button>
+                          <button onClick={e => handleDeleteRoom(e, room.id)} className="p-0.5" title={isConfirming ? "Confirm delete" : "Delete channel"}>
+                            {isConfirming
+                              ? <Check className="w-2.5 h-2.5 text-red-500" />
+                              : <Trash2 className="w-2.5 h-2.5 text-zinc-700 hover:text-red-600" />}
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
 
@@ -167,7 +235,7 @@ export default function NetworkRoom() {
               </div>
             ) : (
               <button onClick={() => setShowCreateRoom(true)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 text-[10px] text-zinc-800 hover:text-amber-700 transition-colors">
+                className="w-full flex items-center gap-2 px-2 py-1.5 text-[10px] text-zinc-700 hover:text-amber-700 transition-colors">
                 <Plus className="w-3 h-3" /> New Channel
               </button>
             )}

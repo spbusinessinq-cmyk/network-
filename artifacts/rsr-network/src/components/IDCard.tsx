@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { User } from "@/lib/store";
 import { StandingBadge } from "./StandingBadge";
 import { cn } from "@/lib/utils";
@@ -54,11 +54,69 @@ export function IDCard({ user, expanded, onExpand, size = "md", className }: IDC
     }
   };
 
-  const heightClass = size === "sm" ? "h-40" : expanded ? "h-auto min-h-[260px]" : "h-64";
+  const cardHeightClass = size === "sm" ? "h-40" : expanded ? "min-h-[260px]" : "h-64";
   const isCommand = user.standing === "Command";
 
-  const cardContent = flipped ? (
-    <div className="flex flex-col h-full justify-between" style={{ transform: "rotateY(180deg)" }}>
+  const frontFace = (
+    <div className="flex flex-col h-full justify-between" style={{ backfaceVisibility: "hidden" }}>
+      <div className="flex justify-between items-start">
+        <div>
+          <Shield className={cn("w-5 h-5 mb-3", getAccentClass())} />
+          <div className="text-[8px] uppercase tracking-[0.4em] text-zinc-600 mb-1">Operative</div>
+          <div className={cn("text-xl font-bold tracking-wider uppercase", isCommand ? "text-amber-300" : "text-zinc-100")}>
+            {user.alias}
+          </div>
+        </div>
+        <StandingBadge standing={user.standing} grade={user.grade} />
+      </div>
+
+      {expanded && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.3 }}
+          className={cn("py-4 space-y-4 border-y my-4 flex-1", getAccentBorder())}
+        >
+          {user.bio && (
+            <div>
+              <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1.5">Status</div>
+              <div className="text-sm text-zinc-300 leading-relaxed">{user.bio}</div>
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Access Role</div>
+              <div className="text-sm text-zinc-300">{user.role}</div>
+            </div>
+            <div>
+              <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Join Date</div>
+              <div className="text-sm text-zinc-300">{user.joinDate}</div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      <div className="flex justify-between items-end mt-auto">
+        <div>
+          <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Identification</div>
+          <div className="text-xs font-mono tracking-widest text-zinc-500">{user.id}</div>
+        </div>
+        <div className="text-right">
+          <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Presence</div>
+          <div className="text-xs text-zinc-400 flex items-center justify-end gap-1.5">
+            {user.presence}
+            <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", user.presence.includes("ACTIVE") ? "bg-emerald-500 animate-pulse" : "bg-zinc-600")} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const backFace = (
+    <div
+      className="flex flex-col h-full justify-between absolute inset-0 p-5"
+      style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+    >
       <div>
         <div className={cn("text-[8px] uppercase tracking-[0.4em] mb-4 pb-3 border-b", getAccentClass(), getAccentBorder())}>
           RSR Network — Credential Reverse
@@ -100,91 +158,47 @@ export function IDCard({ user, expanded, onExpand, size = "md", className }: IDC
         {user.id} · AUTHENTICATED · NETWORK PROVISION ACTIVE
       </div>
     </div>
-  ) : (
-    <div className="flex flex-col h-full justify-between">
-      <div className="flex justify-between items-start z-10">
-        <div>
-          <Shield className={cn("w-5 h-5 mb-3", getAccentClass())} />
-          <div className="text-[8px] uppercase tracking-[0.4em] text-zinc-600 mb-1">Operative</div>
-          <div className={cn("text-xl font-bold tracking-wider uppercase", isCommand ? "text-amber-300" : "text-zinc-100")}>{user.alias}</div>
-        </div>
-        <StandingBadge standing={user.standing} grade={user.grade} />
-      </div>
-
-      {expanded && (
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.3 }}
-          className={cn("z-10 py-4 space-y-4 border-y my-4 flex-1", getAccentBorder())}
-        >
-          {user.bio && (
-            <div>
-              <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1.5">Status</div>
-              <div className="text-sm text-zinc-300 leading-relaxed">{user.bio}</div>
-            </div>
-          )}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Access Role</div>
-              <div className="text-sm text-zinc-300">{user.role}</div>
-            </div>
-            <div>
-              <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Join Date</div>
-              <div className="text-sm text-zinc-300">{user.joinDate}</div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      <div className="flex justify-between items-end z-10 mt-auto">
-        <div>
-          <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Identification</div>
-          <div className="text-xs font-mono tracking-widest text-zinc-500">{user.id}</div>
-        </div>
-        <div className="text-right">
-          <div className="text-[8px] uppercase tracking-[0.25em] text-zinc-600 mb-1">Presence</div>
-          <div className="text-xs text-zinc-400 flex items-center justify-end gap-1.5">
-            {user.presence}
-            <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", user.presence.includes("ACTIVE") ? "bg-emerald-500 animate-pulse" : "bg-zinc-600")} />
-          </div>
-        </div>
-      </div>
-    </div>
   );
 
   return (
-    <div className={cn("relative w-full", heightClass, className)} style={{ perspective: 1200 }}>
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 20, rotateX: 8 }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          rotateY: flipped ? 180 : 0,
-        }}
-        whileHover={onExpand && !flipped ? { scale: 1.012, rotateY: 3, rotateX: -3 } : {}}
-        transition={{ type: "spring", stiffness: 260, damping: 24 }}
-        onClick={onExpand}
-        className={cn(
-          "relative w-full h-full cursor-pointer overflow-hidden border p-5 flex flex-col justify-between",
-          getStyleClasses(),
-        )}
-        style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
-      >
-        <div className="absolute inset-0 opacity-[0.025] pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.9)_1px,transparent_1px)] bg-[size:18px_18px]" />
-        {cardContent}
-      </motion.div>
+    <div className={cn("flex flex-col gap-2", className)}>
+      {/* Card with perspective applied */}
+      <div style={{ perspective: 1200 }} className={cn("relative w-full", cardHeightClass)}>
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 20, rotateX: 8 }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            rotateY: flipped ? 180 : 0,
+          }}
+          whileHover={onExpand && !flipped ? { scale: 1.012, rotateY: 3, rotateX: -3 } : {}}
+          transition={{ type: "spring", stiffness: 260, damping: 24 }}
+          onClick={onExpand}
+          className={cn(
+            "relative w-full h-full cursor-pointer overflow-hidden border p-5",
+            getStyleClasses(),
+          )}
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <div className="absolute inset-0 opacity-[0.025] pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.9)_1px,transparent_1px)] bg-[size:18px_18px]" />
+          {frontFace}
+          {backFace}
+        </motion.div>
+      </div>
 
-      <button
-        onClick={(e) => { e.stopPropagation(); setFlipped(f => !f); }}
-        className="absolute bottom-3 right-3 z-20 flex items-center gap-1 text-[8px] uppercase tracking-widest text-zinc-700 hover:text-zinc-400 transition-colors px-2 py-1 border border-white/[0.04] hover:border-white/[0.1] bg-black/40"
-        title={flipped ? "Show front" : "Show back"}
-      >
-        <RotateCcw className="w-2.5 h-2.5" />
-        {flipped ? "Front" : "Flip"}
-      </button>
+      {/* Flip control — separate row, never overlaps card content */}
+      <div className="flex justify-end items-center pr-0.5">
+        <button
+          onClick={() => setFlipped(f => !f)}
+          className="flex items-center gap-1.5 text-[8px] uppercase tracking-widest text-zinc-700 hover:text-zinc-400 transition-colors px-3 py-1.5 border border-white/[0.04] hover:border-white/[0.10] bg-black/30"
+          title={flipped ? "Show front" : "Show credential reverse"}
+        >
+          <RotateCcw className="w-2.5 h-2.5" />
+          {flipped ? "Front" : "Flip"}
+        </button>
+      </div>
     </div>
   );
 }

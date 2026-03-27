@@ -1,0 +1,206 @@
+REPLIT MICRO FINAL PASS — RSR NETWORK CARD FIX / SIGNAL DRAWER CONTROLS / FULL CHANNEL MANAGEMENT / GITHUB-READY CLEANUP
+
+You are upgrading the current **RSR NETWORK** build.
+
+The platform is essentially finished.
+Do not redesign the product.
+Do not change the architecture.
+Do not break working backend flows.
+
+This is a very tight final cleanup pass, and it must also leave the project clean and ready to push to GitHub.
+
+---
+
+## PRIMARY OBJECTIVE
+
+Fix the last visible usability issues:
+
+1. the credential card flip button is colliding with footer text/content
+2. the signal detail side panel must contain real founder/admin delete control in a clean usable location
+3. founder/admin must be able to fully manage channels:
+
+   * rename
+   * reorder / move
+   * delete
+4. the project must be left clean and GitHub-ready
+
+---
+
+1. FIX THE FLIP BUTTON COLLISION
+
+---
+
+The card flip button is currently colliding with footer content on the credential card.
+
+Fix this cleanly.
+
+Requirements:
+
+* flip button must not overlap text
+* flip button must not collide with presence/status/footer labels
+* flip/front controls should feel intentionally placed
+* maintain clean premium motion
+* maintain working front/back flip behavior
+
+Acceptable solutions:
+
+* move button into a dedicated lower control row
+* place it in a fixed clean corner with enough padding
+* create a small card-control strip below the card
+* any other clean premium solution
+
+Important:
+This should feel deliberate, not patched.
+
+Apply the fix consistently anywhere the credential card appears:
+
+* Identity Hub
+* Profile/Dossier
+* any expanded card view
+
+---
+
+2. ADD REAL DELETE CONTROL INSIDE THE SIGNAL SIDE PANEL
+
+---
+
+When a signal is opened in the right-side detail panel/drawer, founder/admin must have a clean real delete control directly inside that panel.
+
+This is required.
+
+Requirements:
+
+* founder/admin only
+* clearly visible in the signal drawer
+* not colliding with close button
+* not hidden awkwardly
+* confirmation required
+* delete hits real backend
+* signal disappears from feed after deletion
+* drawer closes or refreshes correctly after deletion
+* no stale selected signal state
+
+If edit is supported for signals, make sure the drawer also supports or routes cleanly to edit.
+
+This panel is where the signal is being reviewed, so destructive control must exist there.
+
+---
+
+3. FULL CHANNEL MANAGEMENT FOR FOUNDER / COMMAND
+
+---
+
+Founder/admin must be able to fully manage channels.
+
+Current support is not enough unless it is complete.
+
+Add/finish support for:
+
+* rename channel
+* move/reorder channel position
+* delete channel
+* create channel
+* persist all changes
+* keep protected system channels protected if intended
+
+Requirements:
+
+* founder/admin only
+* reorder must update UI immediately
+* reorder must persist
+* rename must update active room label immediately
+* delete must remove room cleanly and switch away if active
+* room list must stay stable after changes
+
+If drag-and-drop is clean and fast, use it.
+If not, use move up / move down controls or another compact ordering control.
+
+The goal is:
+channel management should feel complete, not partial.
+
+---
+
+4. KEEP NETWORK ROOM CLEAN
+
+---
+
+Do not re-clutter the Network Room.
+
+Keep:
+
+* current channel layout
+* tactical feel
+* cleaner chat surface
+* side personnel rail
+
+Only add the management controls needed for founder/admin without making the room feel messy.
+
+---
+
+5. FINAL USABILITY CHECK
+
+---
+
+Before considering this pass complete, verify:
+
+* flip button no longer overlaps anything
+* card front/back works everywhere
+* founder can delete a signal directly from the signal side drawer
+* signal delete updates the UI correctly
+* founder can rename channels
+* founder can reorder channels
+* founder can delete custom channels
+* protected channels remain protected if intended
+* no broken layout collisions were introduced
+
+---
+
+6. GITHUB-READY CLEANUP
+
+---
+
+Before finishing, leave the project clean and ready to push to GitHub.
+
+Required:
+
+* remove dead code / obvious unused junk created during rapid iteration if safe to do so
+* remove temporary debug logs and test-only console noise
+* make sure environment variables are not hardcoded into tracked files
+* ensure `.gitignore` is present and sane
+* make sure secrets, tokens, and local build artifacts are ignored
+* keep README minimal but useful if one already exists; if not, add a short project README with setup/run notes
+* make sure the app still builds cleanly after cleanup
+* do not break working auth/backend config
+
+The repo should feel presentable and push-ready.
+
+---
+
+7. FINAL OUTPUT
+
+---
+
+Return a cleaned final build with:
+
+1. fixed card flip button placement
+2. real founder/admin delete inside signal side panel
+3. complete founder/admin channel management
+4. preserved current visuals, starfield, and polish
+5. no regressions to working backend/auth flows
+6. GitHub-ready cleanup completed
+
+---
+
+## FINAL RULE
+
+This pass is about closing the last visible cracks and leaving the project clean enough to ship and push.
+
+It should make RSR NETWORK feel:
+**finished, deliberate, fully manageable from the founder side, and ready for GitHub + launch**
+
+Not:
+
+* almost done
+* awkward in key interaction points
+* partially managed in channel controls
+* messy in the repo
