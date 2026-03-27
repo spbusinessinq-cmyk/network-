@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { signalsTable, signalThreadsTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { requireAuth } from "../lib/auth.js";
+import { takeFirstInt } from "../lib/params.js";
 
 const router = Router();
 
@@ -83,7 +84,7 @@ router.post("/", requireAuth, async (req, res) => {
 // PATCH /api/signals/:id
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     const { status, priority, caseId } = req.body;
     const updates: Record<string, any> = {};
     if (status !== undefined) updates.status = status;
@@ -100,7 +101,7 @@ router.patch("/:id", requireAuth, async (req, res) => {
 // DELETE /api/signals/:id
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     await db.delete(signalThreadsTable).where(eq(signalThreadsTable.signalId, id));
     await db.delete(signalsTable).where(eq(signalsTable.id, id));
     res.json({ success: true });
@@ -112,7 +113,7 @@ router.delete("/:id", requireAuth, async (req, res) => {
 // POST /api/signals/:id/thread
 router.post("/:id/thread", requireAuth, async (req, res) => {
   try {
-    const signalId = parseInt(req.params.id);
+    const signalId = takeFirstInt(req.params.id);
     const userId = (req as any).user.userId;
     const { message } = req.body;
 

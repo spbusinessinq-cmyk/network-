@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { casesTable, signalsTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { requireAuth } from "../lib/auth.js";
+import { takeFirstInt } from "../lib/params.js";
 
 const router = Router();
 
@@ -67,7 +68,7 @@ router.post("/", requireAuth, async (req, res) => {
 // PATCH /api/cases/:id
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     const { status, notes, summary, name, lead } = req.body;
     const updates: Record<string, any> = { updatedAt: new Date() };
     if (status !== undefined) updates.status = status;
@@ -86,7 +87,7 @@ router.patch("/:id", requireAuth, async (req, res) => {
 // DELETE /api/cases/:id
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     // Unlink signals from this case first
     await db.update(signalsTable).set({ caseId: null }).where(eq(signalsTable.caseId, id));
     await db.delete(casesTable).where(eq(casesTable.id, id));

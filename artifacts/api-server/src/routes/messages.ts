@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { messagesTable } from "@workspace/db";
 import { desc, eq, sql, isNull } from "drizzle-orm";
 import { requireAuth } from "../lib/auth.js";
+import { takeFirstInt } from "../lib/params.js";
 
 const router = Router();
 
@@ -61,7 +62,7 @@ router.post("/", requireAuth, async (req, res) => {
 // PATCH /api/messages/:id/response
 router.patch("/:id/response", requireAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     const { response } = req.body;
     if (!response) { res.status(400).json({ error: "Response required" }); return; }
 
@@ -78,7 +79,7 @@ router.patch("/:id/response", requireAuth, async (req, res) => {
 // DELETE /api/messages/:id
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     await db.delete(messagesTable).where(eq(messagesTable.id, id));
     res.json({ success: true });
   } catch (err) {

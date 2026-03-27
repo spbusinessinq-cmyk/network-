@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, roomsTable, usersTable } from "@workspace/db";
 import { requireAuth } from "../lib/auth.js";
 import { eq } from "drizzle-orm";
+import { takeFirstInt } from "../lib/params.js";
 
 const router = Router();
 
@@ -51,7 +52,7 @@ router.post("/", requireAuth, async (req, res) => {
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
     if (!await requireCommand(req, res)) return;
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     if (isNaN(id)) { res.status(400).json({ error: "Invalid room id" }); return; }
     const { name } = req.body;
     if (!name?.trim()) { res.status(400).json({ error: "Name required" }); return; }
@@ -72,7 +73,7 @@ router.patch("/:id", requireAuth, async (req, res) => {
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
     if (!await requireCommand(req, res)) return;
-    const id = parseInt(req.params.id);
+    const id = takeFirstInt(req.params.id);
     if (isNaN(id)) { res.status(400).json({ error: "Invalid room id" }); return; }
     const [room] = await db.select().from(roomsTable).where(eq(roomsTable.id, id));
     if (!room) { res.status(404).json({ error: "Room not found" }); return; }

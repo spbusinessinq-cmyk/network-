@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { requireAuth } from "../lib/auth.js";
+import { takeFirst } from "../lib/params.js";
 
 const router = Router();
 
@@ -43,7 +44,8 @@ router.get("/", requireAuth, async (_req, res) => {
 // GET /api/users/:id
 router.get("/:id", requireAuth, async (req, res) => {
   try {
-    const results = await db.select().from(usersTable).where(eq(usersTable.id, req.params.id)).limit(1);
+    const userId = takeFirst(req.params.id) ?? "";
+    const results = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
     if (!results[0]) { res.status(404).json({ error: "User not found" }); return; }
     res.json(toFrontendUser(results[0]));
   } catch {
