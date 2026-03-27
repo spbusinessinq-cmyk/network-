@@ -1,0 +1,424 @@
+REPLIT ABSOLUTE FINAL PASS — RSR NETWORK LIVE LOCK / STARFIELD UPGRADE / FOUNDER BACKROOM / JOIN INTEL / CARD FLIP
+
+You are upgrading the current **RSR NETWORK** build.
+
+This is the absolute final pass before live use.
+
+Do not redesign the product from scratch.
+Do not change the core architecture.
+Do not break any working backend flows.
+Do not remove the current starfield direction.
+Do not add random new feature experiments outside this scope.
+
+The current build is very close and looks much better.
+This pass is about tightening the final details so the product feels:
+
+* premium
+* alive
+* command-grade
+* more personal for founder use
+* clearer for new operators
+* more polished in motion and presentation
+
+---
+
+## PRIMARY OBJECTIVE
+
+Finish the final details across:
+
+* starfield / shooting star polish
+* signal drawer layout
+* join/access explanation
+* founder personal space / profile environment
+* operator request management
+* identity card animation / flip behavior
+* brighter text/readability polish
+* last release audit
+
+This pass should make the app feel:
+**finished, premium, personal, and truly live-ready**
+
+---
+
+1. STARFIELD MUST BE MORE DEFINED
+
+---
+
+Keep the live starfield background, but increase its clarity slightly.
+
+The stars are currently too faint.
+They should still remain restrained and premium, but they need to read more clearly.
+
+Improve:
+
+* star brightness slightly
+* star variation slightly
+* a little more depth/parallax feeling if possible
+* still sparse, still elegant, still premium
+
+Do NOT make it dense.
+Do NOT make it noisy.
+Do NOT make it look like a game skybox.
+
+It should feel like:
+
+* deep background atmosphere
+* visible enough to matter
+* subtle but clearly present
+
+---
+
+2. ADD OCCASIONAL SHOOTING STARS
+
+---
+
+Keep and refine the shooting stars.
+
+Requirements:
+
+* occasional only
+* smooth
+* faint
+* thin
+* premium
+* maybe a little more readable than now, but still subtle
+
+They should appear every so often, not constantly.
+They should feel like small elegant motion events in the background.
+
+---
+
+3. BRIGHTNESS / CONTRAST PASS
+
+---
+
+The last pass reduced brightness too much in places.
+
+Bring back a bit more legibility and contrast.
+
+Improve:
+
+* key text readability
+* headings
+* important labels
+* section headers
+* vital metadata
+* active UI states
+
+Do not make the UI bright overall.
+Do not ruin the dark premium look.
+Just bring back enough brightness so it feels crisp and readable.
+
+---
+
+4. FIX SIGNAL DRAWER DELETE BUTTON LOCATION
+
+---
+
+The delete control in the signal side panel is awkward.
+
+Reposition it so it feels clean and intentional.
+
+Requirements:
+
+* founder/admin delete stays available in the signal drawer
+* placement is visually correct and clearly associated with the signal actions
+* does not collide with close button
+* does not feel jammed in
+* destructive action still requires confirmation
+
+This should feel polished and command-grade.
+
+---
+
+5. PERSONAL PROFILE / FOUNDER BACKROOM EXPERIENCE
+
+---
+
+My personal space needs to feel more like:
+
+* my backroom
+* my founder control surface
+* my operator home base
+* my internal command environment
+
+Upgrade the founder personal/profile space so it feels more custom and more owned.
+
+Do this without turning it into social media or fluff.
+
+---
+
+6. ADD PROFILE ENVIRONMENT / BACKGROUND OPTIONS
+
+---
+
+Improve the operator environment selection / personal surface customization.
+
+Make the “select environment” experience cleaner and more premium.
+
+It should feel like choosing an internal control-room atmosphere.
+
+Add or refine tasteful options like:
+
+* Cold Glass
+* Tactical Grid
+* Command Steel
+* Dark Mesh
+* Signal Field
+* Black Flag
+* Republic Steel
+
+Important:
+Add an option inspired by a **black and grey American flag** background treatment for founder/personal profile use.
+
+This must be:
+
+* subtle
+* dark
+* monochrome
+* premium
+* integrated into the UI
+* not loud or patriotic-merch style
+
+It should feel like part of a hardened command environment.
+
+---
+
+7. FOUNDER PROFILE SHOULD FEEL LIKE A BACKROOM CONTROL PANEL
+
+---
+
+Make the founder profile/dossier/personal space feel more like a real backroom control panel.
+
+Improve:
+
+* hero section composition
+* environment/background integration
+* stronger founder identity presentation
+* better spacing and hierarchy
+* more “personal command chamber” feeling
+* cleaner link between profile and authority
+
+This should feel like:
+**Black Rail’s private control surface inside the network**
+
+---
+
+8. OPERATOR REQUEST / APPROVAL MANAGEMENT
+
+---
+
+I need to be able to manage operator requests to join.
+
+Add proper founder/admin visibility and control for incoming access requests.
+
+This can live in Command or a relevant admin surface.
+
+At minimum founder/admin should be able to:
+
+* view pending requests
+* inspect submitted operator details
+* approve request
+* reject request
+* maybe edit/adjust standing/class if appropriate on approval
+* persist approval/rejection state
+
+This is important.
+
+If the system currently auto-creates access without meaningful review, improve that flow so there is a real command-side request management surface.
+
+---
+
+9. WELCOME / ACCESS ROOM NEEDS EXPANDABLE RANK INFO
+
+---
+
+The welcome screen needs to explain:
+
+* standing/ranking
+* what operators do
+* what credential classes mean
+* what Command is
+* what users should know before joining
+
+Do not dump too much text on screen all at once.
+
+Add a cleaner expandable explanation pattern.
+
+Examples:
+
+* “View Standing Structure”
+* “What is Command?”
+* “Credential Classes”
+* “How Access Works”
+
+When clicked, these should expand cleanly in-place or open a polished detail section.
+
+This should help new operators understand the system without cluttering the welcome page.
+
+---
+
+10. ADD CLEARER RANK / STANDING INFO
+
+---
+
+Make sure the app clearly explains:
+
+* Observer
+* Scout
+* Operator
+* Analyst
+* Command
+
+Also clarify:
+
+* first 4 tiers can have grades
+* Command is reserved
+* standing is earned through contribution and review
+* credential class is not the same as standing
+
+Keep it concise and premium.
+
+---
+
+11. IMPROVE CARD ANIMATION
+
+---
+
+The identity card / credential card needs a better animation feel.
+
+Improve:
+
+* enter animation
+* hover tilt
+* hover lighting/reflection
+* expand/inspect transition
+* overall smoothness
+
+It should feel more premium, more physical, and more satisfying.
+
+---
+
+12. ADD A FLIP BUTTON TO SHOW THE BACK OF THE CARD
+
+---
+
+Add a clear flip control for the card.
+
+The card should support:
+
+* front side
+* back side
+
+This should be clean and premium.
+
+The back can include things like:
+
+* credential class summary
+* access class
+* standing overview
+* network provisions
+* issuance text
+* operator environment info if tasteful
+* compact internal details
+
+Do not overload it.
+Do not make it gimmicky.
+It should feel like a real high-end network credential.
+
+---
+
+13. KEEP FUNCTIONALITY INTACT
+
+---
+
+Do not break:
+
+* login
+* logout
+* founder account
+* registration
+* role gating
+* signals
+* cases
+* channels
+* messages
+* signal drawer delete
+* command CRUD
+* event feed
+* operator profile routing
+* environment selection
+* backend persistence
+
+This is a final refinement/completion pass, not a regression pass.
+
+---
+
+14. FINAL FULL AUDIT
+
+---
+
+Before calling this done, do a final audit of the full product.
+
+Verify:
+
+* founder login works
+* sign out works
+* registration works
+* request handling works
+* founder can manage requests
+* operator clicking opens profile
+* card flip works
+* environment selection works
+* signal drawer delete works
+* channels still work
+* room creation/deletion/rename still work
+* no broken states
+* no ugly collisions
+* no unreadable text
+* no misplaced controls
+
+Fix anything found.
+
+---
+
+15. FINAL OUTPUT
+
+---
+
+Return a final polished live-ready build that includes:
+
+1. more defined starfield
+2. occasional premium shooting stars
+3. improved text/readability contrast
+4. corrected signal drawer delete placement
+5. founder backroom-style personal/profile space
+6. improved environment selection
+7. black/grey American flag inspired environment option
+8. founder/admin join-request management
+9. expandable standing/rank info in welcome/access room
+10. cleaner onboarding explanation
+11. better card animation
+12. card flip button with back side
+13. full existing functionality preserved
+14. final audit/stabilization complete
+
+---
+
+## FINAL RULE
+
+RSR NETWORK should now feel like:
+
+**a premium, living, command-grade internal network with a personal founder backroom, clean operator onboarding, refined atmospheric visuals, and fully polished credential identity**
+
+It should not feel like:
+
+* half-finished
+* too dim
+* too boxed in
+* too generic
+* too gamey
+* too cluttered
+
+Everything should communicate:
+**control, atmosphere, authority, personal ownership, and final release polish.**

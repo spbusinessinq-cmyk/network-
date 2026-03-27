@@ -176,6 +176,18 @@ export async function apiRenameRoom(id: number, name: string): Promise<ApiRoom> 
   return apiRequest("PATCH", `/rooms/${id}`, { name });
 }
 
+// User management (Command only)
+export async function apiUpdateUser(id: string, updates: {
+  standing?: string; grade?: string | null; accessClass?: string;
+  role?: string; reviewStatus?: string; promotionStatus?: string; bio?: string; statusLine?: string;
+}): Promise<ApiUser> {
+  return apiRequest("PATCH", `/users/${id}`, updates);
+}
+
+export async function apiDeleteUser(id: string): Promise<void> {
+  return apiRequest("DELETE", `/users/${id}`);
+}
+
 // Delete operations
 export async function apiDeleteCase(id: number): Promise<void> {
   return apiRequest("DELETE", `/cases/${id}`);

@@ -156,7 +156,7 @@ export function AppShell({ children }: AppShellProps) {
                     ? "text-zinc-200 bg-white/[0.06] border-l border-l-sky-500/40"
                     : "text-zinc-600 hover:bg-white/[0.03] hover:text-zinc-400 border-l border-l-transparent"
                 )}>
-                  <item.icon className={cn("w-3.5 h-3.5 shrink-0 transition-colors", active ? "text-zinc-400" : "text-zinc-700 group-hover:text-zinc-600")} />
+                  <item.icon className={cn("w-3.5 h-3.5 shrink-0 transition-colors", active ? "text-zinc-400" : "text-zinc-600 group-hover:text-zinc-400")} />
                   <span className="tracking-widest uppercase text-[10px]">{item.label}</span>
                 </Link>
               );

@@ -4,6 +4,7 @@ import {
   apiGetMessages, apiCreateSignal, apiUpdateSignal, apiAddSignalThread, apiCreateCase,
   apiUpdateCase, apiSendMessage, apiAddMessageResponse, apiDeleteCase, apiDeleteSignal,
   apiDeleteMessage, apiGetRooms, apiCreateRoom, apiDeleteRoom, apiRenameRoom,
+  apiUpdateUser, apiDeleteUser,
   saveSession, clearSession, getSavedToken,
   type ApiUser, type ApiSignal, type ApiCase, type ApiMessage, type ApiRoom,
 } from "./api";
@@ -165,6 +166,8 @@ interface AppContextType extends AppState {
   createRoom: (name: string, slug: string) => Promise<Room>;
   deleteRoom: (id: number) => Promise<void>;
   renameRoom: (id: number, name: string) => Promise<void>;
+  updateUserOnServer: (id: string, updates: { standing?: string; grade?: string | null; accessClass?: string; reviewStatus?: string; promotionStatus?: string }) => Promise<void>;
+  removeUserFromNetwork: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -410,6 +413,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(s => ({ ...s, networkMessages: s.networkMessages.filter(m => m.id !== id) }));
   }, []);
 
+  const updateUserOnServer = useCallback(async (id: string, updates: { standing?: string; grade?: string | null; accessClass?: string; reviewStatus?: string; promotionStatus?: string }) => {
+    const updated = await apiUpdateUser(id, updates);
+    setState(s => ({ ...s, users: s.users.map(u => u.id === id ? mapApiUser(updated) : u) }));
+  }, []);
+
+  const removeUserFromNetwork = useCallback(async (id: string) => {
+    await apiDeleteUser(id);
+    setState(s => ({ ...s, users: s.users.filter(u => u.id !== id) }));
+  }, []);
+
   return (
     <AppContext.Provider value={{
       ...state,
@@ -434,6 +447,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       createRoom,
       deleteRoom,
       renameRoom,
+      updateUserOnServer,
+      removeUserFromNetwork,
     }}>
       {children}
     </AppContext.Provider>

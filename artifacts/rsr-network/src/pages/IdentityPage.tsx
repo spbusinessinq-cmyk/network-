@@ -120,7 +120,7 @@ export default function IdentityPage() {
                 <div className="space-y-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="text-[9px] text-zinc-700 uppercase tracking-widest mb-2">Current Standing</div>
+                      <div className="text-[9px] text-zinc-500 uppercase tracking-widest mb-2">Current Standing</div>
                       <StandingBadge standing={currentUser.standing} grade={currentUser.grade} />
                     </div>
                     <div className="text-right">

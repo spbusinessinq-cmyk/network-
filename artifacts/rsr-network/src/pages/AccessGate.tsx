@@ -9,9 +9,47 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IDCard } from "@/components/IDCard";
 import { StarfieldCanvas } from "@/components/StarfieldCanvas";
 
+const INFO_SECTIONS = [
+  {
+    id: "standing",
+    label: "Standing Structure",
+    content: [
+      { tier: "Observer",  desc: "Entry-level. Intake and observation. Limited participation." },
+      { tier: "Scout",     desc: "Early contributor. Signal submission, basic room access." },
+      { tier: "Operator",  desc: "Proven field contributor. Case participation, full rooms." },
+      { tier: "Analyst",   desc: "High-trust. Verification authority. Case synthesis." },
+      { tier: "Command",   desc: "Reserved. Founder-assigned. Full network authority.", isCmd: true },
+    ],
+  },
+  {
+    id: "credentials",
+    label: "Credential Classes",
+    content: [
+      { tier: "Obsidian",  desc: "Low-signature field credential. Minimal visibility." },
+      { tier: "Steel",     desc: "Structured support credential. Standard operational issue." },
+      { tier: "Ice",       desc: "Verification and analysis credential. Technical roles." },
+      { tier: "Graphite",  desc: "Neutral general credential. Broad utility." },
+      { tier: "Gold",      desc: "Command credential. Founder-class. Not user-selectable.", isCmd: true },
+    ],
+  },
+  {
+    id: "access",
+    label: "How Access Works",
+    content: null,
+    text: "All operators begin at Observer standing. Standing is earned through contribution — signal submission, case participation, and verified engagement. Promotion is reviewed and assigned by Command. Credential class is chosen at registration and represents your operational profile, not your standing. Access is always logged.",
+  },
+  {
+    id: "command",
+    label: "What is Command?",
+    content: null,
+    text: "Command is the founder-level authority tier of the RSR Network. It is not earned through progression — it is assigned by the founder. Command has unrestricted access: signal verification, case control, standing assignment, operator management, and network oversight. The amber designation marks Command standing in all network contexts.",
+  },
+];
+
 export default function AccessGate() {
   const [, setLocation] = useLocation();
   const { loginUser, registerUser } = useStore();
+  const [openSection, setOpenSection] = useState<string | null>(null);
   
   const [view, setView] = useState<"entry" | "login" | "join">("entry");
   
@@ -130,8 +168,52 @@ export default function AccessGate() {
           </div>
         </div>
 
-        <div className="text-[9px] text-zinc-800 uppercase tracking-widest mt-12 relative z-10">
-          All access is logged. All operators are accountable.
+        <div className="mt-auto pt-10 relative z-10 space-y-px">
+          <div className="text-[8px] text-zinc-800 uppercase tracking-widest mb-3">Network Information</div>
+          {INFO_SECTIONS.map(section => (
+            <div key={section.id} className="border border-white/[0.04]">
+              <button
+                onClick={() => setOpenSection(s => s === section.id ? null : section.id)}
+                className="w-full flex items-center justify-between px-3 py-2.5 text-left hover:bg-white/[0.02] transition-colors"
+              >
+                <span className="text-[9px] uppercase tracking-widest text-zinc-600 hover:text-zinc-400 transition-colors">
+                  {section.label}
+                </span>
+                <span className="text-zinc-800 text-[9px] ml-2">{openSection === section.id ? "−" : "+"}</span>
+              </button>
+              <AnimatePresence>
+                {openSection === section.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-3 pb-3 pt-1 border-t border-white/[0.04]">
+                      {section.content ? (
+                        <div className="space-y-1.5">
+                          {section.content.map((row: any) => (
+                            <div key={row.tier} className="flex gap-3">
+                              <span className={`text-[9px] uppercase tracking-wider w-16 shrink-0 pt-0.5 ${row.isCmd ? "text-amber-700" : "text-zinc-600"}`}>
+                                {row.tier}
+                              </span>
+                              <span className="text-[10px] text-zinc-700 leading-relaxed">{row.desc}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-zinc-700 leading-relaxed">{(section as any).text}</p>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+          <div className="text-[8px] text-zinc-800 uppercase tracking-widest pt-3">
+            All access is logged. All operators are accountable.
+          </div>
         </div>
       </div>
 

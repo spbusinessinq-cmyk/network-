@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useStore, Case, Signal, Standing } from "@/lib/store";
-import { Shield, AlertTriangle, CheckCircle2, Archive, Plus, Flag, X, Trash2 } from "lucide-react";
+import { Shield, AlertTriangle, CheckCircle2, Archive, Plus, Flag, X, Trash2, UserCheck, UserX } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StandingBadge } from "@/components/StandingBadge";
 
 export default function CommandPage() {
-  const { currentUserId, users, signals, cases, updateSignal, updateUser, addCase, updateCase, deleteCase, deleteSignal, networkMessages, deleteNetworkMessage } = useStore();
+  const { currentUserId, users, signals, cases, updateSignal, updateUser, addCase, updateCase, deleteCase, deleteSignal, networkMessages, deleteNetworkMessage, updateUserOnServer, removeUserFromNetwork } = useStore();
   const currentUser = users.find(u => u.id === currentUserId);
   
   const [activeTab, setActiveTab] = useState("signals");
@@ -244,6 +244,9 @@ export default function CommandPage() {
           </TabsTrigger>
           <TabsTrigger value="priority" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-sky-500 data-[state=active]:text-sky-400 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
             Priority Board {priorityCount > 0 && <Badge className="ml-2 bg-red-950 text-red-500 border-red-900 rounded-none">{priorityCount}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="intake" className="rounded-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-amber-600 data-[state=active]:text-amber-500 px-0 pb-2 bg-transparent text-zinc-500 uppercase tracking-widest text-xs whitespace-nowrap">
+            Intake {users.filter(u => u.standing === "Observer").length > 0 && <Badge className="ml-2 bg-amber-950/50 text-amber-500 border-amber-900/50 rounded-none">{users.filter(u => u.standing === "Observer").length}</Badge>}
           </TabsTrigger>
         </TabsList>
 
@@ -739,7 +742,140 @@ export default function CommandPage() {
 
           </div>
         </TabsContent>
+
+        {/* --- INTAKE TAB --- */}
+        <TabsContent value="intake">
+          <IntakePanel
+            users={users}
+            currentUserId={currentUserId!}
+            onPromote={async (id, standing) => {
+              try {
+                await updateUserOnServer(id, { standing, reviewStatus: "Active", promotionStatus: "Not Eligible" });
+                showToast(`Operator promoted to ${standing}.`);
+              } catch {
+                showToast("Promotion failed. Try again.", "err");
+              }
+            }}
+            onRemove={async (id, alias) => {
+              setConfirmDelete({ type: "signal", id: 0, name: `OPERATOR: ${alias}` });
+              // Override to delete user instead
+              // We'll use a direct remove below
+            }}
+            onRemoveDirect={async (id, alias) => {
+              if (!window.confirm(`Remove operator "${alias}" from the network? This cannot be undone.`)) return;
+              try {
+                await removeUserFromNetwork(id);
+                showToast(`Operator ${alias} removed.`);
+              } catch {
+                showToast("Removal failed.", "err");
+              }
+            }}
+          />
+        </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+interface IntakePanelProps {
+  users: ReturnType<typeof useStore>["users"];
+  currentUserId: string;
+  onPromote: (id: string, standing: string) => Promise<void>;
+  onRemove: (id: string, alias: string) => void;
+  onRemoveDirect: (id: string, alias: string) => Promise<void>;
+}
+
+function IntakePanel({ users, currentUserId, onPromote, onRemoveDirect }: IntakePanelProps) {
+  const observers = users.filter(u => u.standing === "Observer");
+  const [promoting, setPromoting] = useState<string | null>(null);
+  const [removing, setRemoving] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-300">Operator Intake</h2>
+          <p className="text-[10px] text-zinc-600 mt-1 uppercase tracking-widest">
+            Observer-standing operators awaiting review and standing assignment.
+          </p>
+        </div>
+        <Badge className="bg-amber-950/40 border-amber-900/50 text-amber-500 rounded-none text-[10px]">
+          {observers.length} pending
+        </Badge>
+      </div>
+
+      {observers.length === 0 ? (
+        <div className="border border-white/[0.05] bg-black/20 p-10 text-center">
+          <div className="text-zinc-700 text-xs uppercase tracking-widest">No operators in intake queue.</div>
+          <div className="text-zinc-800 text-[10px] mt-2">All registered operators have been reviewed.</div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {observers.map(op => (
+            <div key={op.id} className="border border-white/[0.06] bg-black/30 p-5">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-base font-medium text-zinc-200 uppercase tracking-wider">{op.alias}</span>
+                    <span className="text-[9px] uppercase tracking-widest border border-white/[0.06] text-zinc-600 px-2 py-0.5">Observer</span>
+                  </div>
+                  <div className="text-[9px] font-mono text-zinc-700 mb-2">{op.id}</div>
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-1.5 text-[10px]">
+                    <div><span className="text-zinc-700 uppercase tracking-widest">Credential:</span> <span className="text-zinc-500">{op.cardStyle}</span></div>
+                    <div><span className="text-zinc-700 uppercase tracking-widest">Joined:</span> <span className="text-zinc-500">{op.joinDate}</span></div>
+                    <div><span className="text-zinc-700 uppercase tracking-widest">Access:</span> <span className="text-zinc-500">{op.accessClass}</span></div>
+                  </div>
+                  {op.bio && (
+                    <div className="mt-3 text-[11px] text-zinc-600 leading-relaxed border-l border-white/[0.05] pl-3 italic">
+                      {op.bio}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                  <div className="flex gap-1">
+                    {["Scout", "Operator", "Analyst"].map(tier => (
+                      <button
+                        key={tier}
+                        disabled={promoting === op.id}
+                        onClick={async () => {
+                          setPromoting(op.id);
+                          await onPromote(op.id, tier);
+                          setPromoting(null);
+                        }}
+                        className="text-[9px] uppercase tracking-widest px-2.5 py-1.5 border border-white/[0.07] text-zinc-500 hover:border-emerald-800/60 hover:text-emerald-500 hover:bg-emerald-950/20 transition-colors disabled:opacity-40"
+                      >
+                        {promoting === op.id ? "…" : `→ ${tier}`}
+                      </button>
+                    ))}
+                  </div>
+                  {op.id !== currentUserId && (
+                    <button
+                      disabled={removing === op.id}
+                      onClick={async () => {
+                        setRemoving(op.id);
+                        await onRemoveDirect(op.id, op.alias);
+                        setRemoving(null);
+                      }}
+                      className="flex items-center gap-1 text-[9px] uppercase tracking-widest px-2.5 py-1.5 border border-white/[0.04] text-zinc-700 hover:border-red-900/50 hover:text-red-700 transition-colors disabled:opacity-40"
+                    >
+                      <UserX className="w-3 h-3" />
+                      {removing === op.id ? "…" : "Remove"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="border-t border-white/[0.04] pt-4 mt-6">
+        <div className="text-[8px] text-zinc-800 uppercase tracking-widest">
+          Promotion assigns standing immediately. Observers gain full operator privileges at Scout and above.
+          Removal permanently deletes the operator record.
+        </div>
+      </div>
     </div>
   );
 }

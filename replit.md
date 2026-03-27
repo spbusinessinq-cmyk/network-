@@ -17,7 +17,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
-## RSR Network Backend
+## RSR Network — Final Pass Complete
 
 ### Database Tables
 - `users` — operator accounts (seeded: Black Rail/EIO/4451, Signal Echo/echo/echo, Operator Vanta/vanta/vanta, Cipher Nine/cipher/cipher)
@@ -26,6 +26,16 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `network_messages` — Network Room message feed (has `room_id` FK to network_rooms)
 - `signal_threads` — per-signal thread messages
 - `network_rooms` — Network Room channel list (system rooms: General Net, Signal Review, Case Ops, Command Net, Field Reports)
+
+### Final Pass Features (v2)
+- **StarfieldCanvas**: Layered 3-depth stars (foreground/mid/background), much brighter and more defined. Radial glow on foreground stars. Occasional shooting stars (9–25s interval, 0.3 max opacity). Canvas z-0 fixed behind all content.
+- **IDCard flip**: Flip button (RotateCcw) on bottom-right of card. Front/back with `rotateY` spring animation, `preserve-3d`. Back shows credential class, access class, standing, role, join date, network provision.
+- **SignalDetailDrawer**: Delete button moved to footer section (below thread input), separate from title. Confirmation flow: one click to arm, second to confirm.
+- **AccessGate expandable info**: 4 collapsible sections — Standing Structure, Credential Classes, How Access Works, What is Command? — animate in-place.
+- **ProfilePage (Founder Backroom)**: 9 environments (Shadow Panel, Command Steel, Dark Grid, Tactical Mesh, Cold Glass, Signal Field, Dark Mesh, Republic Steel, Black Flag [Command only]). Black Flag uses subtle horizontal grey stripes inspired by monochrome American flag. Command stat block for founder.
+- **CommandPage Intake tab**: Observer-standing operators appear in intake queue. Founder can promote (→ Scout/Operator/Analyst) or remove. Uses PATCH/DELETE `/api/users/:id` (Command-auth-gated).
+- **API users routes**: Added `PATCH /api/users/:id` and `DELETE /api/users/:id` — Command standing required, cannot delete self.
+- **Brightness pass**: Key label text nudged from zinc-700 to zinc-500 across SignalsPage, CasesPage, IdentityPage, DossierPage, AppShell nav icons.
 
 ### API Routes (all under /api)
 - `POST /auth/login` — returns JWT + user
